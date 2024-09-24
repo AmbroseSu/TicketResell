@@ -20,11 +20,13 @@ public class JwtService : IJwtService
         public string GenerateToken(User user)
         {
             var userName = user.Email;
+            var password = user.Password;
             var role = user.Role;
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, userName),
+                new Claim("Email", userName),
+                new Claim("Password", password),
                 new Claim("roles", role.ToString())
             };
 
@@ -45,11 +47,13 @@ public class JwtService : IJwtService
         public string GenerateRefreshToken(User user, Dictionary<string, object> extraClaims)
         {
             var userName = user.Email;
+            var password = user.Password;
             var role = user.Role;
 
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, userName),
+                new Claim("Password", password),
                 new Claim("roles", role.ToString())
             };
 

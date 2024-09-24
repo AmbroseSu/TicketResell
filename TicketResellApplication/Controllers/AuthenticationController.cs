@@ -1,4 +1,5 @@
 using System.Net;
+using DataAccess.DTO.Request;
 using DataAccess.DTO.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -65,5 +66,31 @@ namespace TicketResellApplication.Controllers
                 return result;
             }
         }
+        
+        [HttpPost("save-info")]
+        public async Task<ResponseDTO> SaveInfoAsync([FromBody] SignUp signUp)
+        {
+            var result = await _authenticationService.SaveInfo(signUp);
+
+            if (result.StatusCode.Equals(HttpStatusCode.BadRequest) )
+            {
+                return ResponseUtil.Error("Email is already in use", "Sign up failed", HttpStatusCode.BadRequest);
+            }
+            else
+            {
+                return result;
+            }
+        }
+        
+        [HttpPost("sign-in")]
+        public async Task<ResponseDTO> SiginAsync([FromBody] SignInRequest signInRequest )
+        {
+            var result = await _authenticationService.SignIn(signInRequest);
+            return result;
+            
+        }
+        
+        
+        
     }
 }

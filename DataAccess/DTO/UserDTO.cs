@@ -5,7 +5,7 @@ namespace DataAccess.DTO;
 
 public class UserDTO
 {
-    public int UserId { get; set; }
+    public int Id { get; set; }
     public string Fullname { get; set; }
     public string Address { get; set; }
     public string Email { get; set; }
@@ -27,9 +27,9 @@ public class UserDTO
     {
     }
 
-    public UserDTO(int userId, string fullname, string address, string email, string phone, string status, Gender gender, Role role, string fcm, bool isDelete, List<int> deliveryIds, List<int> ordersIds, List<int> returnsIds, List<int> messagesIds, List<int> userChatsIds, int cartId)
+    public UserDTO(int id, string fullname, string address, string email, string phone, string status, Gender gender, Role role, string fcm, bool isDelete, List<int> deliveryIds, List<int> ordersIds, List<int> returnsIds, List<int> messagesIds, List<int> userChatsIds, int cartId)
     {
-        UserId = userId;
+        Id = id;
         Fullname = fullname;
         Address = address;
         Email = email;
