@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  sql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - SA_PASSWORD=TicketResell2024@
+      - ACCEPT_EULA=Y
+    ports:
+      - "1434:1433"  
+    networks:
+      - ticketresellapp
+
+  ticket_resell:
+    build: .  
+    ports:
+      - "8081:8080"  
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Server=localhost,1434;Database=TicketResell;User Id=sa;Password=TicketResell2024@;Trusted_Connection=False;TrustServerCertificate=true"
+    depends_on:
+      - sql
+    networks:
+      - ticketresellapp
+    
+networks:
+  ticketresellapp:
+    driver: bridge  

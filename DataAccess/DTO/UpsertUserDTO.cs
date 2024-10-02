@@ -5,7 +5,7 @@ namespace DataAccess.DTO;
 
 public class UpsertUserDTO
 {
-    public int UserId { get; set; }
+    public int Id { get; set; }
     public string Fullname { get; set; }
     public string Email { get; set; }
     public string Address { get; set; }
@@ -17,9 +17,9 @@ public class UpsertUserDTO
     {
     }
 
-    public UpsertUserDTO(int userId, string fullname, string email, string address, string phone, Gender gender, Role role)
+    public UpsertUserDTO(int id, string fullname, string email, string address, string phone, Gender gender, Role role)
     {
-        UserId = userId;
+        Id = id;
         Fullname = fullname;
         Email = email;
         Address = address;
