@@ -18,6 +18,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5  
+    volumes:
+      - sqlserver_data:/var/opt/mssql
   ticket_resell:
     build: .
     ports:
@@ -32,4 +34,7 @@ services:
 
 networks:
   ticketresellapp:
-    driver: bridge  
+    driver: bridge      
+volumes:
+  sqlserver_data:
+    driver: local
