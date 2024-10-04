@@ -22,8 +22,52 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
+builder.Services.AddDbContext<TicketResellDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DB")));
+
 
 var app = builder.Build();
+// using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+// {
+//     var logger = serviceScope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+//     var db = serviceScope.ServiceProvider.GetRequiredService<TicketResellDbContext>().Database;
+//
+//     logger.LogInformation("Migrating database...");
+//
+//     while (!db.CanConnect())
+//     {
+//         logger.LogInformation("Database not ready yet; waiting...");
+//         Thread.Sleep(1000);
+//         logger.LogInformation(db.GetConnectionString());
+//     }
+//
+//     try
+//     {
+//         serviceScope.ServiceProvider.GetRequiredService<TicketResellDbContext>().Database.Migrate();
+//         logger.LogInformation("Database migrated successfully.");
+//     }
+//     catch (Exception ex)
+//     {
+//         logger.LogError(ex, "An error occurred while migrating the database.");
+//     }
+// }
+using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+{
+    var logger = serviceScope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    var dbContext = serviceScope.ServiceProvider.GetRequiredService<TicketResellDbContext>();
+
+    logger.LogInformation("Migrating database...");
+
+    try
+    {
+        dbContext.Database.Migrate();
+        logger.LogInformation("Database migrated successfully.");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while migrating the database.");
+    }
+}
 
 if (app.Environment.IsDevelopment())
 {
