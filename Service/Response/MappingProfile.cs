@@ -12,5 +12,7 @@ public class MappingProfile : Profile
         CreateMap<UpsertUserDTO, User>();
         CreateMap<User, UserDTO>();
         CreateMap<UserDTO, User>();
+        CreateMap<Ticket, TicketDTO>();
+        CreateMap<TicketDTO, Ticket>();
     }
 }

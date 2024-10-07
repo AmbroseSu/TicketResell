@@ -59,8 +59,18 @@ public class ResponseUtil
     }
 
     // Phương thức để tính toán và trả về metadata cho collection response
+    /// <summary>
+    /// count là total element trong dbb
+    /// limit là số lượng element trên một trang
+    /// page là trang muốn nhảy đến
+    /// </summary>
+    /// <param name="page"></param>
+    /// <param name="limit"></param>
+    /// <param name="count"></param>
+    /// <returns></returns>
     private static MeatadataDTO GetMeatadata(int page, int limit, long count)
     {
+        
         var totalPages = (int)Math.Ceiling((double)count / limit);
 
         return new MeatadataDTO
