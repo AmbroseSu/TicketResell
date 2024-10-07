@@ -1,4 +1,5 @@
 ﻿using DataAccess.DTO;
+using DataAccess.DTO.Request;
 using DataAccess.DTO.Response;
 using System;
 using System.Collections.Generic;
@@ -10,8 +11,11 @@ namespace Service
 {
     public interface ITicketService
     {
-        Task<ResponseDTO> CreateTicketAsync(TicketDTO ticket);
-        Task<ResponseDTO> UpdateTicketAsync(TicketDTO ticket);
+        Task<ResponseDTO> CreateTicketAsync(NewTicketRequest ticket, string imgUrl);
+        Task<ResponseDTO> UpdateTicketAsync(updateTicketRequest ticket);
         Task<ResponseDTO> DeleteTicketAsync(int id);
+        Task<ResponseDTO> GetTicketAsync(int id);
+        Task<ResponseDTO> GetTicketsAsync(int page, int limit);
+        Task<ResponseDTO> updateStatus(int id, string status);
     }
 }

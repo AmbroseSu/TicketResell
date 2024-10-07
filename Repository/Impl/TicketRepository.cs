@@ -15,20 +15,17 @@ namespace Repository.Impl
     {
         public async Task DeleteAsync(int id)
         {
-            IEnumerable<Ticket?> ticket = await BaseDAO<Ticket>.Instance.Find(c => c.Id == id && c.IsDeleted==false);
+            Ticket? ticket = (await BaseDAO<Ticket>.Instance.Find(c => c.Id == id && c.IsDeleted == false)).SingleOrDefault();
 
             if (ticket != null)
             {
-                Ticket updateTicket = ticket.First();
+                Ticket updateTicket = ticket;
                 updateTicket.IsDeleted = true;
                 await BaseDAO<Ticket>.Instance.UpdateAsync(updateTicket);
             }
         }
 
-        public Task<IEnumerable<Ticket?>> Find(Expression<Func<Ticket, bool>> predicate)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<IEnumerable<Ticket?>> Find(Expression<Func<Ticket, bool>> predicate) => await BaseDAO<Ticket>.Instance.Find(predicate);
 
         public async Task<IEnumerable<Ticket>> GetAllAsync() => await BaseDAO<Ticket>.Instance.GetAllAsync();
 

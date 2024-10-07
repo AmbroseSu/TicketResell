@@ -12,29 +12,24 @@ namespace Repository.Impl
 {
     public class PostRepository : IPostRepository
     {
-        public Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            Post? result = (await BaseDAO<Post>.Instance.Find(c => c.Id == id && c.IsDeleted == false)).SingleOrDefault();
+
+            if (result != null)
+            {
+                Post updateResult = result;
+                updateResult.IsDeleted = true;
+                await BaseDAO<Post>.Instance.UpdateAsync(updateResult);
+            }
         }
 
-        public Task<IEnumerable<Ticket?>> Find(Expression<Func<Ticket, bool>> predicate)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<IEnumerable<Post?>> Find(Expression<Func<Post, bool>> predicate) => await BaseDAO<Post>.Instance.Find(predicate);
 
-        public Task<IEnumerable<Ticket>> GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<IEnumerable<Post>> GetAllAsync() => await BaseDAO<Post>.Instance.GetAllAsync();
 
-        public Task SaveAsync(Ticket savedTicket)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task SaveAsync(Post savedTicket) => await BaseDAO<Post>.Instance.SaveAsync(savedTicket);
 
-        public Task UpdateAsync(Ticket newTicket)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task UpdateAsync(Post newTicket) => await BaseDAO<Post>.Instance.UpdateAsync(newTicket);
     }
 }

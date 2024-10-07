@@ -1,4 +1,5 @@
 ﻿using DataAccess.DTO;
+using DataAccess.DTO.Request;
 using DataAccess.DTO.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,28 +20,42 @@ namespace TicketResellApplication.Controllers
             _logger = logger;
         }
 
-        [HttpPost("new-post")]
-        public async Task<ResponseDTO> CreatePostAsync([FromBody] PostDTO postDTO, [FromQuery] int ticketId)
+        [HttpPost("new")]
+        public async Task<ResponseDTO> CreatePostAsync([FromBody] NewPostRequest post, 
+            [FromQuery] int ticketId,
+            [FromQuery] int userId)
         {
-            return await _postService.CreatePost(postDTO, ticketId);
+            return await _postService.CreatePost(post, ticketId, userId);
         }
 
-        [HttpPut("edit-post")]
-        public async Task<ResponseDTO> UpdatePostAsync([FromBody] PostDTO postDTO)
+        [HttpPut("edit")]
+        public async Task<ResponseDTO> UpdatePostAsync([FromQuery] string description, [FromQuery] int ticketId)
         {
-            return await _postService.EditPost(postDTO);
+            return await _postService.EditPost(ticketId, description);
         }
 
-        //[HttpGet("get-posts")]
-        //public async Task<ResponseDTO> GetPostsAsync()
-        //{
-        //    return await _postService.GetPosts();
-        //}
+        [HttpPut("remove")]
+        public async Task<ResponseDTO> DeletePost([FromQuery] int ticketId)
+        {
+            return await _postService.DeletePost(ticketId);
+        }
 
+        [HttpGet("current-post")]
+        public async Task<ResponseDTO> GetCurrentPostsAsync(int page, int limit)
+        {
+            return await _postService.getCurrentPosts(page, limit);
+        }
 
+        [HttpGet("get-lists")]
+        public async Task<ResponseDTO> GetAllPosts(int page, int limit)
+        {
+            return await _postService.getAllPosts(page,limit);
+        }
 
-
-
-       
+        [HttpGet("get")]
+        public async Task<ResponseDTO> GetPostsAsync(int id)
+        {
+            return await _postService.GetPost(id);
+        }
     }
 }

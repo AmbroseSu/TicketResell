@@ -12,10 +12,10 @@ namespace Repository
 {
     public interface IPostRepository 
     {
-        public Task<IEnumerable<Ticket>> GetAllAsync();
-        public Task<IEnumerable<Ticket?>> Find(Expression<Func<Ticket, bool>> predicate);
-        Task SaveAsync(Ticket savedTicket);
-        Task UpdateAsync(Ticket newTicket);
+        public Task<IEnumerable<Post>> GetAllAsync();
+        public Task<IEnumerable<Post?>> Find(Expression<Func<Post, bool>> predicate);
+        Task SaveAsync(Post savedTicket);
+        Task UpdateAsync(Post newTicket);
         Task DeleteAsync(int id);
 
     }

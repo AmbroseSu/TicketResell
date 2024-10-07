@@ -19,7 +19,7 @@ namespace TicketResellApplication.Controllers
         }
 
         [HttpGet("current-categories")]
-        public async Task<ResponseDTO> getCurrentCategory(
+        public async Task<ResponseDTO> getCurrentCategories(
              [FromQuery] int page = 1,
             [FromQuery] int limit = 1)
         {
@@ -38,6 +38,13 @@ namespace TicketResellApplication.Controllers
         public async Task<ResponseDTO> CreateCategory([FromQuery] string categoryName)
         {
             return await categoryService.CreateCategory(categoryName);
+        }
+
+        [HttpGet("category")]
+        public async Task<ResponseDTO> getCategory(
+           [FromQuery] int id)
+        {
+            return await categoryService.GetCategory(id);
         }
     }
 }

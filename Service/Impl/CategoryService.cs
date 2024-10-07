@@ -48,10 +48,20 @@ namespace Service.Impl
                 IsDeleted = false
             };
 
-            _categoryRepository.SaveAsync(category);
+            await _categoryRepository.SaveAsync(category);
             return ResponseUtil.GetObject("New category accepted","Category created successfully", HttpStatusCode.OK, null);
         }
 
+        public async Task<ResponseDTO> GetCategory(int id)
+        {
+            IEnumerable<Category?> result = await _categoryRepository.Find(c => c.Id == id && c.IsDeleted == false);
 
+            if (result == null)
+            {
+                return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
+            }
+
+            return ResponseUtil .GetObject(result, "Category retrieved successfully", HttpStatusCode.OK, null);
+        }
     }
 }

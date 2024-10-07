@@ -14,11 +14,11 @@ namespace Repository.Impl
     {
         public async Task DeleteAsync(int id)
         {
-            IEnumerable<Category?> category = await BaseDAO<Category>.Instance.Find(c => c.Id == id && c.IsDeleted == false);
+            Category? category = (await BaseDAO<Category>.Instance.Find(c => c.Id == id && c.IsDeleted == false)).SingleOrDefault();
 
             if (category != null)
             {
-                Category updateCate = category.First();
+                Category updateCate = category;
                 updateCate.IsDeleted = true;
                 await BaseDAO<Category>.Instance.UpdateAsync(updateCate);
             }
