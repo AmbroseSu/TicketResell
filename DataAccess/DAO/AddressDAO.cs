@@ -2,7 +2,7 @@
 
 namespace DataAccess.DAO;
 
-public class AddressDAO : BaseDAO<Address>
+public class AddressDAO : IBaseDAO<Address>
 {
     private static AddressDAO instance;
     private static object instanceLock = new object();
