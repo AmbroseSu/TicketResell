@@ -41,13 +41,15 @@ namespace TicketResellApplication.Controllers
         }
 
         [HttpGet("current-post")]
-        public async Task<ResponseDTO> GetCurrentPostsAsync(int page, int limit)
+        public async Task<ResponseDTO> GetCurrentPostsAsync([FromQuery] int page = 1,
+         [FromQuery] int limit = 1)
         {
             return await _postService.getCurrentPosts(page, limit);
         }
 
         [HttpGet("get-lists")]
-        public async Task<ResponseDTO> GetAllPosts(int page, int limit)
+        public async Task<ResponseDTO> GetAllPosts([FromQuery] int page = 1,
+         [FromQuery] int limit = 1)
         {
             return await _postService.getAllPosts(page,limit);
         }
