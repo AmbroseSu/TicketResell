@@ -40,7 +40,7 @@ public class TicketResellDbContext : DbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseSqlServer(GetConnectionString())
+            optionsBuilder.UseNpgsql(GetConnectionString())
                 .EnableSensitiveDataLogging() // Bật log dữ liệu nhạy cảm
                 .UseLoggerFactory(MyLoggerFactory) // Kích hoạt logger
                 .EnableDetailedErrors(); // Hiển thị lỗi chi tiết;
