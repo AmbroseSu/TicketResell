@@ -30,8 +30,8 @@ builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IImageTicketRepository, ImageTicketRepository>();
 
 
-builder.Services.AddDbContext<TicketResellDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DB")));
+/*builder.Services.AddDbContext<TicketResellDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DB")));*/
 
 
 var app = builder.Build();

@@ -1,25 +1,6 @@
 version: '3.8'
 
 services:
-  sql:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    environment:
-      - SA_PASSWORD=TicketResell2024@
-      - ACCEPT_EULA=Y
-    ports:
-      - "1434:1433"
-    networks:
-      - ticketresellapp
-    healthcheck:
-      test: [
-        "CMD-SHELL",
-        "/opt/mssql-tools18/bin/sqlcmd -S 0.0.0.0,1434 -U sa -P TicketResell2024@ -Q 'SELECT 1' -C"
-      ]
-      interval: 10s
-      timeout: 5s
-      retries: 5  
-    volumes:
-      - sqlserver_data:/var/opt/mssql
   ticket_resell:
     build: .
     ports:
