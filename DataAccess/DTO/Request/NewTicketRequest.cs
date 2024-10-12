@@ -9,6 +9,7 @@ namespace DataAccess.DTO.Request
         public int? Quantity { get; set; }
         public DateTime ExpirationDate { get; set; }
         public string? Venue { get; set; }
+        public List<string?> imgList { get; set; } 
         public int? CategoryId { get; set; }
     }
 }

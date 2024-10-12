@@ -56,7 +56,7 @@ namespace Service.Impl
         {
             IEnumerable<Category?> result = await _categoryRepository.Find(c => c.Id == id && c.IsDeleted == false);
 
-            if (result == null)
+            if (result.Count() == 0)
             {
                 return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
             }

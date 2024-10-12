@@ -81,7 +81,7 @@ namespace Service.Impl
 
         public async Task<ResponseDTO> getCurrentPosts(int page, int limit)
         {
-            IEnumerable<Post?> result = await _postRespository.Find(p => p.IsDeleted == false);
+            IEnumerable<Post?> result = await _postRespository.Find(p => p.IsDeleted == false && p.Status.Equals("OPEN") );
             IEnumerable<Post?> data = result.Skip((page - 1) * limit).Take(limit);
             return ResponseUtil.GetCollection(data, "All available posts retrieved sucessfully", HttpStatusCode.OK, page, limit, result.Count());
         }
