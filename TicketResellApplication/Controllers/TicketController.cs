@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Writers;
 using Service;
 using Service.Impl;
+using System.ComponentModel.DataAnnotations;
 
 namespace TicketResellApplication.Controllers
 {
@@ -20,11 +21,10 @@ namespace TicketResellApplication.Controllers
         }
 
         [HttpPost("new-ticket")]
-        public async Task<ResponseDTO> CreateTicket([FromBody] NewTicketRequest ticket,
-            [FromQuery] string imgURL
+        public async Task<ResponseDTO> CreateTicket([FromBody] NewTicketRequest ticket
             )
         {
-            return await _ticketService.CreateTicketAsync(ticket, imgURL);
+            return await _ticketService.CreateTicketAsync(ticket);
         }
 
         [HttpPut("edit")]
@@ -35,30 +35,30 @@ namespace TicketResellApplication.Controllers
 
 
         [HttpPut("remove")]
-        public async Task<ResponseDTO> RemoveTicket([FromQuery] int id)
+        public async Task<ResponseDTO> RemoveTicket([FromQuery, Required] int id)
         {
             return await _ticketService.DeleteTicketAsync(id);
         }
 
         [HttpGet("get-list")]
         public async Task<ResponseDTO> getTickets(
-         [FromQuery] int page = 1,
-         [FromQuery] int limit = 1)
+         [FromQuery, Required] int page = 1,
+         [FromQuery, Required] int limit = 10)
         {
             return await _ticketService.GetTicketsAsync(page, limit);
         }
 
         [HttpGet("get")]
         public async Task<ResponseDTO> getTicket(
-          [FromQuery] int id)
+          [FromQuery, Required] int id)
         {
             return await _ticketService.GetTicketAsync(id);
         }
 
         [HttpGet("status-manage")]
         public async Task<ResponseDTO> updateStatus(
-            [FromQuery] int id,
-          [FromQuery] string status)
+            [FromQuery, Required] int id,
+          [FromQuery, Required] string status)
         {
             return await _ticketService.updateStatus(id, status);
         }

@@ -8,6 +8,8 @@ using Repository;
 using Repository.Impl;
 using Service.Response;
 using System.Net;
+using System.Transactions;
+using static System.Formats.Asn1.AsnWriter;
 
 
 namespace Service.Impl
@@ -27,31 +29,40 @@ namespace Service.Impl
             _imageTicketRepository = imageTicketRepository;
         }
 
-        public async Task<ResponseDTO> CreateTicketAsync(NewTicketRequest ticket, string imgUrl)
+        public async Task<ResponseDTO> CreateTicketAsync(NewTicketRequest ticket)
         {
-            //tim ticket category 
-            IEnumerable<Category?> category = await _ticketCategoryRepository.Find(c => c.Id == ticket.CategoryId && c.IsDeleted);
-
-            if (category == null)
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
-            }
+                //tim ticket category 
+                IEnumerable<Category?> category = await _ticketCategoryRepository.Find(c => c.Id == ticket.CategoryId && c.IsDeleted == false);
 
-            Ticket reqTicket = _mapper.Map<Ticket>(ticket);
+                if (category.Count() == 0)
+                {
+                    return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
+                }
+                Ticket reqTicket = _mapper.Map<Ticket>(ticket);
+                reqTicket.Status = TicketStatus.PENDING;
+                await _ticketRepository.SaveAsync(reqTicket);
 
-            ImageTicket image = new ImageTicket()
-            {
-                ImageUrl = imgUrl,
-                IsDeleted = false,
-                TicketId = reqTicket.Id
+                foreach (string imgUrl in ticket.imgList)
+                {
+                    ImageTicket image = new ImageTicket()
+                    {
+                        ImageUrl = imgUrl,
+                        IsDeleted = false,
+                        TicketId = reqTicket.Id
+
+                    };
+                    await _imageTicketRepository.SaveAsync(image);
+                }
                 
-            };
+                TicketDTO result = _mapper.Map<TicketDTO>(reqTicket);
 
-            reqTicket.Status = TicketStatus.PENDING;
-            await _ticketRepository.SaveAsync(reqTicket);
-            await _imageTicketRepository.SaveAsync(image);
-            TicketDTO result = _mapper.Map<TicketDTO>(reqTicket);
-            return ResponseUtil.GetObject(result, "Ticket created successfully", HttpStatusCode.OK, null);
+                // Commit transaction
+                scope.Complete();
+
+                return ResponseUtil.GetObject(result, "Ticket created successfully", HttpStatusCode.OK, null);
+            }
         }
 
         public async Task<ResponseDTO> DeleteTicketAsync(int id)
@@ -111,8 +122,8 @@ namespace Service.Impl
                 return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
             }
 
+            result.Venue = ticket.Venue;
             result.Quantity = ticket.Quantity;
-            result.Status = ticket.Status;
             result.Status = ticket.Status;
 
             Ticket newTicket = _mapper.Map<Ticket>(result);

@@ -62,19 +62,7 @@ var app = builder.Build();
 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
 {
     var logger = serviceScope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-    var dbContext = serviceScope.ServiceProvider.GetRequiredService<TicketResellDbContext>();
 
-    logger.LogInformation("Migrating database...");
-
-    try
-    {
-        dbContext.Database.Migrate();
-        logger.LogInformation("Database migrated successfully.");
-    }
-    catch (Exception ex)
-    {
-        logger.LogError(ex, "An error occurred while migrating the database.");
-    }
 }
 
 if (app.Environment.IsDevelopment())

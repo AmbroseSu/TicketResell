@@ -11,7 +11,7 @@ namespace Service
 {
     public interface ITicketService
     {
-        Task<ResponseDTO> CreateTicketAsync(NewTicketRequest ticket, string imgUrl);
+        Task<ResponseDTO> CreateTicketAsync(NewTicketRequest ticket);
         Task<ResponseDTO> UpdateTicketAsync(updateTicketRequest ticket);
         Task<ResponseDTO> DeleteTicketAsync(int id);
         Task<ResponseDTO> GetTicketAsync(int id);

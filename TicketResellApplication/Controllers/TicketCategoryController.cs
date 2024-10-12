@@ -3,6 +3,7 @@ using DataAccess.DTO.Response;
 using Microsoft.AspNetCore.Mvc;
 using Service;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 
 namespace TicketResellApplication.Controllers
@@ -20,29 +21,29 @@ namespace TicketResellApplication.Controllers
 
         [HttpGet("current-categories")]
         public async Task<ResponseDTO> getCurrentCategories(
-             [FromQuery] int page = 1,
-            [FromQuery] int limit = 1)
+             [FromQuery, Required] int page = 1,
+            [FromQuery, Required] int limit = 10)
         {
             return await categoryService.getCurrentCategories(page, limit);
         }
 
         [HttpGet("categories")]
         public async Task<ResponseDTO> getAllCategory(
-            [FromQuery] int page = 1,
-            [FromQuery] int limit = 1)
+            [FromQuery, Required] int page = 1,
+            [FromQuery, Required] int limit = 10)
         {
             return await categoryService.getAllCategories(page,  limit);
         }
 
         [HttpPost("new-category")]
-        public async Task<ResponseDTO> CreateCategory([FromQuery] string categoryName)
+        public async Task<ResponseDTO> CreateCategory([FromQuery, Required] string categoryName)
         {
             return await categoryService.CreateCategory(categoryName);
         }
 
         [HttpGet("category")]
         public async Task<ResponseDTO> getCategory(
-           [FromQuery] int id)
+           [FromQuery, Required] int id)
         {
             return await categoryService.GetCategory(id);
         }
