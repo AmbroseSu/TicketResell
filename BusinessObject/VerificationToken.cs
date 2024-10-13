@@ -30,8 +30,8 @@ public class VerificationToken
     
     private DateTime GetTokenExpirationTime()
     {
-        DateTime now = DateTime.UtcNow; // Sử dụng UtcNow thay vì Now
-        DateTime expirationTime = now.AddMinutes(EXPIRATION_TIME_MINUTES);
+        DateTime now = DateTime.Now; 
+        DateTime expirationTime = now.AddMinutes(EXPIRATION_TIME_MINUTES).ToUniversalTime();
         return expirationTime;
     }
 }

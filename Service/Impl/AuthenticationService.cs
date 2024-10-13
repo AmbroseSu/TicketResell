@@ -124,7 +124,7 @@ public class AuthenticationService : IAuthenticationService
             User user = token.User;
             
             DateTime ex = token.ExpirationTime;
-            DateTime no = DateTime.Now;
+            DateTime no = DateTime.UtcNow;
             TimeSpan timeRemaining = ex - no;
             if (timeRemaining.TotalMinutes <= 0)
             {

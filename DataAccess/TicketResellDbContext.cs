@@ -220,6 +220,9 @@ public class TicketResellDbContext : DbContext
             entity.HasMany(e => e.Orders)
                 .WithOne(e => e.Ticket)
                 .HasForeignKey(e => e.TicketId);
+            entity.HasMany(e => e.TicketRequest)
+                .WithOne(e => e.Ticket)
+                .HasForeignKey(e => e.TicketId);
             //entity.HasOne(e => e.TicketRequest)
             //    .WithOne(e => e.Ticket)
             //    .HasForeignKey<TicketRequest>(e => e.TicketId);
@@ -235,10 +238,6 @@ public class TicketResellDbContext : DbContext
             entity.Property(e => e.Address);
             entity.Property(e => e.Status);
             entity.Property(e => e.IdDeleted);
-            
-            entity.HasOne(e => e.Ticket)
-                .WithOne(e => e.TicketRequest)
-                .HasForeignKey<Ticket>(e => e.TicketRequestId);
         });
 
         modelBuilder.Entity<Transaction>(entity =>

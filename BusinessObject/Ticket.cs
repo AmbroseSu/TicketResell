@@ -19,14 +19,14 @@ public class Ticket
     public TicketStatus Status { get; set; }
     public bool IsDeleted { get; set; }
     
-    public int? TicketRequestId { get; set; }
+    //public int? TicketRequestId { get; set; }
     public int? CategoryId { get; set; }
     public List<Feedback>? Feedbacks { get; set; }
     public List<CartItem>? CartItems { get; set; }
     public List<Post>? Posts { get; set; }
     public List<ImageTicket>? ImageTickets { get; set; }
     public List<Order>? Orders { get; set; }
-    public TicketRequest? TicketRequest { get; set; }
+    public List<TicketRequest>? TicketRequest { get; set; }
     public Category? Category { get; set; }
     
     

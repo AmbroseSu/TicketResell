@@ -28,6 +28,8 @@ builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IImageTicketRepository, ImageTicketRepository>();
+builder.Services.AddScoped<ITicketRequestRepository, TicketRequestRepository>();
+builder.Services.AddScoped<ITicketRequestService, TicketRequestService>();
 
 
 /*builder.Services.AddDbContext<TicketResellDbContext>(options =>
@@ -59,23 +61,7 @@ var app = builder.Build();
 //         logger.LogError(ex, "An error occurred while migrating the database.");
 //     }
 // }
-using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
-{
-    var logger = serviceScope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-    var dbContext = serviceScope.ServiceProvider.GetRequiredService<TicketResellDbContext>();
 
-    logger.LogInformation("Migrating database...");
-
-    try
-    {
-        dbContext.Database.Migrate();
-        logger.LogInformation("Database migrated successfully.");
-    }
-    catch (Exception ex)
-    {
-        logger.LogError(ex, "An error occurred while migrating the database.");
-    }
-}
 
 if (app.Environment.IsDevelopment())
 {
