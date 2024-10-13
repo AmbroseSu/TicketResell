@@ -395,9 +395,6 @@ namespace DataAccess.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("TicketRequestId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Venue")
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
@@ -405,9 +402,6 @@ namespace DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("TicketRequestId")
-                        .IsUnique();
 
                     b.ToTable("Ticket", (string)null);
                 });
@@ -446,6 +440,8 @@ namespace DataAccess.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TicketId");
 
                     b.HasIndex("UserId");
 
@@ -723,20 +719,20 @@ namespace DataAccess.Migrations
                         .WithMany("Tickets")
                         .HasForeignKey("CategoryId");
 
-                    b.HasOne("BusinessObject.TicketRequest", "TicketRequest")
-                        .WithOne("Ticket")
-                        .HasForeignKey("BusinessObject.Ticket", "TicketRequestId");
-
                     b.Navigation("Category");
-
-                    b.Navigation("TicketRequest");
                 });
 
             modelBuilder.Entity("BusinessObject.TicketRequest", b =>
                 {
+                    b.HasOne("BusinessObject.Ticket", "Ticket")
+                        .WithMany("TicketRequest")
+                        .HasForeignKey("TicketId");
+
                     b.HasOne("BusinessObject.User", "User")
                         .WithMany("TicketRequests")
                         .HasForeignKey("UserId");
+
+                    b.Navigation("Ticket");
 
                     b.Navigation("User");
                 });
@@ -824,11 +820,8 @@ namespace DataAccess.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("Posts");
-                });
 
-            modelBuilder.Entity("BusinessObject.TicketRequest", b =>
-                {
-                    b.Navigation("Ticket");
+                    b.Navigation("TicketRequest");
                 });
 
             modelBuilder.Entity("BusinessObject.User", b =>

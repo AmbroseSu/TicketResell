@@ -18,6 +18,6 @@ public class TicketDTO
     public List<int>? PostIds { get; set; }
     public List<int>? ImageTicketIds { get; set; }
     public List<int>? OrderIds { get; set; }
-    public int? TicketRequestId { get; set; }
+    public List<int>? TicketRequestId { get; set; }
     public int? CategoryId { get; set; }
 }
