@@ -77,7 +77,8 @@ else
 {
     builder.WebHost.ConfigureKestrel(options =>
     {
-        options.ListenAnyIP(8080);  // Chỉ dùng HTTP trong production (Render)
+        options.ListenAnyIP(8080); 
+        options.ListenAnyIP(8081, o => o.UseHttps("/https/kestrel.pfx", "Ambrose47"));
     });
 }
 
