@@ -33,7 +33,7 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 
 COPY --from=publish /app/publish .
-COPY certs/kestrel.pfx /https/kestrel.pfx
+COPY /kestrel.pfx /https/kestrel.pfx
 
 # Set environment variables for Kestrel
 ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/https/kestrel.pfx
