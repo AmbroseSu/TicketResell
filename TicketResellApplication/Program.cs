@@ -61,7 +61,11 @@ var app = builder.Build();
 //         logger.LogError(ex, "An error occurred while migrating the database.");
 //     }
 // }
+using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+{
+    var logger = serviceScope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
+}
 
 if (app.Environment.IsDevelopment())
 {
