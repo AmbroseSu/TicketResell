@@ -36,7 +36,7 @@ builder.Services.AddScoped<ITicketRequestService, TicketRequestService>();
     options.UseSqlServer(builder.Configuration.GetConnectionString("DB")));*/
 
 
-var app = builder.Build();
+
 // using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
 // {
 //     var logger = serviceScope.ServiceProvider.GetRequiredService<ILogger<Program>>();
@@ -61,16 +61,12 @@ var app = builder.Build();
 //         logger.LogError(ex, "An error occurred while migrating the database.");
 //     }
 // }
-using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
-{
-    var logger = serviceScope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
-}
 if (builder.Environment.IsDevelopment())
 {
     builder.WebHost.ConfigureKestrel(options =>
     {
-        options.ListenAnyIP(8080, o => o.UseHttps());  // HTTPS chỉ dùng trong development
+        options.ListenAnyIP(8083, o => o.UseHttps());  // HTTPS chỉ dùng trong development
     });
 }
 else
@@ -78,16 +74,21 @@ else
     builder.WebHost.ConfigureKestrel(options =>
     {
         options.ListenAnyIP(8080); 
-        options.ListenAnyIP(8081, o => o.UseHttps("/https/kestrel.pfx", "Ambrose47"));
+        options.ListenAnyIP(8083, o => o.UseHttps("/https/kestrel.pfx", "Ambrose47"));
     });
 }
+var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+{
+    var logger = serviceScope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
+}
 
 app.UseHttpsRedirection();
 
