@@ -66,6 +66,20 @@ using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>(
     var logger = serviceScope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
 }
+if (builder.Environment.IsDevelopment())
+{
+    builder.WebHost.ConfigureKestrel(options =>
+    {
+        options.ListenAnyIP(8080, o => o.UseHttps());  // HTTPS chỉ dùng trong development
+    });
+}
+else
+{
+    builder.WebHost.ConfigureKestrel(options =>
+    {
+        options.ListenAnyIP(8080);  // Chỉ dùng HTTP trong production (Render)
+    });
+}
 
 if (app.Environment.IsDevelopment())
 {
