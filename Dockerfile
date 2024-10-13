@@ -32,6 +32,12 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
+COPY --from=publish /app/publish .
+COPY D:/Certificate_Net/kestrel.pfx /https/kestrel.pfx  
+
+# Set environment variables for Kestrel
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/https/kestrel.pfx
+ENV ASPNETCORE_Kestrel__Certificates__Default__Password=Ambrose47
 
 ENTRYPOINT ["dotnet", "TicketResellApplication.dll"]
 
