@@ -62,21 +62,7 @@ builder.Services.AddScoped<ITicketRequestService, TicketRequestService>();
 //     }
 // }
 
-if (builder.Environment.IsDevelopment())
-{
-    builder.WebHost.ConfigureKestrel(options =>
-    {
-        options.ListenAnyIP(8083, o => o.UseHttps());  // HTTPS chỉ dùng trong development
-    });
-}
-else
-{
-    builder.WebHost.ConfigureKestrel(options =>
-    {
-        options.ListenAnyIP(8080); 
-        options.ListenAnyIP(8083, o => o.UseHttps("/https/kestrel.pfx", "Ambrose47"));
-    });
-}
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

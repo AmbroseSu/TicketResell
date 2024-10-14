@@ -31,13 +31,5 @@ RUN dotnet publish "./TicketResellApplication.csproj" -c $BUILD_CONFIGURATION -o
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-
-COPY --from=publish /app/publish .
-COPY /kestrel.pfx /https/kestrel.pfx
-
-# Set environment variables for Kestrel
-ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/https/kestrel.pfx
-ENV ASPNETCORE_Kestrel__Certificates__Default__Password=Ambrose47
-
 ENTRYPOINT ["dotnet", "TicketResellApplication.dll"]
 
