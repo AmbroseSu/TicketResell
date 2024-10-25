@@ -6,6 +6,6 @@ public class RequestTicket
     public int? Quantity { get; set; }
     public string? Address { get; set; }
     
-    public int? UserId { get; set; }
-    public int? TicketId { get; set; }
+    public int UserId { get; set; }
+    public int TicketId { get; set; }
 }

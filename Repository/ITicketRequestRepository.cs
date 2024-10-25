@@ -8,5 +8,6 @@ public interface ITicketRequestRepository
     Task UpdateAsync(TicketRequest ticketRequest);
     Task DeleteAsync(long requestId);
     Task<TicketRequest?> FindByIdAsync(long id);
+    Task<TicketRequest?> FindByTicketIdAndUserIdAsync(int ticketId, int userId);
     Task<List<TicketRequest>> FindAllTicketRequestsByTicketIdAsync(int ticketId);
 }

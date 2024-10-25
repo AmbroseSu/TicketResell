@@ -30,6 +30,10 @@ builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IImageTicketRepository, ImageTicketRepository>();
 builder.Services.AddScoped<ITicketRequestRepository, TicketRequestRepository>();
 builder.Services.AddScoped<ITicketRequestService, TicketRequestService>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IOrderStatusRepository, OrderStatusRepository>();
+
 
 
 /*builder.Services.AddDbContext<TicketResellDbContext>(options =>

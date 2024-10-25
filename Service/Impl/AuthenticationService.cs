@@ -193,6 +193,7 @@ public class AuthenticationService : IAuthenticationService
                 user.Password = BCrypt.Net.BCrypt.HashPassword(signUp.Password);
                 user.Address = signUp.Address;
                 user.Gender = signUp.Gender;
+                user.Image = signUp.Image;
                 user.Role = Role.CUSTOMER;
                 user.FcmToken = signUp.FcmToken;
                 var result = _mapper.Map<UpsertUserDTO>(user);
