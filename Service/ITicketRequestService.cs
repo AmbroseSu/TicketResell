@@ -8,9 +8,9 @@ namespace Service;
 public interface ITicketRequestService
 {
     Task<ResponseDTO> CreateTicketRequestAsync(RequestTicket requestTicket);
-    Task UpdateAsync(TicketRequest ticketRequest);
+    Task<ResponseDTO> AcceptTicketRequestAsync(long requestId);
     Task DeleteAsync(long requestId);
     Task<TicketRequest?> FindByIdAsync(long id);
     
-    Task<List<ResponseDTO>> FindAllTicketRequestsByTicketIdAsync(int ticketId);
+    Task<ResponseDTO> FindAllTicketRequestsByTicketIdAsync(int ticketId, int page, int limit);
 }

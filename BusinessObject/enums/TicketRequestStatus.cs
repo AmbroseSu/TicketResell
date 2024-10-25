@@ -3,5 +3,6 @@
 public enum TicketRequestStatus
 {
     WAITING,
-    CONFIRMED
+    CONFIRMED,
+    REJECTED,
 }
