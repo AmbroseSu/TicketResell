@@ -23,6 +23,7 @@ public class MappingProfile : Profile
         CreateMap<RequestTicket, TicketRequest>();
         CreateMap<TicketRequest, TicketRequestDTO>();
         CreateMap<TicketRequestDTO, TicketRequest>();
+        CreateMap<ImageTicket, ImageTicketDTO>();
 
     }
 }
