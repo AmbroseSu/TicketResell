@@ -42,7 +42,7 @@ public class TicketRequestService : ITicketRequestService
                 return ResponseUtil.Error("Request fails", "TicketID or UserID not found !", HttpStatusCode.BadRequest);
             }
             TicketRequest? ticketRequest = await _ticketRequestRepository.FindByTicketIdAndUserIdAsync(requestTicket.TicketId, requestTicket.UserId);
-            if (ticketRequest != null && ticketRequest.Status == TicketRequestStatus.WAITING)
+            if (ticketRequest != null && ticketRequest.Status == TicketRequestStatus.WAITING) 
             {
                 return ResponseUtil.Error("Request fails", "Ticket Request has exists !", HttpStatusCode.BadRequest);
             }
@@ -123,6 +123,16 @@ public class TicketRequestService : ITicketRequestService
             }
             else
             {
+                List<TicketRequest> ticketRequestsReject = await _ticketRequestRepository.FindAllTicketRequestsByTicketIdAsync(ticketRequest.TicketId.Value);
+
+                foreach (TicketRequest ticketRequestReject in ticketRequestsReject)
+                {
+                    if (ticketRequestReject.Id != ticketRequest.Id && ticketRequestReject.Status == TicketRequestStatus.WAITING && ticketRequestReject.Quantity > ticketRequest.Quantity)
+                    {
+                        ticketRequestReject.Status = TicketRequestStatus.REJECTED;
+                        await _ticketRequestRepository.UpdateAsync(ticketRequestReject);
+                    }
+                }
                 await _ticketRepository.UpdateAsync(ticket);
             }
             
