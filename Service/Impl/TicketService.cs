@@ -98,7 +98,6 @@ namespace Service.Impl
 
         public async Task<ResponseDTO> GetTicketsAsync(int page, int limit)
         {
-            //IEnumerable<Ticket?> result = await _ticketRepository.Find(c => c.IsDeleted == false);
             IEnumerable<Ticket?> result = await _ticketRepository.Find(c => c.IsDeleted == false);
             if (result == null)
             {
