@@ -1,4 +1,5 @@
-﻿using DataAccess.DTO;
+﻿using BusinessObject;
+using DataAccess.DTO;
 using DataAccess.DTO.Request;
 using DataAccess.DTO.Response;
 using Microsoft.AspNetCore.Mvc;
@@ -35,9 +36,9 @@ namespace TicketResellApplication.Controllers
 
 
         [HttpPut("remove")]
-        public async Task<ResponseDTO> RemoveTicket([FromQuery, Required] int id)
+        public async Task<ResponseDTO> RemoveTicket([FromQuery, Required] int ticketId)
         {
-            return await _ticketService.DeleteTicketAsync(id);
+            return await _ticketService.DeleteTicketAsync(ticketId);
         }
 
         [HttpGet("get-list")]
@@ -50,17 +51,26 @@ namespace TicketResellApplication.Controllers
 
         [HttpGet("get")]
         public async Task<ResponseDTO> getTicket(
-          [FromQuery, Required] int id)
+          [FromQuery, Required] int ticketId)
         {
-            return await _ticketService.GetTicketAsync(id);
+            return await _ticketService.GetTicketAsync(ticketId);
         }
 
-        [HttpGet("status-manage")]
+        [HttpGet("manager-approve")]
         public async Task<ResponseDTO> updateStatus(
-            [FromQuery, Required] int id,
+            [FromQuery, Required] int ticketId,
           [FromQuery, Required] string status)
         {
-            return await _ticketService.updateStatus(id, status);
+            return await _ticketService.updateStatus(ticketId, status);
+        }
+
+        [HttpGet("get-by-category")]
+        public async Task<ResponseDTO> getTicketByCategoryId(
+         [FromQuery, Required] int categoryId,
+         [FromQuery, Required] int page = 1,
+         [FromQuery, Required] int limit = 10)
+        {
+            return await _ticketService.getTicketByCategoryId(categoryId, page, limit);
         }
     }
 }
