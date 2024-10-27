@@ -2,6 +2,7 @@
 using BusinessObject;
 using DataAccess.DTO;
 using DataAccess.DTO.Request;
+using DataAccess.DTO.Response;
 
 namespace Service.Response;
 
@@ -22,5 +23,6 @@ public class MappingProfile : Profile
         CreateMap<RequestTicket, TicketRequest>();
         CreateMap<TicketRequest, TicketRequestDTO>();
         CreateMap<TicketRequestDTO, TicketRequest>();
+
     }
 }

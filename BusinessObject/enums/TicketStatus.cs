@@ -1,4 +1,6 @@
-﻿namespace BusinessObject.Enums;
+﻿using System.Net;
+
+namespace BusinessObject.Enums;
 
 public enum TicketStatus
 {
@@ -10,15 +12,10 @@ public enum TicketStatus
 
 public static class TicketStatusExtensions
 {
-    public static string ToFriendlyString(this TicketStatus status)
+
+    public static bool IsValidStatus(string status)
     {
-        return status.ToString().ToLowerInvariant() switch
-        {
-            "pending" => "PENDING",
-            "verified" => "VERIFIED",
-            "rejected" => "REJECTED",
-            "closed" => "CLOSED",
-            _ => status.ToString()
-        };
+        return Enum.TryParse(typeof(TicketStatus), status, true, out _);
     }
+
 }

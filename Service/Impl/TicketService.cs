@@ -4,9 +4,11 @@ using BusinessObject.Enums;
 using DataAccess.DTO;
 using DataAccess.DTO.Request;
 using DataAccess.DTO.Response;
+using Microsoft.AspNetCore.Mvc;
 using Repository;
 using Repository.Impl;
 using Service.Response;
+using System.Collections.Generic;
 using System.Net;
 using System.Transactions;
 using static System.Formats.Asn1.AsnWriter;
@@ -18,17 +20,20 @@ namespace Service.Impl
     {
         private readonly ITicketRepository _ticketRepository;
         private readonly ICategoryRepository _ticketCategoryRepository;
+        private readonly IPostRepository _postRepository;
         private readonly IMapper _mapper;
         private readonly IImageTicketRepository _imageTicketRepository;
+        private readonly IUserRepository _userRepository;
 
-        public TicketService(ITicketRepository ticketRepository, ICategoryRepository ticketCategoryRepository, IMapper mapper, IImageTicketRepository imageTicketRepository)
+        public TicketService(ITicketRepository ticketRepository, ICategoryRepository ticketCategoryRepository, IPostRepository postRepository, IMapper mapper, IImageTicketRepository imageTicketRepository, IUserRepository userRepository)
         {
             _ticketRepository = ticketRepository;
             _ticketCategoryRepository = ticketCategoryRepository;
+            _postRepository = postRepository;
             _mapper = mapper;
             _imageTicketRepository = imageTicketRepository;
+            _userRepository = userRepository;
         }
-
         public async Task<ResponseDTO> CreateTicketAsync(NewTicketRequest ticket)
         {
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
@@ -55,7 +60,7 @@ namespace Service.Impl
                     };
                     await _imageTicketRepository.SaveAsync(image);
                 }
-                
+
                 TicketDTO result = _mapper.Map<TicketDTO>(reqTicket);
 
                 // Commit transaction
@@ -88,25 +93,51 @@ namespace Service.Impl
                 return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
             }
 
-            return ResponseUtil.GetObject(result, "Ticket retrieved successfully", HttpStatusCode.OK, null);
+            return await getTicketInfoResponse(result);
         }
 
         public async Task<ResponseDTO> GetTicketsAsync(int page, int limit)
         {
-            IEnumerable<Ticket?> result = await _ticketRepository.GetAllAsync();
-            IEnumerable<Ticket?> data = result.Skip((page - 1) * limit).Take(limit);
-            return ResponseUtil.GetCollection(data, "All tickets retrieved sucessfully", HttpStatusCode.OK, page, limit, result.Count());
+            IEnumerable<Ticket?> result = await _ticketRepository.Find(c => c.IsDeleted == false);
+
+            if (result == null)
+            {
+                return ResponseUtil.Error("Request fails", "No ticket found !", HttpStatusCode.BadRequest);
+            }
+
+            return await getListTicketInforResponse(result.ToList(), page, limit);
         }
 
         public async Task<ResponseDTO> updateStatus(int id, string status)
         {
             Ticket? result = (await IsTicketValid(id)).SingleOrDefault();
+
             if (result == null)
             {
                 return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
             }
 
-            //result.Status = status;
+            if (result.Status != TicketStatus.PENDING)
+            {
+                return ResponseUtil.Error("Request fails", "Ticket status is not pending !", HttpStatusCode.BadRequest);
+            }
+
+            status = status.ToUpper();
+
+            if (!TicketStatusExtensions.IsValidStatus(status))
+            {
+                return ResponseUtil.Error("Request fails", "Invalid status !", HttpStatusCode.BadRequest);
+            }
+
+            if (status.Equals(TicketStatus.REJECTED.ToString()))
+            {
+                result.Status = TicketStatus.REJECTED;
+            }
+
+            if (status.Equals(TicketStatus.VERIFIED.ToString()))
+            {
+                result.Status = TicketStatus.VERIFIED;
+            }
 
             Ticket newTicket = _mapper.Map<Ticket>(result);
             await _ticketRepository.UpdateAsync(newTicket);
@@ -141,6 +172,108 @@ namespace Service.Impl
             }
 
             return result;
+        }
+
+        private TicketResponse getTicketInfo(Ticket result, Post post, Category cat, User user)
+        {
+
+            TicketResponse ticketResponse = new TicketResponse(
+            result.Id,
+            result.Name,
+            result.Price,
+            result.Quantity,
+                result.ExpirationDate,
+            result.Venue,
+                result.Status,
+                result.CategoryId,
+                cat.Name,
+                post.Id,
+                post.Title,
+                post.Description,
+                post.CreatedDate,
+                post.Status,
+                post.UserId,
+                user.Email
+                );
+
+            return ticketResponse;
+        }
+
+        public async Task<ResponseDTO> getTicketByCategoryId(int id, int page, int limit)
+        {
+            IEnumerable<Ticket?> result = await _ticketRepository.Find(c => c.IsDeleted == false && c.CategoryId == id);
+
+            if (result == null)
+            {
+                return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
+            }
+
+            return await getListTicketInforResponse(result.ToList(), page, limit);
+
+        }
+
+        private async Task<ResponseDTO> getTicketInfoResponse(Ticket result)
+        {
+            Post? post = (await _postRepository.Find(p => p.IsDeleted == false && p.TicketId == result.Id)).SingleOrDefault();
+
+            if (post == null)
+            {
+                return ResponseUtil.Error("Request fails", "Post not found !", HttpStatusCode.BadRequest);
+            }
+
+            Category? cat = (await _ticketCategoryRepository.Find(c => c.IsDeleted == false && c.Id == result.CategoryId)).SingleOrDefault();
+
+            if (cat == null)
+            {
+                return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
+            }
+
+            User? user = (await _userRepository.FindUserByIdAsync((long)post.UserId));
+
+            if (user == null)
+            {
+                return ResponseUtil.Error("Request fails", "User not found !", HttpStatusCode.BadRequest);
+            }
+
+            TicketResponse ticket = getTicketInfo(result, post, cat, user);
+
+            return ResponseUtil.GetObject(ticket, "Ticket retrieved successfully", HttpStatusCode.OK, null);
+        }
+
+        private async Task<ResponseDTO> getListTicketInforResponse(List<Ticket?> result, int page, int limit)
+        {
+            List<TicketResponse?> responseData = new List<TicketResponse?>();
+
+            //Duyệt qua list ticket lấy ticket info tương ứng
+
+            foreach (Ticket ticket in result)
+            {
+                Post? post = (await _postRepository.Find(p => p.IsDeleted == false && p.TicketId == ticket.Id)).SingleOrDefault();
+
+                if (post == null)
+                {
+                    return ResponseUtil.Error("Request fails", "Post not found !", HttpStatusCode.BadRequest);
+                }
+
+                Category? cat = (await _ticketCategoryRepository.Find(c => c.IsDeleted == false && c.Id == ticket.CategoryId)).SingleOrDefault();
+
+                if (cat == null)
+                {
+                    return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
+                }
+
+                User? user = (await _userRepository.FindUserByIdAsync((long)post.UserId));
+
+                if (user == null)
+                {
+                    return ResponseUtil.Error("Request fails", "User not found !", HttpStatusCode.BadRequest);
+                }
+
+                responseData.Add(getTicketInfo(ticket, post, cat, user));
+            }
+
+            List<TicketResponse?> data = responseData.Skip((page - 1) * limit).Take(limit).ToList();
+            return ResponseUtil.GetCollection(data, "All tickets retrieved sucessfully", HttpStatusCode.OK, page, limit, result.Count());
         }
     }
 }
