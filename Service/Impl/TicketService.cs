@@ -237,6 +237,17 @@ namespace Service.Impl
 
             TicketResponse ticket = getTicketInfo(result, post, cat, user);
 
+            List<ImageTicket?> imageTickets = (await _imageTicketRepository.Find(i => i.TicketId == result.Id)).ToList();
+
+            if (imageTickets.Count == 0)
+            {
+                return ResponseUtil.Error("Request fails", "Image not found !", HttpStatusCode.BadRequest);
+            }
+
+            List<ImageTicketDTO> imgList = _mapper.Map<List<ImageTicketDTO>>(imageTickets);
+
+            ticket.imageTicketDTOs = imgList;
+
             return ResponseUtil.GetObject(ticket, "Ticket retrieved successfully", HttpStatusCode.OK, null);
         }
 
@@ -269,7 +280,17 @@ namespace Service.Impl
                     return ResponseUtil.Error("Request fails", "User not found !", HttpStatusCode.BadRequest);
                 }
 
-                responseData.Add(getTicketInfo(ticket, post, cat, user));
+                List<ImageTicket?> imageTickets = (await _imageTicketRepository.Find(i => i.TicketId == ticket.Id)).ToList();
+
+                if (imageTickets.Count == 0)
+                {
+                    return ResponseUtil.Error("Request fails", "Image not found !", HttpStatusCode.BadRequest);
+                }
+
+                List<ImageTicketDTO> imgList = _mapper.Map<List<ImageTicketDTO>>(imageTickets);
+                TicketResponse ticketResponse = getTicketInfo(ticket, post, cat, user);
+                ticketResponse.imageTicketDTOs = imgList;
+                responseData.Add(ticketResponse);
             }
 
             List<TicketResponse?> data = responseData.Skip((page - 1) * limit).Take(limit).ToList();

@@ -48,6 +48,8 @@ namespace DataAccess.DTO.Response
         public int? UserId { get; set; }
         public string Email { get; set; }
 
+        public List<ImageTicketDTO> imageTicketDTOs { get; set; }
+
 
     }
 }
