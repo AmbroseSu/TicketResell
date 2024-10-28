@@ -18,5 +18,6 @@ namespace Service
         Task<ResponseDTO> GetTicketsAsync(int page, int limit);
         Task<ResponseDTO> updateStatus(int id, string status);
         Task<ResponseDTO> getTicketByCategoryId(int id, int page, int limit);
+        Task<ResponseDTO> getTicketByEmail(string email, int page, int limit);
     }
 }

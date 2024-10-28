@@ -296,5 +296,39 @@ namespace Service.Impl
             List<TicketResponse?> data = responseData.Skip((page - 1) * limit).Take(limit).ToList();
             return ResponseUtil.GetCollection(data, "All tickets retrieved sucessfully", HttpStatusCode.OK, page, limit, result.Count());
         }
+
+        public async Task<ResponseDTO> getTicketByEmail(string email, int page, int limit)
+        {
+            User? user = await _userRepository.FindUserByEmailAsync(email);
+
+            if (user == null)
+            {
+                return ResponseUtil.Error("Request fails", "User not found !", HttpStatusCode.BadRequest);
+            }
+
+            IEnumerable<Post?> posts = await _postRepository.Find(p => p.UserId == user.Id);
+
+            if (posts.Count() == 0)
+            {
+                return ResponseUtil.GetObject("Request accepted", "No ticket found !", HttpStatusCode.Accepted, null);
+            }
+
+            List<Ticket?> tickets = new List<Ticket?>();
+
+            foreach (var item in posts)
+            {
+                Ticket? result = (await _ticketRepository.Find(t => t.Id == item.TicketId)).SingleOrDefault();
+
+                if (result == null)
+                {
+                    return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
+                }
+
+                tickets.Add(result);
+            }
+
+            return await getListTicketInforResponse(tickets, page, limit);
+
+        }
     }
 }
