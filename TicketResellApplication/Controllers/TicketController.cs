@@ -72,5 +72,14 @@ namespace TicketResellApplication.Controllers
         {
             return await _ticketService.getTicketByCategoryId(categoryId, page, limit);
         }
+
+        [HttpGet("get/user")]
+        public async Task<ResponseDTO> getTicket(
+          [FromQuery, Required] string email,
+          [FromQuery, Required] int page = 1,
+          [FromQuery, Required] int limit = 10)
+        {
+            return await _ticketService.getTicketByEmail(email, page, limit);
+        }
     }
 }
