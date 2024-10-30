@@ -94,7 +94,8 @@ public class TicketRequestService : ITicketRequestService
             {
                 return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
             }
-            ticket.Quantity = ticket.Quantity - ticketRequest.Quantity;
+            int? quantity = ticket.Quantity - ticketRequest.Quantity;
+            ticket.Quantity = quantity;
             if (ticket.Quantity == 0)
             {
                 List<TicketRequest> ticketRequestsReject = await _ticketRequestRepository.FindAllTicketRequestsByTicketIdAsync(ticketRequest.TicketId.Value);
@@ -127,7 +128,7 @@ public class TicketRequestService : ITicketRequestService
 
                 foreach (TicketRequest ticketRequestReject in ticketRequestsReject)
                 {
-                    if (ticketRequestReject.Id != ticketRequest.Id && ticketRequestReject.Status == TicketRequestStatus.WAITING && ticketRequestReject.Quantity > ticketRequest.Quantity)
+                    if (ticketRequestReject.Id != ticketRequest.Id && ticketRequestReject.Status == TicketRequestStatus.WAITING && ticketRequestReject.Quantity > ticket.Quantity)
                     {
                         ticketRequestReject.Status = TicketRequestStatus.REJECTED;
                         await _ticketRequestRepository.UpdateAsync(ticketRequestReject);
@@ -143,7 +144,7 @@ public class TicketRequestService : ITicketRequestService
             order.Quantity = ticketRequest.Quantity;
             order.Address = ticketRequest.Address;
             order.TicketId = ticketRequest.TicketId.Value;
-            order.UserId = ticketRequest.UserId.Value;
+            order.UserId = ticketRequest.UserId;
             await _orderRepository.SaveAsync(order);
             OrderStatus orderStatus = new OrderStatus();
             orderStatus.Name = "Pending";
@@ -183,7 +184,9 @@ public class TicketRequestService : ITicketRequestService
             List<TicketRequest> ticketRequests =
                 await _ticketRequestRepository.FindAllTicketRequestsByTicketIdAsync(ticketId);
             
-            IEnumerable<TicketRequestDTO> ticketRequestsDto = _mapper.Map<IEnumerable<TicketRequestDTO>>(ticketRequests);
+            //IEnumerable<TicketRequestDTO> ticketRequestsDto = _mapper.Map<IEnumerable<TicketRequestDTO>>(ticketRequests);
+            IEnumerable<TicketRequestDTO> ticketRequestsDto =
+                await ConvertTicketRequestsToTicketRequestsDTOAsync(ticketRequests);
             IEnumerable<TicketRequestDTO?> data = ticketRequestsDto.Skip((page - 1) * limit).Take(limit);
             return ResponseUtil.GetCollection(data, "All tickets Request retrieved sucessfully", HttpStatusCode.OK, page, limit, ticketRequestsDto.Count());
         }
@@ -192,6 +195,25 @@ public class TicketRequestService : ITicketRequestService
             Console.WriteLine(e);
             throw;
         }
+    }
+
+    public async Task<IEnumerable<TicketRequestDTO>> ConvertTicketRequestsToTicketRequestsDTOAsync(
+        IEnumerable<TicketRequest> ticketRequests)
+    {
+        List<TicketRequestDTO> ticketRequestDtos = new List<TicketRequestDTO>();
+        foreach (var ticketRequest in ticketRequests)
+        {
+            User? user = await _userRepository.FindUserByIdAsync((long)ticketRequest.UserId);
+            if (user != null)
+            {
+                TicketRequestDTO ticketRequestDto = _mapper.Map<TicketRequestDTO>(ticketRequest);
+                ticketRequestDto.UserFullname = user.Fullname;
+                ticketRequestDto.UserEmail = user.Email;
+                ticketRequestDtos.Add(ticketRequestDto);
+            }
+        }
+
+        return ticketRequestDtos;
     }
     
 }

@@ -18,7 +18,7 @@ public class TicketRequest
     public bool IdDeleted { get; set; }
     
     
-    public int? UserId { get; set; }
+    public int UserId { get; set; }
     public int? TicketId { get; set; }
     public User? User { get; set; }
     public Ticket? Ticket { get; set; }

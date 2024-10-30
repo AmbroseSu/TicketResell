@@ -11,7 +11,8 @@ public class TicketRequestDTO
     public string? Address { get; set; }
     public TicketRequestStatus Status { get; set; }
     public bool IsDeleted { get; set; }
-    
+    public string? UserFullname { get; set; }
+    public string? UserEmail { get; set; }
     public int? UserId { get; set; }
     public int? TicketId { get; set; }
 }
