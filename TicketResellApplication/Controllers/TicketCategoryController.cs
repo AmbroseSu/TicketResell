@@ -5,9 +5,11 @@ using Service;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
+using Microsoft.AspNetCore.Cors;
 
 namespace TicketResellApplication.Controllers
 {
+    [EnableCors("AllowSpecificOrigins")]
     [Route("api/[controller]")]
     [ApiController]
     public class TicketCategoryController : Controller

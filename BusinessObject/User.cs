@@ -42,6 +42,7 @@ public class User
     public List<Order>? Orders { get; set; }
     public List<Message>? Messages { get; set; }
     public List<UserChat>? UserChats { get; set; }
+    public List<Notification>? Notifications { get; set; }
     public Cart? Cart { get; set; }
     public VerificationToken? VerificationToken { get; set; }
     

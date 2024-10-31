@@ -211,7 +211,7 @@ public class AuthenticationService : IAuthenticationService
         {
             try
             {
-                User? user = await _userRepository.FindUserByEmailAsync(signInRequest.Email);
+                User? user = await _userRepository.FindUserByEmailAsync(signInRequest.Email.ToLower());
                 if (user == null || !BCrypt.Net.BCrypt.Verify(signInRequest.Password, user.Password))
                 {
                     return ResponseUtil.Error("Email or Password not exist", "Failed", HttpStatusCode.BadRequest);

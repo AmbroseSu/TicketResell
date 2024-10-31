@@ -34,6 +34,25 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderStatusRepository, OrderStatusRepository>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+
+    options.AddPolicy("AllowSpecificOrigins",
+        builder =>
+        {
+            builder.WithOrigins("https://example.com")
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+});
+
 
 
 /*builder.Services.AddDbContext<TicketResellDbContext>(options =>
@@ -79,6 +98,7 @@ using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>(
     var logger = serviceScope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
 }
+app.UseCors("AllowAllOrigins");
 
 app.UseHttpsRedirection();
 

@@ -238,6 +238,45 @@ namespace DataAccess.Migrations
                     b.ToTable("Message", (string)null);
                 });
 
+            modelBuilder.Entity("BusinessObject.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsClick")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("TicketRequestId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("UserReceivedId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserReceivedId");
+
+                    b.ToTable("Notification");
+                });
+
             modelBuilder.Entity("BusinessObject.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -436,7 +475,7 @@ namespace DataAccess.Migrations
                     b.Property<DateTime?>("TicketRequestDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -668,6 +707,15 @@ namespace DataAccess.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("BusinessObject.Notification", b =>
+                {
+                    b.HasOne("BusinessObject.User", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserReceivedId");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("BusinessObject.Order", b =>
                 {
                     b.HasOne("BusinessObject.Ticket", "Ticket")
@@ -730,7 +778,9 @@ namespace DataAccess.Migrations
 
                     b.HasOne("BusinessObject.User", "User")
                         .WithMany("TicketRequests")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Ticket");
 
@@ -833,6 +883,8 @@ namespace DataAccess.Migrations
                     b.Navigation("Feedbacks");
 
                     b.Navigation("Messages");
+
+                    b.Navigation("Notifications");
 
                     b.Navigation("Orders");
 
