@@ -1,20 +1,27 @@
-﻿using System.Security.Claims;
+﻿using System.Net;
+using System.Security.Claims;
+using AutoMapper;
 using BusinessObject;
+using DataAccess.DTO;
+using DataAccess.DTO.Response;
 using Repository;
+using Service.Response;
 
 namespace Service.Impl;
 
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IMapper _mapper;
     private readonly IVerificationTokenRepository _tokenRepository;
 
     public UserService(
         IUserRepository userRepository,
-        IVerificationTokenRepository tokenRepository)
+        IVerificationTokenRepository tokenRepository, IMapper mapper)
     {
         _userRepository = userRepository;
         _tokenRepository = tokenRepository;
+        _mapper = mapper;
     }
 
     public async Task<ClaimsPrincipal> LoadUserByUsernameAsync(string email)
@@ -63,4 +70,21 @@ public class UserService : IUserService
         await _tokenRepository.DeleteAsync(token.Id);
         return "Valid";
     }
+
+
+    public async Task<ResponseDTO> GetUserByEmailAsync(string email)
+    {
+        try
+        {
+            User? user = await _userRepository.FindUserByEmailAsync(email.ToLower());
+            UserDTO userDto = _mapper.Map<UserDTO>(user);
+                
+            return ResponseUtil.GetObject(userDto, "ok", HttpStatusCode.Created, null);
+        }
+        catch (Exception ex)
+        {
+            return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
+        }
+    }
+    
 }

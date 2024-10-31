@@ -7,9 +7,11 @@ using Microsoft.OpenApi.Writers;
 using Service;
 using Service.Impl;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Cors;
 
 namespace TicketResellApplication.Controllers
 {
+    [EnableCors("AllowSpecificOrigins")]
     [Route("api/[controller]")]
     [ApiController]
     public class TicketController : Controller

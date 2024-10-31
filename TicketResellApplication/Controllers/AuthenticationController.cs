@@ -1,6 +1,7 @@
 using System.Net;
 using DataAccess.DTO.Request;
 using DataAccess.DTO.Response;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Repository;
@@ -9,6 +10,7 @@ using Service.Response;
 
 namespace TicketResellApplication.Controllers
 {
+    [EnableCors("AllowSpecificOrigins")]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthenticationController : ControllerBase
@@ -33,7 +35,7 @@ namespace TicketResellApplication.Controllers
         [HttpPost("check-email")]
         public async Task<ResponseDTO> CheckEmailAsync([FromQuery] string email)
         {
-            var result = await _authenticationService.CheckEmailAsync(email);
+            var result = await _authenticationService.CheckEmailAsync(email.ToLower());
 
             if (result.StatusCode.Equals(HttpStatusCode.BadRequest) )
             {
@@ -55,7 +57,7 @@ namespace TicketResellApplication.Controllers
         [HttpPost("resend-otp-email")]
         public async Task<ResponseDTO> ResetCheckEmailAsync([FromQuery] string email, [FromQuery] int id)
         {
-            var result = await _authenticationService.ResetVerifyEmailAsync(email, id);
+            var result = await _authenticationService.ResetVerifyEmailAsync(email.ToLower(), id);
 
             if (result.StatusCode.Equals(HttpStatusCode.BadRequest) )
             {

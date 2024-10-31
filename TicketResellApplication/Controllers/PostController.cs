@@ -1,12 +1,14 @@
 ﻿using DataAccess.DTO;
 using DataAccess.DTO.Request;
 using DataAccess.DTO.Response;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service;
 
 namespace TicketResellApplication.Controllers
 {
+    [EnableCors("AllowSpecificOrigins")]
     [Route("api/[controller]")]
     [ApiController]
     public class PostController : ControllerBase
