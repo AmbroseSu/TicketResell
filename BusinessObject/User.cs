@@ -27,6 +27,7 @@ public class User
     [StringLength(2000)]
     public string? FcmToken { get; set; }
     public DateTime? PostTime { get; set; }
+    public DateTime? CreatedAt { get; set; }
     public int? Points { get; set; }
     public bool Status { get; set; }
     public bool IsDeleted { get; set; } = false;
@@ -42,7 +43,6 @@ public class User
     public List<Order>? Orders { get; set; }
     public List<Message>? Messages { get; set; }
     public List<UserChat>? UserChats { get; set; }
-    public List<Notification>? Notifications { get; set; }
     public Cart? Cart { get; set; }
     public VerificationToken? VerificationToken { get; set; }
     

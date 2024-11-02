@@ -92,6 +92,21 @@ namespace TicketResellApplication.Controllers
             
         }
         
+        [HttpPost("sign-up-for-staff")]
+        public async Task<ResponseDTO> SignUpForStaffAsync([FromBody] SignUpForStaff signUpForStaff)
+        {
+            var result = await _authenticationService.SignUpForStaff(signUpForStaff);
+
+            if (result.StatusCode.Equals(HttpStatusCode.BadRequest) )
+            {
+                return ResponseUtil.Error("Email is already in use", "Sign up failed", HttpStatusCode.BadRequest);
+            }
+            else
+            {
+                return result;
+            }
+        }
+        
         
         
     }

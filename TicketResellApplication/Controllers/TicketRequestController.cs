@@ -40,5 +40,13 @@ namespace TicketResellApplication.Controllers
             return await _ticketRequestService.AcceptTicketRequestAsync(ticketRequestId);
         }
         
+        [HttpGet("get-ticket-request-by-id")]
+        public async Task<ResponseDTO> GetTicketRequestById([FromQuery] long ticketRequestId)
+        {
+            return await _ticketRequestService.FindByIdAsync(ticketRequestId);
+        }
+        
+        
+        
     }
 }

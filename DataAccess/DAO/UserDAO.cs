@@ -123,4 +123,30 @@ public class UserDAO
             .Where(u => EF.Functions.Like(u.PhoneNumber, phone))
             .FirstOrDefaultAsync();
     }
+
+    public async Task<List<User>> FindAllByRoleAsync(Role role)
+    {
+        using var context = new TicketResellDbContext();
+        return await context.Users
+            .Where(u => u.Role == role)
+            .ToListAsync();
+    }
+
+    public async Task<List<User>> FindAllUsersAsync()
+    {
+        using var context = new TicketResellDbContext();
+        return await context.Users.ToListAsync();
+    }
+    
+    public async Task<List<User>> FindAllCustomersByDateAndYearAsync(int month, int year)
+    {
+        using var context = new TicketResellDbContext();
+        return await context.Users
+            .Where(u => u.Role == Role.CUSTOMER
+                        && u.CreatedAt.Value.Year == year 
+                        && u.CreatedAt.Value.Month == month)
+            .ToListAsync();
+    }
+
+
 }

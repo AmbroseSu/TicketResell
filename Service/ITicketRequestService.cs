@@ -10,7 +10,7 @@ public interface ITicketRequestService
     Task<ResponseDTO> CreateTicketRequestAsync(RequestTicket requestTicket);
     Task<ResponseDTO> AcceptTicketRequestAsync(long requestId);
     Task DeleteAsync(long requestId);
-    Task<TicketRequest?> FindByIdAsync(long id);
-    
+    Task<ResponseDTO> FindByIdAsync(long id);
     Task<ResponseDTO> FindAllTicketRequestsByTicketIdAsync(int ticketId, int page, int limit);
+
 }
