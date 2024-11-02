@@ -194,6 +194,7 @@ public class AuthenticationService : IAuthenticationService
                 user.Address = signUp.Address;
                 user.Gender = signUp.Gender;
                 user.Image = signUp.Image;
+                user.CreatedAt = DateTime.UtcNow;
                 user.Role = Role.CUSTOMER;
                 user.FcmToken = signUp.FcmToken;
                 var result = _mapper.Map<UpsertUserDTO>(user);
@@ -215,6 +216,17 @@ public class AuthenticationService : IAuthenticationService
                 if (user == null || !BCrypt.Net.BCrypt.Verify(signInRequest.Password, user.Password))
                 {
                     return ResponseUtil.Error("Email or Password not exist", "Failed", HttpStatusCode.BadRequest);
+                }
+
+                if (user.IsDeleted == true)
+                {
+                    return ResponseUtil.Error("User is deleted", "Failed", HttpStatusCode.BadRequest);
+                }
+
+                if (!signInRequest.FcmToken.Equals(user.FcmToken) && !signInRequest.FcmToken.Equals("string"))
+                {
+                    user.FcmToken = signInRequest.FcmToken;
+                    await _userRepository.UpdateAsync(user);
                 }
 
                 var jwt = _jwtService.GenerateToken(user);
@@ -270,8 +282,39 @@ public class AuthenticationService : IAuthenticationService
                 return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
             }
         }
-        
-        
-        
-        
+
+        public async Task<ResponseDTO> SignUpForStaff(SignUpForStaff signUpForStaff)
+        {
+            try
+            {
+                User? user = await _userRepository.FindUserByEmailAsync(signUpForStaff.Email);
+                if (user != null)
+                {
+                    return ResponseUtil.Error("Emailexist", "Failed", HttpStatusCode.BadRequest);
+                }
+                else
+                {
+                    User userSignUp = new User();
+                    userSignUp.Email = signUpForStaff.Email;
+                    userSignUp.Fullname = signUpForStaff.Fullname;
+                    userSignUp.PhoneNumber = signUpForStaff.PhoneNumber;
+                    userSignUp.Password = BCrypt.Net.BCrypt.HashPassword(signUpForStaff.Password);
+                    userSignUp.Address = signUpForStaff.Address;
+                    userSignUp.Gender = signUpForStaff.Gender;
+                    userSignUp.Image = signUpForStaff.Image;
+                    userSignUp.CreatedAt = DateTime.UtcNow;
+                    userSignUp.IsEnabled = true;
+                    userSignUp.Role = Role.STAFF;
+                    userSignUp.FcmToken = null;
+                    await _userRepository.SaveAsync(userSignUp);
+                    var result = _mapper.Map<UserDTO>(userSignUp);
+                    return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, null);
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
+            }
+        }
 }

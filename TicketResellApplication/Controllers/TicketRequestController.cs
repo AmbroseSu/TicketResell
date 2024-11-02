@@ -9,7 +9,7 @@ using Service;
 
 namespace TicketResellApplication.Controllers
 {
-    [EnableCors("AllowSpecificOrigins")]
+    [EnableCors("AllowReactApp")]
     [Route("api/[controller]")]
     [ApiController]
     public class TicketRequestController : ControllerBase
@@ -39,6 +39,14 @@ namespace TicketResellApplication.Controllers
         {
             return await _ticketRequestService.AcceptTicketRequestAsync(ticketRequestId);
         }
+        
+        [HttpGet("get-ticket-request-by-id")]
+        public async Task<ResponseDTO> GetTicketRequestById([FromQuery] long ticketRequestId)
+        {
+            return await _ticketRequestService.FindByIdAsync(ticketRequestId);
+        }
+        
+        
         
     }
 }

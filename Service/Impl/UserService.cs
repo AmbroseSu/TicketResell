@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using AutoMapper;
 using BusinessObject;
+using BusinessObject.Enums;
 using DataAccess.DTO;
 using DataAccess.DTO.Response;
 using Repository;
@@ -86,5 +87,128 @@ public class UserService : IUserService
             return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
         }
     }
-    
+
+    public async Task<ResponseDTO> FindAllByRoleAsync(Role role,int page, int limit)
+    {
+        try
+        {
+            IEnumerable<User?> users = await _userRepository.FindAllByRoleAsync(role);
+            IEnumerable<UserDTO> userDtos = _mapper.Map<IEnumerable<UserDTO>>(users);
+            List<UserDTO> result = userDtos.Skip((page - 1) * limit).Take(limit).ToList();
+            //UserDTO userDto = _mapper.Map<UserDTO>(user);
+                
+            return ResponseUtil.GetCollection(result, "ok", HttpStatusCode.Created, page, limit, users.Count());
+        }
+        catch (Exception ex)
+        {
+            return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
+        }
+    }
+
+    public async Task<ResponseDTO> FindAllUsersAsync(int page, int limit)
+    {
+        try
+        {
+            IEnumerable<User?> users = await _userRepository.FindAllUsersAsync();
+            IEnumerable<UserDTO> userDtos = _mapper.Map<IEnumerable<UserDTO>>(users);
+            List<UserDTO> result = userDtos.Skip((page - 1) * limit).Take(limit).ToList();
+            //UserDTO userDto = _mapper.Map<UserDTO>(user);
+                
+            return ResponseUtil.GetCollection(result, "ok", HttpStatusCode.Created, page, limit, users.Count());
+        }
+        catch (Exception ex)
+        {
+            return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
+        }
+    }
+
+    public async Task<ResponseDTO> FindAllCustomersByDateAndYearAsync(int month, int year, int page, int limit)
+    {
+        try
+        {
+            IEnumerable<User?> users = await _userRepository.FindAllCustomersByDateAndYearAsync(month, year);
+            IEnumerable<UserDTO> userDtos = _mapper.Map<IEnumerable<UserDTO>>(users);
+            List<UserDTO> result = userDtos.Skip((page - 1) * limit).Take(limit).ToList();
+            //UserDTO userDto = _mapper.Map<UserDTO>(user);
+                
+            return ResponseUtil.GetCollection(result, "ok", HttpStatusCode.Created, page, limit, users.Count());
+        }
+        catch (Exception ex)
+        {
+            return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
+        }
+    }
+
+    public async Task<ResponseDTO> FindAllNumberOfCustomersByDateAndYearAsync(int month, int year)
+    {
+        try
+        {
+            IEnumerable<User?> users = await _userRepository.FindAllCustomersByDateAndYearAsync(month, year);
+            return ResponseUtil.GetObject(users.Count(), "ok", HttpStatusCode.Created, null);
+        }
+        catch (Exception ex)
+        {
+            return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
+        }
+    }
+
+    public async Task<ResponseDTO> FindUserByIdAsync(long userId)
+    {
+        try
+        {
+            User? user = await _userRepository.FindUserByIdAsync(userId);
+            if (user is null)
+            {
+                return ResponseUtil.Error("User not found", "Faild", HttpStatusCode.NotFound);
+            }
+            var result = _mapper.Map<UserDTO>(user);
+            return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, null);
+        }
+        catch (Exception ex)
+        {
+            return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
+        }
+    }
+
+    public async Task<ResponseDTO> EditProfileAsync(UpsertUserDTO userDTO)
+    {
+        try
+        {
+            User? user = await _userRepository.FindUserByIdAsync(userDTO.Id);
+            if (user is null)
+            {
+                return ResponseUtil.Error("User not found", "Faild", HttpStatusCode.NotFound);
+            }
+            var fields = typeof(UpsertUserDTO).GetProperties();
+            foreach (var field in fields)
+            {
+                // Bỏ qua các thuộc tính cụ thể không muốn cập nhật
+                if (field.Name == "Id" || field.Name == "Email" || field.Name == "Role" || field.Name == "Gender")
+                {
+                    continue;
+                }
+
+                // Lấy giá trị mới từ userDTO
+                var newValue = field.GetValue(userDTO);
+                if (newValue != null)
+                {
+                    // Tìm thuộc tính tương ứng trong lớp User
+                    var userField = typeof(User).GetProperty(field.Name);
+                    if (userField != null && userField.CanWrite)
+                    {
+                        // Gán giá trị mới cho thuộc tính của user
+                        userField.SetValue(user, newValue);
+                    }
+                }
+            }
+            
+            await _userRepository.UpdateAsync(user);
+            var result = _mapper.Map<UserDTO>(user);
+            return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, null);
+        }
+        catch (Exception ex)
+        {
+            return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
+        }
+    }
 }

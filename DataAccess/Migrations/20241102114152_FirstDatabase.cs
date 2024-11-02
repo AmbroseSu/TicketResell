@@ -71,6 +71,7 @@ namespace DataAccess.Migrations
                     Gender = table.Column<int>(type: "integer", nullable: false),
                     FcmToken = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
                     PostTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Points = table.Column<int>(type: "integer", nullable: true),
                     Status = table.Column<bool>(type: "boolean", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
@@ -173,31 +174,6 @@ namespace DataAccess.Migrations
                     table.ForeignKey(
                         name: "FK_Message_User_UserId",
                         column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Notification",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Title = table.Column<string>(type: "text", nullable: true),
-                    Content = table.Column<string>(type: "text", nullable: true),
-                    TicketRequestId = table.Column<int>(type: "integer", nullable: true),
-                    DateCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Type = table.Column<int>(type: "integer", nullable: false),
-                    Status = table.Column<bool>(type: "boolean", nullable: false),
-                    IsClick = table.Column<bool>(type: "boolean", nullable: false),
-                    UserReceivedId = table.Column<int>(type: "integer", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Notification", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Notification_User_UserReceivedId",
-                        column: x => x.UserReceivedId,
                         principalTable: "User",
                         principalColumn: "Id");
                 });
@@ -508,11 +484,6 @@ namespace DataAccess.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notification_UserReceivedId",
-                table: "Notification",
-                column: "UserReceivedId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Order_TicketId",
                 table: "Order",
                 column: "TicketId");
@@ -591,9 +562,6 @@ namespace DataAccess.Migrations
 
             migrationBuilder.DropTable(
                 name: "Message");
-
-            migrationBuilder.DropTable(
-                name: "Notification");
 
             migrationBuilder.DropTable(
                 name: "OrderStatus");

@@ -265,6 +265,7 @@ public class TicketResellDbContext : DbContext
             entity.Property(e => e.Gender);
             entity.Property(e => e.FcmToken);
             entity.Property(e => e.PostTime);
+            entity.Property(e => e.CreatedAt);
             entity.Property(e => e.Points);
             entity.Property(e => e.Status);
             entity.Property(e => e.IsEnabled);
@@ -294,9 +295,6 @@ public class TicketResellDbContext : DbContext
             entity.HasMany(e => e.UserChats)
                 .WithOne(e => e.User)
                 .HasForeignKey(e => e.UserId);
-            entity.HasMany(e => e.Notifications)
-                .WithOne(e => e.User)
-                .HasForeignKey(e => e.UserReceivedId);
             entity.HasOne(e => e.Cart)
                 .WithOne(e => e.User)
                 .HasForeignKey<Cart>(e => e.UserId);

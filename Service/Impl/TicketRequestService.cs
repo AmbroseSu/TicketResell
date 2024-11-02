@@ -166,9 +166,22 @@ public class TicketRequestService : ITicketRequestService
         throw new NotImplementedException();
     }
 
-    public Task<TicketRequest?> FindByIdAsync(long id)
+    public async Task<ResponseDTO> FindByIdAsync(long id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            TicketRequest ticketRequest = await _ticketRequestRepository.FindByIdAsync(id);
+            User? user = await _userRepository.FindUserByIdAsync((long)ticketRequest.UserId);
+            TicketRequestDTO ticketRequestDto = _mapper.Map<TicketRequestDTO>(ticketRequest);
+            ticketRequestDto.UserFullname = user.Fullname;
+            ticketRequestDto.UserEmail = user.Email;
+            return ResponseUtil.GetObject(ticketRequestDto, "Ticket Request created successfully", HttpStatusCode.OK, null);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     public async Task<ResponseDTO> FindAllTicketRequestsByTicketIdAsync(int ticketId, int page, int limit)
@@ -196,6 +209,7 @@ public class TicketRequestService : ITicketRequestService
             throw;
         }
     }
+    
 
     public async Task<IEnumerable<TicketRequestDTO>> ConvertTicketRequestsToTicketRequestsDTOAsync(
         IEnumerable<TicketRequest> ticketRequests)

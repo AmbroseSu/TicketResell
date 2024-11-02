@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Cors;
 
 namespace TicketResellApplication.Controllers
 {
-    [EnableCors("AllowSpecificOrigins")]
+    [EnableCors("AllowReactApp")]
     [Route("api/[controller]")]
     [ApiController]
     public class TicketController : Controller

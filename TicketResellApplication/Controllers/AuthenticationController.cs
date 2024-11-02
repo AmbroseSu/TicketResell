@@ -10,7 +10,7 @@ using Service.Response;
 
 namespace TicketResellApplication.Controllers
 {
-    [EnableCors("AllowSpecificOrigins")]
+    [EnableCors("AllowReactApp")]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthenticationController : ControllerBase
@@ -90,6 +90,21 @@ namespace TicketResellApplication.Controllers
             var result = await _authenticationService.SignIn(signInRequest);
             return result;
             
+        }
+        
+        [HttpPost("sign-up-for-staff")]
+        public async Task<ResponseDTO> SignUpForStaffAsync([FromBody] SignUpForStaff signUpForStaff)
+        {
+            var result = await _authenticationService.SignUpForStaff(signUpForStaff);
+
+            if (result.StatusCode.Equals(HttpStatusCode.BadRequest) )
+            {
+                return ResponseUtil.Error("Email is already in use", "Sign up failed", HttpStatusCode.BadRequest);
+            }
+            else
+            {
+                return result;
+            }
         }
         
         

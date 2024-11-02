@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(TicketResellDbContext))]
-    [Migration("20241030155725_FirstDatabase")]
+    [Migration("20241102114152_FirstDatabase")]
     partial class FirstDatabase
     {
         /// <inheritdoc />
@@ -239,45 +239,6 @@ namespace DataAccess.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Message", (string)null);
-                });
-
-            modelBuilder.Entity("BusinessObject.Notification", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsClick")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("boolean");
-
-                    b.Property<int?>("TicketRequestId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("UserReceivedId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserReceivedId");
-
-                    b.ToTable("Notification");
                 });
 
             modelBuilder.Entity("BusinessObject.Order", b =>
@@ -543,6 +504,9 @@ namespace DataAccess.Migrations
                     b.Property<int?>("CartId")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Email")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
@@ -706,15 +670,6 @@ namespace DataAccess.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("Chat");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("BusinessObject.Notification", b =>
-                {
-                    b.HasOne("BusinessObject.User", "User")
-                        .WithMany("Notifications")
-                        .HasForeignKey("UserReceivedId");
 
                     b.Navigation("User");
                 });
@@ -886,8 +841,6 @@ namespace DataAccess.Migrations
                     b.Navigation("Feedbacks");
 
                     b.Navigation("Messages");
-
-                    b.Navigation("Notifications");
 
                     b.Navigation("Orders");
 
