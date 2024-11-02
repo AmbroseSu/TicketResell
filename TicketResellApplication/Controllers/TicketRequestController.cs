@@ -9,7 +9,7 @@ using Service;
 
 namespace TicketResellApplication.Controllers
 {
-    [EnableCors("AllowSpecificOrigins")]
+    [EnableCors("AllowReactApp")]
     [Route("api/[controller]")]
     [ApiController]
     public class TicketRequestController : ControllerBase

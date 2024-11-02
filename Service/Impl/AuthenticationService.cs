@@ -223,7 +223,7 @@ public class AuthenticationService : IAuthenticationService
                     return ResponseUtil.Error("User is deleted", "Failed", HttpStatusCode.BadRequest);
                 }
 
-                if (!signInRequest.FcmToken.Equals(user.FcmToken))
+                if (!signInRequest.FcmToken.Equals(user.FcmToken) && !signInRequest.FcmToken.Equals("string"))
                 {
                     user.FcmToken = signInRequest.FcmToken;
                     await _userRepository.UpdateAsync(user);
