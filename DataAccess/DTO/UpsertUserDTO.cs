@@ -9,7 +9,7 @@ public class UpsertUserDTO
     public string Fullname { get; set; }
     public string Email { get; set; }
     public string Address { get; set; }
-    public string Phone { get; set; }
+    public string PhoneNumber { get; set; }
     public string Image { get; set; }
     public Gender Gender { get; set; }
     public Role Role { get; set; }
@@ -18,13 +18,13 @@ public class UpsertUserDTO
     {
     }
 
-    public UpsertUserDTO(int id, string fullname, string email, string address, string phone, string image, Gender gender, Role role)
+    public UpsertUserDTO(int id, string fullname, string email, string address, string phoneNumber, string image, Gender gender, Role role)
     {
         Id = id;
         Fullname = fullname;
         Email = email;
         Address = address;
-        Phone = phone;
+        PhoneNumber = phoneNumber;
         Image = image;
         Gender = gender;
         Role = role;

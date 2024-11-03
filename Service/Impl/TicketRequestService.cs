@@ -209,7 +209,35 @@ public class TicketRequestService : ITicketRequestService
             throw;
         }
     }
-    
+
+    public async Task<ResponseDTO> FindAllTicketRequestsByUserIdAsync(int userId, int page, int limit)
+    {
+        try
+        {
+            //Ticket? result = (await _ticketRepository.Find(c => c.IsDeleted == false && c.Id == ticketId)).SingleOrDefault();
+            User? user = await _userRepository.FindUserByIdAsync(userId);
+            if (user == null)
+            {
+                return ResponseUtil.Error("Request fails", "User not found !", HttpStatusCode.BadRequest);
+            }
+
+            List<TicketRequest> ticketRequests =
+                await _ticketRequestRepository.FindAllTicketRequestsByUserIdAsync(userId);
+            
+            //IEnumerable<TicketRequestDTO> ticketRequestsDto = _mapper.Map<IEnumerable<TicketRequestDTO>>(ticketRequests);
+            IEnumerable<TicketRequestDTO> ticketRequestsDto =
+                await ConvertTicketRequestsToTicketRequestsDTOAsync(ticketRequests);
+            IEnumerable<TicketRequestDTO?> data = ticketRequestsDto.Skip((page - 1) * limit).Take(limit);
+            return ResponseUtil.GetCollection(data, "All tickets Request retrieved sucessfully", HttpStatusCode.OK, page, limit, ticketRequestsDto.Count());
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        
+    }
+
 
     public async Task<IEnumerable<TicketRequestDTO>> ConvertTicketRequestsToTicketRequestsDTOAsync(
         IEnumerable<TicketRequest> ticketRequests)

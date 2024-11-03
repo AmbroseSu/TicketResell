@@ -16,4 +16,5 @@ public class TicketRequestRepository : ITicketRequestRepository
     public Task<TicketRequest?> FindByTicketIdAndUserIdAsync(int ticketId, int userId) => TicketRequestDAO.Instance.FindByTicketIdAndUserIdAsync(ticketId, userId);
     
     public Task<List<TicketRequest>> FindAllTicketRequestsByTicketIdAsync(int ticketId) => TicketRequestDAO.Instance.FindAllTicketRequestsByTicketIdAsync(ticketId);
+    public Task<List<TicketRequest>> FindAllTicketRequestsByUserIdAsync(int userId) => TicketRequestDAO.Instance.FindAllTicketRequestsByUserIdAsync(userId);
 }

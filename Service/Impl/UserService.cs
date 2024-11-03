@@ -15,14 +15,16 @@ public class UserService : IUserService
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
     private readonly IVerificationTokenRepository _tokenRepository;
+    private readonly IPostRepository _postRepository;
 
     public UserService(
         IUserRepository userRepository,
-        IVerificationTokenRepository tokenRepository, IMapper mapper)
+        IVerificationTokenRepository tokenRepository, IMapper mapper, IPostRepository postRepository)
     {
         _userRepository = userRepository;
         _tokenRepository = tokenRepository;
         _mapper = mapper;
+        _postRepository = postRepository;
     }
 
     public async Task<ClaimsPrincipal> LoadUserByUsernameAsync(string email)
@@ -204,6 +206,20 @@ public class UserService : IUserService
             
             await _userRepository.UpdateAsync(user);
             var result = _mapper.Map<UserDTO>(user);
+            return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, null);
+        }
+        catch (Exception ex)
+        {
+            return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
+        }
+    }
+
+    public async Task<ResponseDTO> GetUserByTicketIdAsync(long ticketId)
+    {
+        try
+        {
+            IEnumerable<Post?> result = await _postRepository.Find(c => c.IsDeleted == false && c.TicketId == ticketId);
+            //var result = _mapper.Map<UserDTO>(user);
             return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, null);
         }
         catch (Exception ex)

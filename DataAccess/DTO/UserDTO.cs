@@ -9,7 +9,7 @@ public class UserDTO
     public string Fullname { get; set; }
     public string Address { get; set; }
     public string Email { get; set; }
-    public string Phone { get; set; }
+    public string PhoneNumber { get; set; }
     public string Status { get; set; }
     public Gender Gender { get; set; }
     public string Image { get; set; }
@@ -28,13 +28,13 @@ public class UserDTO
     {
     }
 
-    public UserDTO(int id, string fullname, string address, string email, string phone, string status, Gender gender, string image, Role role, string fcmToken, bool isDelete, List<int> deliveryIds, List<int> ordersIds, List<int> returnsIds, List<int> messagesIds, List<int> userChatsIds, int cartId)
+    public UserDTO(int id, string fullname, string address, string email, string phoneNumber, string status, Gender gender, string image, Role role, string fcmToken, bool isDelete, List<int> deliveryIds, List<int> ordersIds, List<int> returnsIds, List<int> messagesIds, List<int> userChatsIds, int cartId)
     {
         Id = id;
         Fullname = fullname;
         Address = address;
         Email = email;
-        Phone = phone;
+        PhoneNumber = phoneNumber;
         Status = status;
         Gender = gender;
         Image = image;
