@@ -128,4 +128,17 @@ public class TicketRequestDAO : IBaseDAO<TicketRequest>
         }
     }
     
+    public async Task<List<TicketRequest>> FindAllTicketRequestsByUserIdAsync(int userId)
+    {
+        try
+        {
+            return await _context.TicketRequests.Where(x => x.UserId == userId).ToListAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+    
 }

@@ -10,4 +10,5 @@ public interface ITicketRequestRepository
     Task<TicketRequest?> FindByIdAsync(long id);
     Task<TicketRequest?> FindByTicketIdAndUserIdAsync(int ticketId, int userId);
     Task<List<TicketRequest>> FindAllTicketRequestsByTicketIdAsync(int ticketId);
+    Task<List<TicketRequest>> FindAllTicketRequestsByUserIdAsync(int userId);
 }

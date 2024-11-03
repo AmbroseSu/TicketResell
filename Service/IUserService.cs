@@ -18,4 +18,6 @@ public interface IUserService
     Task<ResponseDTO> FindAllNumberOfCustomersByDateAndYearAsync(int month, int year);
     Task<ResponseDTO> FindUserByIdAsync(long userId);
     Task<ResponseDTO> EditProfileAsync(UpsertUserDTO userDTO);
+    
+    Task<ResponseDTO> GetUserByTicketIdAsync(long ticketId);
 }

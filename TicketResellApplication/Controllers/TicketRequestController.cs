@@ -34,6 +34,13 @@ namespace TicketResellApplication.Controllers
             return await _ticketRequestService.FindAllTicketRequestsByTicketIdAsync(ticketId, page, limit);
         }
         
+        [HttpGet("get-ticket-request-for-buyer")]
+        public async Task<ResponseDTO> GetTicketRequestForBuyer([FromQuery] int userId, [FromQuery, Required] int page = 1,
+            [FromQuery, Required] int limit = 10)
+        {
+            return await _ticketRequestService.FindAllTicketRequestsByUserIdAsync(userId, page, limit);
+        }
+        
         [HttpPost("confirm-ticket-request")]
         public async Task<ResponseDTO> ConfirmTicketRequest([FromQuery] int ticketRequestId)
         {

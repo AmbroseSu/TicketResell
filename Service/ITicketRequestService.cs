@@ -12,5 +12,6 @@ public interface ITicketRequestService
     Task DeleteAsync(long requestId);
     Task<ResponseDTO> FindByIdAsync(long id);
     Task<ResponseDTO> FindAllTicketRequestsByTicketIdAsync(int ticketId, int page, int limit);
+    Task<ResponseDTO> FindAllTicketRequestsByUserIdAsync(int userId, int page, int limit);
 
 }
