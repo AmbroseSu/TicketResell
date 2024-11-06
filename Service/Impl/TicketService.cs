@@ -330,5 +330,36 @@ namespace Service.Impl
             return await getListTicketInforResponse(tickets, page, limit);
 
         }
+
+        public async Task<ResponseDTO> updateTicketImg(List<string> imgList, int ticketId)
+        {
+            Ticket ticket = (await _ticketRepository.Find(t => t.Id == ticketId)).SingleOrDefault();
+
+            if (ticket == null)
+            {
+                return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
+            }
+
+            List<ImageTicket?> imageTickets = (await _imageTicketRepository.Find(i => i.TicketId == ticketId)).ToList();
+
+            if (imageTickets.Count != 0)
+            {
+                return ResponseUtil.Error("Request fails", "Image already exists !", HttpStatusCode.BadRequest);
+            }
+
+            foreach (string imgUrl in imgList)
+            {
+                ImageTicket image = new ImageTicket()
+                {
+                    ImageUrl = imgUrl,
+                    IsDeleted = false,
+                    TicketId = ticketId
+
+                };
+                await _imageTicketRepository.SaveAsync(image);
+            }
+
+            return ResponseUtil.GetObject("Request accepted", "Image updated successfully", HttpStatusCode.Accepted, 0);
+        }
     }
 }
