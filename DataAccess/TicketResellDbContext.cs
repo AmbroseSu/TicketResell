@@ -24,7 +24,7 @@ public class TicketResellDbContext : DbContext
     public virtual DbSet<Order> Orders { get; set; }
     public virtual DbSet<OrderStatus> OrderStatuses { get; set; }
     public virtual DbSet<PlatformFee> PlatformFees { get; set; }
-    public virtual DbSet<Post> Posts { get; set; }
+    //public virtual DbSet<Post> Posts { get; set; }
     public virtual DbSet<Ticket> Tickets { get; set; }
     public virtual DbSet<TicketRequest> TicketRequests { get; set; }
     public virtual DbSet<Transaction> Transactions { get; set; }
@@ -182,7 +182,7 @@ public class TicketResellDbContext : DbContext
                 .HasForeignKey(e => e.PlatformFeeId);
         });
 
-        modelBuilder.Entity<Post>(entity =>
+        /*modelBuilder.Entity<Post>(entity =>
         {
             entity.ToTable("Post");
             entity.HasKey(e => e.Id);
@@ -191,7 +191,7 @@ public class TicketResellDbContext : DbContext
             entity.Property(e => e.CreatedDate);
             entity.Property(e => e.Status);
             entity.Property(e => e.IsDeleted);
-        });
+        });*/
 
         modelBuilder.Entity<Ticket>(entity =>
         {
@@ -211,9 +211,9 @@ public class TicketResellDbContext : DbContext
             entity.HasMany(e => e.CartItems)
                 .WithOne(e => e.Ticket)
                 .HasForeignKey(e => e.TicketId);
-            entity.HasMany(e => e.Posts)
+            /*entity.HasMany(e => e.Posts)
                 .WithOne(e => e.Ticket)
-                .HasForeignKey(e => e.TicketId);
+                .HasForeignKey(e => e.TicketId);*/
             entity.HasMany(e => e.ImageTickets)
                 .WithOne(e => e.Ticket)
                 .HasForeignKey(e => e.TicketId);
@@ -280,7 +280,10 @@ public class TicketResellDbContext : DbContext
             entity.HasMany(e => e.Addresses)
                 .WithOne(e => e.User)
                 .HasForeignKey(e => e.UserId);
-            entity.HasMany(e => e.Posts)
+            /*entity.HasMany(e => e.Posts)
+                .WithOne(e => e.User)
+                .HasForeignKey(e => e.UserId);*/            
+            entity.HasMany(e => e.Tickets)
                 .WithOne(e => e.User)
                 .HasForeignKey(e => e.UserId);
             entity.HasMany(e => e.TicketRequests)

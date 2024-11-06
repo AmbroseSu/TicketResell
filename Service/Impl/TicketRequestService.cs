@@ -18,10 +18,9 @@ public class TicketRequestService : ITicketRequestService
     private readonly IOrderRepository _orderRepository;
     private readonly IOrderStatusRepository _orderStatusRepository;
     private readonly IUserRepository _userRepository;
-    private readonly IPostRepository _postRepository;
     private readonly IMapper _mapper;
 
-    public TicketRequestService(ITicketRequestRepository ticketRequestRepository, ITicketRepository ticketRepository, IUserRepository userRepository, IMapper mapper, IOrderRepository orderRepository, IOrderStatusRepository orderStatusRepository, IPostRepository postRepository)
+    public TicketRequestService(ITicketRequestRepository ticketRequestRepository, ITicketRepository ticketRepository, IUserRepository userRepository, IMapper mapper, IOrderRepository orderRepository, IOrderStatusRepository orderStatusRepository)
     {
         _ticketRequestRepository = ticketRequestRepository;
         _ticketRepository = ticketRepository;
@@ -29,7 +28,6 @@ public class TicketRequestService : ITicketRequestService
         _mapper = mapper;
         _orderRepository = orderRepository;
         _orderStatusRepository = orderStatusRepository;
-        _postRepository = postRepository;
     }
 
 

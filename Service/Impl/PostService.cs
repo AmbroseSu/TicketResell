@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿/*
+using AutoMapper;
 using BusinessObject;
 using System.Net;
 using DataAccess.DTO.Request;
@@ -135,3 +136,4 @@ namespace Service.Impl
         }
     }
 }
+*/

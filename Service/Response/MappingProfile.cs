@@ -18,14 +18,14 @@ public class MappingProfile : Profile
         CreateMap<TicketDTO, Ticket>();
         CreateMap<NewTicketRequest, Ticket>();
         CreateMap<updateTicketRequest, Ticket>();
-        CreateMap<NewPostRequest, Post>();
+        //CreateMap<NewPostRequest, Post>();
         CreateMap<TicketRequest, RequestTicket>();
         CreateMap<RequestTicket, TicketRequest>();
         CreateMap<TicketRequest, TicketRequestDTO>();
         CreateMap<TicketRequestDTO, TicketRequest>();
         CreateMap<ImageTicket, ImageTicketDTO>();
         CreateMap<NewPostRequest, Ticket>();
-        CreateMap<Post, PostDTO>();
+        //CreateMap<Post, PostDTO>();
 
     }
 }
