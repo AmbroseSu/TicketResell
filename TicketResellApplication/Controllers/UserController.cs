@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using BusinessObject.Enums;
 using DataAccess.DTO;
+using DataAccess.DTO.Request;
 using DataAccess.DTO.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +21,7 @@ namespace TicketResellApplication.Controllers
         {
             _userService = userService;
         }
-        
+
         [HttpGet("get-user-by-email")]
         public async Task<ResponseDTO> GetUserByEmail([FromQuery] string email)
         {

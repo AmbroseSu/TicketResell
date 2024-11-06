@@ -24,7 +24,7 @@ public class MappingProfile : Profile
         CreateMap<TicketRequest, TicketRequestDTO>();
         CreateMap<TicketRequestDTO, TicketRequest>();
         CreateMap<ImageTicket, ImageTicketDTO>();
-        CreateMap<NewPostRequest, Ticket>();
+        CreateMap<NewTicketRequest, Ticket>();
         //CreateMap<Post, PostDTO>();
 
     }

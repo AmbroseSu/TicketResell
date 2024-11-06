@@ -1,4 +1,4 @@
-﻿/*
+﻿
 using AutoMapper;
 using BusinessObject;
 using BusinessObject.Enums;
@@ -21,26 +21,32 @@ namespace Service.Impl
     {
         private readonly ITicketRepository _ticketRepository;
         private readonly ICategoryRepository _ticketCategoryRepository;
-        private readonly IPostRepository _postRepository;
         private readonly IMapper _mapper;
         private readonly IImageTicketRepository _imageTicketRepository;
         private readonly IUserRepository _userRepository;
 
-        public TicketService(ITicketRepository ticketRepository, ICategoryRepository ticketCategoryRepository, IPostRepository postRepository, IMapper mapper, IImageTicketRepository imageTicketRepository, IUserRepository userRepository)
+        public TicketService(ITicketRepository ticketRepository, ICategoryRepository ticketCategoryRepository, IMapper mapper, IImageTicketRepository imageTicketRepository, IUserRepository userRepository)
         {
             _ticketRepository = ticketRepository;
             _ticketCategoryRepository = ticketCategoryRepository;
-            _postRepository = postRepository;
             _mapper = mapper;
             _imageTicketRepository = imageTicketRepository;
             _userRepository = userRepository;
         }
-        public async Task<ResponseDTO> CreateTicketAsync(NewTicketRequest ticket)
+        public async Task<ResponseDTO> CreateTicket(NewTicketRequest ticket)
         {
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                //tim ticket category 
-                IEnumerable<Category?> category = await _ticketCategoryRepository.Find(c => c.Id == ticket.CategoryId && c.IsDeleted == false);
+                User? user = await _userRepository.FindUserByIdAsync(ticket.UserId);
+
+                if (user == null)
+                {
+                    return ResponseUtil.Error("Request fails", "User not found !", HttpStatusCode.BadRequest);
+                }
+
+                //Create ticket
+                //tim ticket category
+                IEnumerable<Category?> category = await _ticketCategoryRepository.Find(c => c.Id == ticket.CategoryId);
 
                 if (category.Count() == 0)
                 {
@@ -48,40 +54,34 @@ namespace Service.Impl
                 }
                 Ticket reqTicket = _mapper.Map<Ticket>(ticket);
                 reqTicket.Status = TicketStatus.PENDING;
+                reqTicket.IsDeleted = false;
+                reqTicket.PostTitle = ticket.Title;
+                reqTicket.PostDescription = ticket.Description;
                 await _ticketRepository.SaveAsync(reqTicket);
 
-                foreach (string imgUrl in ticket.imgList)
-                {
-                    ImageTicket image = new ImageTicket()
-                    {
-                        ImageUrl = imgUrl,
-                        IsDeleted = false,
-                        TicketId = reqTicket.Id
+                //Commit transaction
 
-                    };
-                    await _imageTicketRepository.SaveAsync(image);
-                }
-
-                TicketDTO result = _mapper.Map<TicketDTO>(reqTicket);
-
-                // Commit transaction
                 scope.Complete();
-
-                return ResponseUtil.GetObject(result, "Ticket created successfully", HttpStatusCode.OK, 0);
+                return ResponseUtil.GetObject(reqTicket, "Ticket created successfully", HttpStatusCode.OK, 0);
             }
         }
 
         public async Task<ResponseDTO> DeleteTicketAsync(int id)
         {
-            IEnumerable<Ticket?> result = await IsTicketValid(id);
+            Ticket? result = await IsTicketValid(id);
 
             if (result == null)
             {
                 return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
             }
 
-            await _ticketRepository.DeleteAsync(id);
+            if (result.IsDeleted == true)
+            {
+                return ResponseUtil.Error("Request fails", "Ticket already deleted !", HttpStatusCode.BadRequest);
+            }
 
+            result.IsDeleted = true;
+            await _ticketRepository.DeleteAsync(id);
             return ResponseUtil.GetObject("Request accepted", "Ticket Deleted successfully", HttpStatusCode.Accepted, 0);
         }
 
@@ -100,7 +100,7 @@ namespace Service.Impl
         public async Task<ResponseDTO> GetTicketsAsync(int page, int limit)
         {
             IEnumerable<Ticket?> result = await _ticketRepository.GetAllAsync();
-            
+
             if (result == null)
             {
                 return ResponseUtil.Error("Request fails", "No ticket found !", HttpStatusCode.BadRequest);
@@ -109,9 +109,9 @@ namespace Service.Impl
             return await getListTicketInforResponse(result.ToList(), page, limit);
         }
 
-        public async Task<ResponseDTO> updateStatus(int id, string status)
+        public async Task<ResponseDTO> UpdateStatus(int id, string status)
         {
-            Ticket? result = (await IsTicketValid(id)).SingleOrDefault();
+            Ticket? result = (await IsTicketValid(id));
 
             if (result == null)
             {
@@ -148,7 +148,7 @@ namespace Service.Impl
 
         public async Task<ResponseDTO> UpdateTicketAsync(updateTicketRequest ticket)
         {
-            Ticket? result = (await IsTicketValid(ticket.Id)).SingleOrDefault();
+            Ticket? result = (await IsTicketValid(ticket.Id));
             if (result == null)
             {
                 return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
@@ -163,19 +163,19 @@ namespace Service.Impl
             return ResponseUtil.GetObject("Request accepted", "Ticket Updated successfully", HttpStatusCode.Accepted, 0);
         }
 
-        private async Task<IEnumerable<Ticket>> IsTicketValid(int ticketId)
+        private async Task<Ticket> IsTicketValid(int ticketId)
         {
-            IEnumerable<Ticket?> result = await _ticketRepository.Find(t => t.Id == ticketId && t.IsDeleted == false);
+            IEnumerable<Ticket?> result = await _ticketRepository.Find(t => t.Id == ticketId);
 
             if (result == null)
             {
                 return null;
             }
 
-            return result;
+            return result.SingleOrDefault();
         }
 
-        private TicketResponse getTicketInfo(Ticket result, Post post, Category cat, User user)
+        private TicketResponse getTicketInfo(Ticket result, Category cat, User user)
         {
 
             TicketResponse ticketResponse = new TicketResponse(
@@ -188,19 +188,17 @@ namespace Service.Impl
                 result.Status,
                 result.CategoryId,
                 cat.Name,
-                post.Id,
-                post.Title,
-                post.Description,
-                post.CreatedDate,
-                post.Status,
-                post.UserId,
+                result.PostTitle,
+                result.PostDescription,
+                result.CreateDate,
+                result.UserId,
                 user.Email
                 );
 
             return ticketResponse;
         }
 
-        public async Task<ResponseDTO> getTicketByCategoryId(int id, int page, int limit)
+        public async Task<ResponseDTO> GetTicketByCategoryId(int id, int page, int limit)
         {
             IEnumerable<Ticket?> result = await _ticketRepository.Find(c => c.CategoryId == id);
 
@@ -215,13 +213,6 @@ namespace Service.Impl
 
         private async Task<ResponseDTO> getTicketInfoResponse(Ticket result)
         {
-            Post? post = (await _postRepository.Find(p => p.TicketId == result.Id)).SingleOrDefault();
-
-            if (post == null)
-            {
-                return ResponseUtil.Error("Request fails", "Post not found !", HttpStatusCode.BadRequest);
-            }
-
             Category? cat = (await _ticketCategoryRepository.Find(c => c.Id == result.CategoryId)).SingleOrDefault();
 
             if (cat == null)
@@ -229,25 +220,26 @@ namespace Service.Impl
                 return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
             }
 
-            User? user = (await _userRepository.FindUserByIdAsync((long)post.UserId));
+            User? user = (await _userRepository.FindUserByIdAsync((long)result.UserId));
 
             if (user == null)
             {
                 return ResponseUtil.Error("Request fails", "User not found !", HttpStatusCode.BadRequest);
             }
 
-            TicketResponse ticket = getTicketInfo(result, post, cat, user);
+            TicketResponse ticket = getTicketInfo(result, cat, user);
 
             List<ImageTicket?> imageTickets = (await _imageTicketRepository.Find(i => i.TicketId == result.Id)).ToList();
 
-            if (imageTickets.Count == 0)
+            if (imageTickets.Count != 0)
             {
-                return ResponseUtil.Error("Request fails", "Image not found !", HttpStatusCode.BadRequest);
+                List<ImageTicketDTO> imgList = _mapper.Map<List<ImageTicketDTO>>(imageTickets);
+                ticket.imageTicketDTOs = imgList;
+            } else
+            {
+                ticket.imageTicketDTOs = null;
+
             }
-
-            List<ImageTicketDTO> imgList = _mapper.Map<List<ImageTicketDTO>>(imageTickets);
-
-            ticket.imageTicketDTOs = imgList;
 
             return ResponseUtil.GetObject(ticket, "Ticket retrieved successfully", HttpStatusCode.OK, 0);
         }
@@ -260,12 +252,6 @@ namespace Service.Impl
 
             foreach (Ticket ticket in result)
             {
-                Post? post = (await _postRepository.Find(p => p.TicketId == ticket.Id)).SingleOrDefault();
-
-                if (post == null)
-                {
-                    return ResponseUtil.Error("Request fails", "Post not found !", HttpStatusCode.BadRequest);
-                }
 
                 Category? cat = (await _ticketCategoryRepository.Find(c => c.Id == ticket.CategoryId)).SingleOrDefault();
 
@@ -274,7 +260,7 @@ namespace Service.Impl
                     return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
                 }
 
-                User? user = (await _userRepository.FindUserByIdAsync((long)post.UserId));
+                User? user = (await _userRepository.FindUserByIdAsync((long)ticket.UserId));
 
                 if (user == null)
                 {
@@ -282,15 +268,17 @@ namespace Service.Impl
                 }
 
                 List<ImageTicket?> imageTickets = (await _imageTicketRepository.Find(i => i.TicketId == ticket.Id)).ToList();
+                TicketResponse ticketResponse = getTicketInfo(ticket, cat, user);
 
-                if (imageTickets.Count == 0)
+                if (imageTickets.Count != 0)
                 {
-                    return ResponseUtil.Error("Request fails", "Image not found !", HttpStatusCode.BadRequest);
+                    List<ImageTicketDTO> imgList = _mapper.Map<List<ImageTicketDTO>>(imageTickets);
+                    ticketResponse.imageTicketDTOs = imgList;
+                } else
+                {
+                    ticketResponse.imageTicketDTOs = null;
                 }
 
-                List<ImageTicketDTO> imgList = _mapper.Map<List<ImageTicketDTO>>(imageTickets);
-                TicketResponse ticketResponse = getTicketInfo(ticket, post, cat, user);
-                ticketResponse.imageTicketDTOs = imgList;
                 responseData.Add(ticketResponse);
             }
 
@@ -298,7 +286,7 @@ namespace Service.Impl
             return ResponseUtil.GetCollection(data, "All tickets retrieved sucessfully", HttpStatusCode.OK, result.Count(), page, limit, result.Count());
         }
 
-        public async Task<ResponseDTO> getTicketByEmail(string email, int page, int limit)
+        public async Task<ResponseDTO> GetTicketByEmail(string email, int page, int limit)
         {
             User? user = await _userRepository.FindUserByEmailAsync(email);
 
@@ -307,32 +295,32 @@ namespace Service.Impl
                 return ResponseUtil.Error("Request fails", "User not found !", HttpStatusCode.BadRequest);
             }
 
-            IEnumerable<Post?> posts = await _postRepository.Find(p => p.UserId == user.Id);
+            IEnumerable<Ticket?> tickets = await _ticketRepository.Find(p => p.UserId == user.Id);
 
-            if (posts.Count() == 0)
+            if (tickets.Count() == 0)
             {
                 return ResponseUtil.GetObject("Request accepted", "No ticket found !", HttpStatusCode.Accepted, 0);
             }
 
-            List<Ticket?> tickets = new List<Ticket?>();
+            List<Ticket?> ticketList = new List<Ticket?>();
 
-            foreach (var item in posts)
+            foreach (var item in tickets)
             {
-                Ticket? result = (await _ticketRepository.Find(t => t.Id == item.TicketId)).SingleOrDefault();
+                Ticket? result = (await _ticketRepository.Find(t => t.Id == item.Id)).SingleOrDefault();
 
                 if (result == null)
                 {
                     return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
                 }
 
-                tickets.Add(result);
+                ticketList.Add(result);
             }
 
-            return await getListTicketInforResponse(tickets, page, limit);
+            return await getListTicketInforResponse(ticketList, page, limit);
 
         }
 
-        public async Task<ResponseDTO> updateTicketImg(List<string> imgList, int ticketId)
+        public async Task<ResponseDTO> UpdateTicketImg(List<string> imgList, int ticketId)
         {
             Ticket ticket = (await _ticketRepository.Find(t => t.Id == ticketId)).SingleOrDefault();
 
@@ -364,4 +352,4 @@ namespace Service.Impl
         }
     }
 }
-*/
+

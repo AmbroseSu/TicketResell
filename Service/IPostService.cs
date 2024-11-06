@@ -12,7 +12,7 @@ namespace Service
 {
     public interface IPostService
     {
-        Task<ResponseDTO> CreatePost(NewPostRequest post);
+        Task<ResponseDTO> CreatePost(NewTicketRequest post);
         Task<ResponseDTO> EditPost(int id, string description);
         Task<ResponseDTO> DeletePost(int id);
         Task<ResponseDTO> getCurrentPosts(int page, int limit);
