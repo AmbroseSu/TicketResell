@@ -23,12 +23,6 @@ namespace TicketResellApplication.Controllers
             _ticketService = ticketService;
         }
 
-        [HttpPost("new-ticket")]
-        public async Task<ResponseDTO> CreateTicket([FromBody] NewTicketRequest ticket
-            )
-        {
-            return await _ticketService.CreateTicketAsync(ticket);
-        }
 
         [HttpPut("edit")]
         public async Task<ResponseDTO> EditTicket([FromBody] updateTicketRequest ticket)
@@ -82,6 +76,12 @@ namespace TicketResellApplication.Controllers
           [FromQuery, Required] int limit = 10)
         {
             return await _ticketService.getTicketByEmail(email, page, limit);
+        }
+
+        [HttpPost("images")]
+        public async Task<ResponseDTO> AddImage([FromBody] List<string> imgList, int ticketId)
+        {
+            return await _ticketService.updateTicketImg(imgList, ticketId);
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace BusinessObject.Enums;
+﻿namespace BusinessObject.Enums;
 
 public enum TicketStatus
 {

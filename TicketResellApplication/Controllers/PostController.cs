@@ -23,11 +23,10 @@ namespace TicketResellApplication.Controllers
         }
 
         [HttpPost("new")]
-        public async Task<ResponseDTO> CreatePostAsync([FromBody] NewPostRequest post, 
-            [FromQuery] int ticketId,
-            [FromQuery] int userId)
+        public async Task<ResponseDTO> CreatePostAsync([FromBody] NewPostRequest post
+            )
         {
-            return await _postService.CreatePost(post, ticketId, userId);
+            return await _postService.CreatePost(post);
         }
 
         [HttpPut("edit")]

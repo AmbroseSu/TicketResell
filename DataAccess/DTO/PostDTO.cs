@@ -8,7 +8,6 @@ public class PostDTO
     public DateTime CreatedDate { get; set; }
     public bool IsDeleted { get; set; }
     public bool Status { get; set; }
-    
     public int? UserId { get; set; }
     public int? TicketId { get; set; }
 }
