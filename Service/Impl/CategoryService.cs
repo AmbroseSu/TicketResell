@@ -28,7 +28,7 @@ namespace Service.Impl
         {
             IEnumerable<Category?> result = await _categoryRepository.Find(c => c.IsDeleted == false);
             IEnumerable<Category?> data = result.Skip((page - 1) * limit).Take(limit);
-            return ResponseUtil.GetCollection(data, "current categories retrieved sucessfully", HttpStatusCode.OK, page, limit, result.Count());
+            return ResponseUtil.GetCollection(data, "current categories retrieved sucessfully", HttpStatusCode.OK, result.Count(), page, limit, result.Count());
 
         }
         
@@ -36,7 +36,7 @@ namespace Service.Impl
         {
             IEnumerable<Category?> result = await _categoryRepository.GetAllAsync();
             IEnumerable<Category?> data = result.Skip((page - 1) * limit).Take(limit);
-            return ResponseUtil.GetCollection(data, "All categories retrieved sucessfully", HttpStatusCode.OK, page, limit, result.Count());
+            return ResponseUtil.GetCollection(data, "All categories retrieved sucessfully", HttpStatusCode.OK, result.Count(), page, limit, result.Count());
 
         }
 
@@ -49,7 +49,7 @@ namespace Service.Impl
             };
 
             await _categoryRepository.SaveAsync(category);
-            return ResponseUtil.GetObject("New category accepted","Category created successfully", HttpStatusCode.OK, null);
+            return ResponseUtil.GetObject("New category accepted","Category created successfully", HttpStatusCode.OK, 0);
         }
 
         public async Task<ResponseDTO> GetCategory(int id)
@@ -61,7 +61,7 @@ namespace Service.Impl
                 return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
             }
 
-            return ResponseUtil .GetObject(result, "Category retrieved successfully", HttpStatusCode.OK, null);
+            return ResponseUtil .GetObject(result, "Category retrieved successfully", HttpStatusCode.OK, 0);
         }
     }
 }

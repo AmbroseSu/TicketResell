@@ -54,7 +54,7 @@ public class EmailService : IEmailService
 
             // Save the verification token to the repository
             await _verificationTokenRepository.SaveAsync(verificationToken);
-            return ResponseUtil.GetObject("Send email Success", "ok", HttpStatusCode.Created, null);
+            return ResponseUtil.GetObject("Send email Success", "ok", HttpStatusCode.Created, 0);
         }
         catch (Exception ex)
         {

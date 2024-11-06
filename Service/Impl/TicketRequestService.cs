@@ -62,7 +62,7 @@ public class TicketRequestService : ITicketRequestService
             saveTicketRequest.Status = TicketRequestStatus.WAITING;
             await _ticketRequestRepository.SaveAsync(saveTicketRequest);
             TicketRequestDTO ticketRequestDto = _mapper.Map<TicketRequestDTO>(saveTicketRequest);
-            return ResponseUtil.GetObject(ticketRequestDto, "Ticket Request created successfully", HttpStatusCode.OK, null);
+            return ResponseUtil.GetObject(ticketRequestDto, "Ticket Request created successfully", HttpStatusCode.OK, 0);
         }
         catch (Exception e)
         {
@@ -152,7 +152,7 @@ public class TicketRequestService : ITicketRequestService
             orderStatus.OrderId = order.Id;
             await _orderStatusRepository.SaveAsync(orderStatus);
             TicketRequestDTO ticketRequestDto = _mapper.Map<TicketRequestDTO>(ticketRequest);
-            return ResponseUtil.GetObject(ticketRequestDto, "Ticket Request created successfully", HttpStatusCode.OK, null);
+            return ResponseUtil.GetObject(ticketRequestDto, "Ticket Request created successfully", HttpStatusCode.OK, 0);
         }
         catch (Exception e)
         {
@@ -175,7 +175,7 @@ public class TicketRequestService : ITicketRequestService
             TicketRequestDTO ticketRequestDto = _mapper.Map<TicketRequestDTO>(ticketRequest);
             ticketRequestDto.UserFullname = user.Fullname;
             ticketRequestDto.UserEmail = user.Email;
-            return ResponseUtil.GetObject(ticketRequestDto, "Ticket Request created successfully", HttpStatusCode.OK, null);
+            return ResponseUtil.GetObject(ticketRequestDto, "Ticket Request created successfully", HttpStatusCode.OK, 0);
         }
         catch (Exception e)
         {
@@ -201,7 +201,7 @@ public class TicketRequestService : ITicketRequestService
             IEnumerable<TicketRequestDTO> ticketRequestsDto =
                 await ConvertTicketRequestsToTicketRequestsDTOAsync(ticketRequests);
             IEnumerable<TicketRequestDTO?> data = ticketRequestsDto.Skip((page - 1) * limit).Take(limit);
-            return ResponseUtil.GetCollection(data, "All tickets Request retrieved sucessfully", HttpStatusCode.OK, page, limit, ticketRequestsDto.Count());
+            return ResponseUtil.GetCollection(data, "All tickets Request retrieved sucessfully", HttpStatusCode.OK, ticketRequestsDto.Count(), page, limit, ticketRequestsDto.Count());
         }
         catch (Exception e)
         {
@@ -228,7 +228,7 @@ public class TicketRequestService : ITicketRequestService
             IEnumerable<TicketRequestDTO> ticketRequestsDto =
                 await ConvertTicketRequestsToTicketRequestsDTOAsync(ticketRequests);
             IEnumerable<TicketRequestDTO?> data = ticketRequestsDto.Skip((page - 1) * limit).Take(limit);
-            return ResponseUtil.GetCollection(data, "All tickets Request retrieved sucessfully", HttpStatusCode.OK, page, limit, ticketRequestsDto.Count());
+            return ResponseUtil.GetCollection(data, "All tickets Request retrieved sucessfully", HttpStatusCode.OK, ticketRequestsDto.Count(), page, limit, ticketRequestsDto.Count());
         }
         catch (Exception e)
         {

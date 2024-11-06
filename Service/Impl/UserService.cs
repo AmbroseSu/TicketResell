@@ -82,7 +82,7 @@ public class UserService : IUserService
             User? user = await _userRepository.FindUserByEmailAsync(email.ToLower());
             UserDTO userDto = _mapper.Map<UserDTO>(user);
                 
-            return ResponseUtil.GetObject(userDto, "ok", HttpStatusCode.Created, null);
+            return ResponseUtil.GetObject(userDto, "ok", HttpStatusCode.Created, 0);
         }
         catch (Exception ex)
         {
@@ -99,7 +99,7 @@ public class UserService : IUserService
             List<UserDTO> result = userDtos.Skip((page - 1) * limit).Take(limit).ToList();
             //UserDTO userDto = _mapper.Map<UserDTO>(user);
                 
-            return ResponseUtil.GetCollection(result, "ok", HttpStatusCode.Created, page, limit, users.Count());
+            return ResponseUtil.GetCollection(result, "ok", HttpStatusCode.Created, users.Count(), page, limit, users.Count());
         }
         catch (Exception ex)
         {
@@ -116,7 +116,7 @@ public class UserService : IUserService
             List<UserDTO> result = userDtos.Skip((page - 1) * limit).Take(limit).ToList();
             //UserDTO userDto = _mapper.Map<UserDTO>(user);
                 
-            return ResponseUtil.GetCollection(result, "ok", HttpStatusCode.Created, page, limit, users.Count());
+            return ResponseUtil.GetCollection(result, "ok", HttpStatusCode.Created, users.Count(), page, limit, users.Count());
         }
         catch (Exception ex)
         {
@@ -133,7 +133,7 @@ public class UserService : IUserService
             List<UserDTO> result = userDtos.Skip((page - 1) * limit).Take(limit).ToList();
             //UserDTO userDto = _mapper.Map<UserDTO>(user);
                 
-            return ResponseUtil.GetCollection(result, "ok", HttpStatusCode.Created, page, limit, users.Count());
+            return ResponseUtil.GetCollection(result, "ok", HttpStatusCode.Created,users.Count(),  page, limit, users.Count());
         }
         catch (Exception ex)
         {
@@ -146,7 +146,7 @@ public class UserService : IUserService
         try
         {
             IEnumerable<User?> users = await _userRepository.FindAllCustomersByDateAndYearAsync(month, year);
-            return ResponseUtil.GetObject(users.Count(), "ok", HttpStatusCode.Created, null);
+            return ResponseUtil.GetObject(users.Count(), "ok", HttpStatusCode.Created, 0);
         }
         catch (Exception ex)
         {
@@ -164,7 +164,7 @@ public class UserService : IUserService
                 return ResponseUtil.Error("User not found", "Faild", HttpStatusCode.NotFound);
             }
             var result = _mapper.Map<UserDTO>(user);
-            return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, null);
+            return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, 0);
         }
         catch (Exception ex)
         {
@@ -206,25 +206,12 @@ public class UserService : IUserService
             
             await _userRepository.UpdateAsync(user);
             var result = _mapper.Map<UserDTO>(user);
-            return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, null);
+            return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, 0);
         }
         catch (Exception ex)
         {
             return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
         }
     }
-
-    public async Task<ResponseDTO> GetUserByTicketIdAsync(long ticketId)
-    {
-        try
-        {
-            IEnumerable<Post?> result = await _postRepository.Find(c => c.IsDeleted == false && c.TicketId == ticketId);
-            //var result = _mapper.Map<UserDTO>(user);
-            return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, null);
-        }
-        catch (Exception ex)
-        {
-            return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
-        }
-    }
+    
 }

@@ -66,7 +66,7 @@ namespace Service.Impl
                 // Commit transaction
                 scope.Complete();
 
-                return ResponseUtil.GetObject(result, "Ticket created successfully", HttpStatusCode.OK, null);
+                return ResponseUtil.GetObject(result, "Ticket created successfully", HttpStatusCode.OK, 0);
             }
         }
 
@@ -81,7 +81,7 @@ namespace Service.Impl
 
             await _ticketRepository.DeleteAsync(id);
 
-            return ResponseUtil.GetObject("Request accepted", "Ticket Deleted successfully", HttpStatusCode.Accepted, null);
+            return ResponseUtil.GetObject("Request accepted", "Ticket Deleted successfully", HttpStatusCode.Accepted, 0);
         }
 
         public async Task<ResponseDTO> GetTicketAsync(int id)
@@ -142,7 +142,7 @@ namespace Service.Impl
             Ticket newTicket = _mapper.Map<Ticket>(result);
             await _ticketRepository.UpdateAsync(newTicket);
 
-            return ResponseUtil.GetObject("Request accepted", "Ticket Updated successfully", HttpStatusCode.Accepted, null);
+            return ResponseUtil.GetObject("Request accepted", "Ticket Updated successfully", HttpStatusCode.Accepted, 0);
         }
 
         public async Task<ResponseDTO> UpdateTicketAsync(updateTicketRequest ticket)
@@ -159,7 +159,7 @@ namespace Service.Impl
 
             Ticket newTicket = _mapper.Map<Ticket>(result);
             await _ticketRepository.UpdateAsync(newTicket);
-            return ResponseUtil.GetObject("Request accepted", "Ticket Updated successfully", HttpStatusCode.Accepted, null);
+            return ResponseUtil.GetObject("Request accepted", "Ticket Updated successfully", HttpStatusCode.Accepted, 0);
         }
 
         private async Task<IEnumerable<Ticket>> IsTicketValid(int ticketId)
@@ -248,7 +248,7 @@ namespace Service.Impl
 
             ticket.imageTicketDTOs = imgList;
 
-            return ResponseUtil.GetObject(ticket, "Ticket retrieved successfully", HttpStatusCode.OK, null);
+            return ResponseUtil.GetObject(ticket, "Ticket retrieved successfully", HttpStatusCode.OK, 0);
         }
 
         private async Task<ResponseDTO> getListTicketInforResponse(List<Ticket?> result, int page, int limit)
@@ -294,7 +294,7 @@ namespace Service.Impl
             }
 
             List<TicketResponse?> data = responseData.Skip((page - 1) * limit).Take(limit).ToList();
-            return ResponseUtil.GetCollection(data, "All tickets retrieved sucessfully", HttpStatusCode.OK, page, limit, result.Count());
+            return ResponseUtil.GetCollection(data, "All tickets retrieved sucessfully", HttpStatusCode.OK, result.Count(), page, limit, result.Count());
         }
 
         public async Task<ResponseDTO> getTicketByEmail(string email, int page, int limit)
@@ -310,7 +310,7 @@ namespace Service.Impl
 
             if (posts.Count() == 0)
             {
-                return ResponseUtil.GetObject("Request accepted", "No ticket found !", HttpStatusCode.Accepted, null);
+                return ResponseUtil.GetObject("Request accepted", "No ticket found !", HttpStatusCode.Accepted, 0);
             }
 
             List<Ticket?> tickets = new List<Ticket?>();

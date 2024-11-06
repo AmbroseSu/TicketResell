@@ -69,7 +69,7 @@ public class AuthenticationService : IAuthenticationService
                 
                 var result = _mapper.Map<UpsertUserDTO>(user);
 
-                return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, null);
+                return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, 0);
             }
             catch (Exception ex)
             {
@@ -99,7 +99,7 @@ public class AuthenticationService : IAuthenticationService
 
                 if (verificationResult.Equals("Valid"))
                 {
-                    return ResponseUtil.GetObject(null, "Verification Email Successfully", HttpStatusCode.Created, null);
+                    return ResponseUtil.GetObject(null, "Verification Email Successfully", HttpStatusCode.Created, 0);
                 }
                 if (verificationResult.Equals("Token already expired"))
                 {
@@ -161,7 +161,7 @@ public class AuthenticationService : IAuthenticationService
                 
                     var result = _mapper.Map<UpsertUserDTO>(user);
 
-                    return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, null);
+                    return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, 0);
                 }
                 else
                 {
@@ -199,7 +199,7 @@ public class AuthenticationService : IAuthenticationService
                 user.FcmToken = signUp.FcmToken;
                 var result = _mapper.Map<UpsertUserDTO>(user);
                 await _userRepository.UpdateAsync(user);
-                return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, null);
+                return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, 0);
             }
             catch (Exception ex)
             {
@@ -239,7 +239,7 @@ public class AuthenticationService : IAuthenticationService
                 jwtAuthResponse.Token = jwt;
                 jwtAuthResponse.RefreshToken = refreshToken;
                 
-                return ResponseUtil.GetObject(jwtAuthResponse, "ok", HttpStatusCode.Created, null);
+                return ResponseUtil.GetObject(jwtAuthResponse, "ok", HttpStatusCode.Created, 0);
             }
             catch (Exception ex)
             {
@@ -275,7 +275,7 @@ public class AuthenticationService : IAuthenticationService
                 jwtAuthResponse.Token = jwt;
                 jwtAuthResponse.RefreshToken = refreshToken;
                 
-                return ResponseUtil.GetObject(jwtAuthResponse, "ok", HttpStatusCode.Created, null);
+                return ResponseUtil.GetObject(jwtAuthResponse, "ok", HttpStatusCode.Created, 0);
             }
             catch (Exception ex)
             {
@@ -308,7 +308,7 @@ public class AuthenticationService : IAuthenticationService
                     userSignUp.FcmToken = null;
                     await _userRepository.SaveAsync(userSignUp);
                     var result = _mapper.Map<UserDTO>(userSignUp);
-                    return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, null);
+                    return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, 0);
                 }
                 
             }
