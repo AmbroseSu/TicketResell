@@ -1,4 +1,5 @@
-﻿using BusinessObject;
+﻿/*
+using BusinessObject;
 using DataAccess;
 using DataAccess.DAO;
 using System;
@@ -33,3 +34,4 @@ namespace Repository.Impl
         public async Task UpdateAsync(Post newTicket) => await BaseDAO<Post>.Instance.UpdateAsync(newTicket);
     }
 }
+*/

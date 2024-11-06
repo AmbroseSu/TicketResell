@@ -15,16 +15,14 @@ public class UserService : IUserService
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
     private readonly IVerificationTokenRepository _tokenRepository;
-    private readonly IPostRepository _postRepository;
 
     public UserService(
         IUserRepository userRepository,
-        IVerificationTokenRepository tokenRepository, IMapper mapper, IPostRepository postRepository)
+        IVerificationTokenRepository tokenRepository, IMapper mapper)
     {
         _userRepository = userRepository;
         _tokenRepository = tokenRepository;
         _mapper = mapper;
-        _postRepository = postRepository;
     }
 
     public async Task<ClaimsPrincipal> LoadUserByUsernameAsync(string email)

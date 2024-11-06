@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿/*
+using AutoMapper;
 using BusinessObject;
 using BusinessObject.Enums;
 using DataAccess.DTO;
@@ -363,3 +364,4 @@ namespace Service.Impl
         }
     }
 }
+*/
