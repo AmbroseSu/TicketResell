@@ -9,26 +9,26 @@ namespace Service.Response;
 public class ResponseUtil
 {
     // Phương thức trả về một đối tượng (response)
-    public static ResponseDTO GetObject(object result, string message, HttpStatusCode status, List<string> details)
+    public static ResponseDTO GetObject(object result, string message, HttpStatusCode status, int size)
     {
         return new ResponseDTO
         {
             Content = result,
             Message = message,
-            Details = details ?? new List<string>(),
+            Size = size,
             StatusCode = (int)status,
             MeatadataDTO = null // for a single object, metadata is not needed
         };
     }
 
     // Phương thức trả về một tập hợp đối tượng (collection)
-    public static ResponseDTO GetCollection(object result, string message, HttpStatusCode status, int page, int limit, long count)
+    public static ResponseDTO GetCollection(object result, string message, HttpStatusCode status, int size, int page, int limit, long count)
     {
         return new ResponseDTO
         {
             Content = result,
             Message = message,
-            Details = new List<string>(),
+            Size = size,
             StatusCode = (int)status,
             MeatadataDTO = GetMeatadata(page, limit, count)
         };
@@ -40,7 +40,7 @@ public class ResponseUtil
         return new ResponseDTO
         {
             Message = message,
-            Details = new List<string> { error },
+            Size = 0,
             StatusCode = (int)status,
             MeatadataDTO = null
         };
@@ -52,7 +52,7 @@ public class ResponseUtil
         return new ResponseDTO
         {
             Message = message,
-            Details = errors,
+            Size = 0,
             StatusCode = (int)status,
             MeatadataDTO = null
         };

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="HttpClientEndpointsTabState">
+    <option name="requestToText" value="&lt;CachedHttpClientTabRequests&gt;&#10;  &lt;entry key=&quot;2106353855ad54397821531e72a1ab2b58901c56&quot; value=&quot;###&amp;#10;GET http://localhost:5220/api/TicketRequest/get-ticket-request?&amp;#10;    ticketId={{$placeholder}}&amp;amp;&amp;#10;    page={{$placeholder}}&amp;amp;&amp;#10;    limit={{$placeholder}}&quot; /&gt;&#10;&lt;/CachedHttpClientTabRequests&gt;" />
+  </component>
+</project>

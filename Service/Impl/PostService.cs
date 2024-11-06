@@ -43,7 +43,7 @@ namespace Service.Impl
             //savedPost.Status = PostStatus.PENDING;
             await _postRespository.SaveAsync(savedPost);
 
-            return ResponseUtil.GetObject(savedPost, "Post created successfully", HttpStatusCode.OK, null);
+            return ResponseUtil.GetObject(savedPost, "Post created successfully", HttpStatusCode.OK, 0);
         }
 
         public async Task<ResponseDTO> DeletePost(int TicketId)
@@ -56,7 +56,7 @@ namespace Service.Impl
             }
             //result.Status = Post.Status;
             await _postRespository.DeleteAsync(TicketId);
-            return ResponseUtil.GetObject(result, "Post created successfully", HttpStatusCode.OK, null);
+            return ResponseUtil.GetObject(result, "Post created successfully", HttpStatusCode.OK, 0);
         }
 
         public async Task<ResponseDTO> EditPost(int TicketId, string description)
@@ -69,21 +69,21 @@ namespace Service.Impl
             }
             result.Description = description;
             await _postRespository.UpdateAsync(result);
-            return ResponseUtil.GetObject(result, "Post created successfully", HttpStatusCode.OK, null);
+            return ResponseUtil.GetObject(result, "Post created successfully", HttpStatusCode.OK, 0);
         }
 
         public async Task<ResponseDTO> getAllPosts(int page, int limit)
         {
             IEnumerable<Post?> result = await _postRespository.GetAllAsync();
             IEnumerable<Post?> data = result.Skip((page - 1) * limit).Take(limit);
-            return ResponseUtil.GetCollection(data, "All posts retrieved sucessfully", HttpStatusCode.OK, page, limit, result.Count());
+            return ResponseUtil.GetCollection(data, "All posts retrieved sucessfully", HttpStatusCode.OK, result.Count(), page, limit, result.Count());
         }
 
         public async Task<ResponseDTO> getCurrentPosts(int page, int limit)
         {
             IEnumerable<Post?> result = await _postRespository.Find(p => p.IsDeleted == false && p.Status.Equals("OPEN") );
             IEnumerable<Post?> data = result.Skip((page - 1) * limit).Take(limit);
-            return ResponseUtil.GetCollection(data, "All available posts retrieved sucessfully", HttpStatusCode.OK, page, limit, result.Count());
+            return ResponseUtil.GetCollection(data, "All available posts retrieved sucessfully", HttpStatusCode.OK, result.Count(), page, limit, result.Count());
         }
 
         public async Task<ResponseDTO> GetPost(int id)
@@ -95,7 +95,7 @@ namespace Service.Impl
                 return ResponseUtil.Error("Request fails", "Post not found !", HttpStatusCode.BadRequest);
             }
 
-            return ResponseUtil.GetObject(result, "Post retrieved successfully", HttpStatusCode.OK, null);
+            return ResponseUtil.GetObject(result, "Post retrieved successfully", HttpStatusCode.OK, 0);
         }
     }
 }
