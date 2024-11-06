@@ -11,7 +11,7 @@ namespace DataAccess.DTO.Response
 {
     public class TicketResponse
     {
-        public TicketResponse(int id, string? ticketName, float? price, int? quantity, DateTime? expirationDate, string? venue, TicketStatus status, int? categoryId, string? categoryName, int postId, string? postTitle, string? postDescription, DateTime? createdDate, bool postStatus, int? userId, string email)
+        public TicketResponse(int id, string? ticketName, float? price, int? quantity, DateTime? expirationDate, string? venue, TicketStatus status, int? categoryId, string? categoryName, string? postTitle, string? postDescription, DateTime? createdDate, int? userId, string email)
         {
             Id = id;
             TicketName = ticketName;
@@ -22,11 +22,9 @@ namespace DataAccess.DTO.Response
             Status = status;
             CategoryId = categoryId;
             CategoryName = categoryName;
-            PostId = postId;
             PostTitle = postTitle;
             PostDescription = postDescription;
             CreatedDate = createdDate;
-            PostStatus = postStatus;
             UserId = userId;
             Email = email;
         }
@@ -40,14 +38,11 @@ namespace DataAccess.DTO.Response
         public TicketStatus Status { get; set; }
         public int? CategoryId { get; set; }
         public string? CategoryName { get; set; }
-        public int PostId { get; set; }
         public string? PostTitle { get; set; }
         public string? PostDescription { get; set; }
         public DateTime? CreatedDate { get; set; }
-        public bool PostStatus { get; set; }
         public int? UserId { get; set; }
         public string Email { get; set; }
-
         public List<ImageTicketDTO> imageTicketDTOs { get; set; }
 
 

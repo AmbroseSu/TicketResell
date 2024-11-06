@@ -23,6 +23,13 @@ namespace TicketResellApplication.Controllers
             _ticketService = ticketService;
         }
 
+        [HttpPost("new")]
+        public async Task<ResponseDTO> CreatePostAsync([FromBody] NewTicketRequest post
+           )
+        {
+            return await _ticketService.CreateTicket(post);
+        }
+
 
         [HttpPut("edit")]
         public async Task<ResponseDTO> EditTicket([FromBody] updateTicketRequest ticket)
@@ -57,7 +64,7 @@ namespace TicketResellApplication.Controllers
             [FromQuery, Required] int ticketId,
           [FromQuery, Required] string status)
         {
-            return await _ticketService.updateStatus(ticketId, status);
+            return await _ticketService.UpdateStatus(ticketId, status);
         }
 
         [HttpGet("get-by-category")]
@@ -66,7 +73,7 @@ namespace TicketResellApplication.Controllers
          [FromQuery, Required] int page = 1,
          [FromQuery, Required] int limit = 10)
         {
-            return await _ticketService.getTicketByCategoryId(categoryId, page, limit);
+            return await _ticketService.GetTicketByCategoryId(categoryId, page, limit);
         }
 
         [HttpGet("get/user")]
@@ -75,13 +82,13 @@ namespace TicketResellApplication.Controllers
           [FromQuery, Required] int page = 1,
           [FromQuery, Required] int limit = 10)
         {
-            return await _ticketService.getTicketByEmail(email, page, limit);
+            return await _ticketService.GetTicketByEmail(email, page, limit);
         }
 
         [HttpPost("images")]
         public async Task<ResponseDTO> AddImage([FromBody] List<string> imgList, int ticketId)
         {
-            return await _ticketService.updateTicketImg(imgList, ticketId);
+            return await _ticketService.UpdateTicketImg(imgList, ticketId);
         }
     }
 }
