@@ -1,4 +1,5 @@
 ﻿using BusinessObject;
+using DataAccess.DTO.Response;
 
 namespace Service;
 
@@ -8,5 +9,5 @@ public interface IOrderService
     Task UpdateAsync(Order order);
     Task DeleteAsync(long orderId);
     Task<Order?> FindByIdAsync(long id);
-    Task<List<Order>> GetAllOrdersByUserId(long userId);
+    Task<ResponseDTO> GetAllOrdersByUserId(long userId, int page, int limit);
 }
