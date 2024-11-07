@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(TicketResellDbContext))]
-    [Migration("20241106140610_FirstDatabase")]
+    [Migration("20241107030655_FirstDatabase")]
     partial class FirstDatabase
     {
         /// <inheritdoc />
@@ -385,6 +385,28 @@ namespace DataAccess.Migrations
                     b.ToTable("Ticket", (string)null);
                 });
 
+            modelBuilder.Entity("BusinessObject.TicketPostingQuota", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("TransactionId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TransactionId")
+                        .IsUnique();
+
+                    b.ToTable("TicketPostingQuota", (string)null);
+                });
+
             modelBuilder.Entity("BusinessObject.TicketRequest", b =>
                 {
                     b.Property<int>("Id")
@@ -449,6 +471,9 @@ namespace DataAccess.Migrations
 
                     b.Property<bool>("Status")
                         .HasColumnType("boolean");
+
+                    b.Property<int?>("TicketPostingQuotaId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("TransactionDate")
                         .HasColumnType("timestamp with time zone");
@@ -695,6 +720,15 @@ namespace DataAccess.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("BusinessObject.TicketPostingQuota", b =>
+                {
+                    b.HasOne("BusinessObject.Transaction", "Transaction")
+                        .WithOne("TicketPostingQuota")
+                        .HasForeignKey("BusinessObject.TicketPostingQuota", "TransactionId");
+
+                    b.Navigation("Transaction");
+                });
+
             modelBuilder.Entity("BusinessObject.TicketRequest", b =>
                 {
                     b.HasOne("BusinessObject.Ticket", "Ticket")
@@ -795,6 +829,11 @@ namespace DataAccess.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("TicketRequest");
+                });
+
+            modelBuilder.Entity("BusinessObject.Transaction", b =>
+                {
+                    b.Navigation("TicketPostingQuota");
                 });
 
             modelBuilder.Entity("BusinessObject.User", b =>

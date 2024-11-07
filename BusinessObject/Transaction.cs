@@ -17,6 +17,8 @@ public class Transaction
 
     public int? PlatformFeeId { get; set; }
     public int? UserId { get; set; }
+    public int? TicketPostingQuotaId { get; set; }
     public PlatformFee? PlatformFee { get; set; }
     public User? User { get; set; }
+    public TicketPostingQuota? TicketPostingQuota { get; set; }
 }

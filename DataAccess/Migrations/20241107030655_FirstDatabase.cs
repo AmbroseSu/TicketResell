@@ -199,7 +199,8 @@ namespace DataAccess.Migrations
                     Promotion = table.Column<int>(type: "integer", nullable: true),
                     Status = table.Column<bool>(type: "boolean", nullable: false),
                     PlatformFeeId = table.Column<int>(type: "integer", nullable: true),
-                    UserId = table.Column<int>(type: "integer", nullable: true)
+                    UserId = table.Column<int>(type: "integer", nullable: true),
+                    TicketPostingQuotaId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -397,6 +398,25 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TicketPostingQuota",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    TransactionId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TicketPostingQuota", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TicketPostingQuota_Transaction_TransactionId",
+                        column: x => x.TransactionId,
+                        principalTable: "Transaction",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OrderStatus",
                 columns: table => new
                 {
@@ -489,6 +509,12 @@ namespace DataAccess.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TicketPostingQuota_TransactionId",
+                table: "TicketPostingQuota",
+                column: "TransactionId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TicketRequest_TicketId",
                 table: "TicketRequest",
                 column: "TicketId");
@@ -542,10 +568,10 @@ namespace DataAccess.Migrations
                 name: "OrderStatus");
 
             migrationBuilder.DropTable(
-                name: "TicketRequest");
+                name: "TicketPostingQuota");
 
             migrationBuilder.DropTable(
-                name: "Transaction");
+                name: "TicketRequest");
 
             migrationBuilder.DropTable(
                 name: "UserChat");
@@ -560,13 +586,16 @@ namespace DataAccess.Migrations
                 name: "Order");
 
             migrationBuilder.DropTable(
-                name: "PlatformFee");
+                name: "Transaction");
 
             migrationBuilder.DropTable(
                 name: "Chat");
 
             migrationBuilder.DropTable(
                 name: "Ticket");
+
+            migrationBuilder.DropTable(
+                name: "PlatformFee");
 
             migrationBuilder.DropTable(
                 name: "Category");
