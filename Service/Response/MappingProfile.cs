@@ -26,6 +26,9 @@ public class MappingProfile : Profile
         CreateMap<ImageTicket, ImageTicketDTO>();
         CreateMap<NewTicketRequest, Ticket>();
         //CreateMap<Post, PostDTO>();
+        CreateMap<Order, OrderDTO>();
+        CreateMap<OrderDTO, Order>();
+        
 
     }
 }
