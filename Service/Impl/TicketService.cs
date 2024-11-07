@@ -5,11 +5,13 @@ using BusinessObject.Enums;
 using DataAccess.DTO;
 using DataAccess.DTO.Request;
 using DataAccess.DTO.Response;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Repository;
 using Repository.Impl;
 using Service.Response;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net;
 using System.Transactions;
 using static System.Formats.Asn1.AsnWriter;
@@ -57,6 +59,14 @@ namespace Service.Impl
                 reqTicket.IsDeleted = false;
                 reqTicket.PostTitle = ticket.Title;
                 reqTicket.PostDescription = ticket.Description;
+                string format = "dd/MM/yyyy HH:mm";
+
+                DateTime expiredDate = DateTime.ParseExact(ticket.ExpirationDate, format, CultureInfo.InvariantCulture);
+
+                DateTime utcDateTime = expiredDate.ToUniversalTime();
+
+                reqTicket.ExpirationDate = utcDateTime;
+                reqTicket.CreateDate = DateTime.UtcNow;
                 await _ticketRepository.SaveAsync(reqTicket);
 
                 //Commit transaction
