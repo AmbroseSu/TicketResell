@@ -26,6 +26,7 @@ public class TicketResellDbContext : DbContext
     public virtual DbSet<PlatformFee> PlatformFees { get; set; }
     //public virtual DbSet<Post> Posts { get; set; }
     public virtual DbSet<Ticket> Tickets { get; set; }
+    public virtual DbSet<TicketPostingQuota> TicketPostingQuotas { get; set; }
     public virtual DbSet<TicketRequest> TicketRequests { get; set; }
     public virtual DbSet<Transaction> Transactions { get; set; }
     public virtual DbSet<User> Users { get; set; }
@@ -228,6 +229,13 @@ public class TicketResellDbContext : DbContext
             //    .HasForeignKey<TicketRequest>(e => e.TicketId);
         });
 
+        modelBuilder.Entity<TicketPostingQuota>(entity =>
+        {
+            entity.ToTable("TicketPostingQuota");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Quantity);
+        });
+
         modelBuilder.Entity<TicketRequest>(entity =>
         {
             entity.ToTable("TicketRequest");
@@ -249,6 +257,10 @@ public class TicketResellDbContext : DbContext
             entity.Property(e => e.PaymentMethod);
             entity.Property(e => e.Promotion);
             entity.Property(e => e.Status);
+            
+            entity.HasOne(e => e.TicketPostingQuota)
+                .WithOne(e => e.Transaction)
+                .HasForeignKey<TicketPostingQuota>(e => e.TransactionId);
         });
 
         modelBuilder.Entity<User>(entity =>

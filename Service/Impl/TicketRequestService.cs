@@ -150,6 +150,9 @@ public class TicketRequestService : ITicketRequestService
             orderStatus.OrderId = order.Id;
             await _orderStatusRepository.SaveAsync(orderStatus);
             TicketRequestDTO ticketRequestDto = _mapper.Map<TicketRequestDTO>(ticketRequest);
+            User? user = await _userRepository.FindUserByIdAsync((long)ticketRequestDto.UserId!);
+            ticketRequestDto.UserEmail = user.Email;
+            ticketRequestDto.UserFullname = user.Fullname;
             return ResponseUtil.GetObject(ticketRequestDto, "Ticket Request created successfully", HttpStatusCode.OK, 0);
         }
         catch (Exception e)
