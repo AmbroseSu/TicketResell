@@ -24,9 +24,9 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();
-builder.Services.AddScoped<ITicketService, TicketService>();
+//builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
-builder.Services.AddScoped<IPostService, PostService>();
+//builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IImageTicketRepository, ImageTicketRepository>();
 builder.Services.AddScoped<ITicketRequestRepository, TicketRequestRepository>();
 builder.Services.AddScoped<ITicketRequestService, TicketRequestService>();
@@ -35,6 +35,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderStatusRepository, OrderStatusRepository>();
 builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 builder.Services.AddScoped<IFeedbackService, FeedbackService>();
+builder.Services.AddScoped<IImageFeedbackRepository, ImageFeedbackRepository>();
 
 builder.Services.AddCors(options =>
 {
