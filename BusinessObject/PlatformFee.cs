@@ -11,6 +11,7 @@ public class PlatformFee
     [StringLength(500)]
     public string? Name { get; set; }
     public int? Quantity { get; set; }
+    public long? Price { get; set; }
     public bool IsDeleted { get; set; }
     
     public List<Transaction>? Transactions { get; set; }
