@@ -24,7 +24,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> FindUserByEmailAsync(string email) => await UserDAO.Instance.FindUserByEmailAsync(email);
 
-    public async Task<User?> FindUserByIdAsync(long id) => await UserDAO.Instance.FindUserByIdAsync(id); 
+    public async Task<User?> FindUserByIdAsync(int id) => await UserDAO.Instance.FindUserByIdAsync(id); 
 
     public async Task<User?> FindUserByPhoneAsync(string phone) => await UserDAO.Instance.FindUserByPhoneAsync(phone);
     

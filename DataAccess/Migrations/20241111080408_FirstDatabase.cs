@@ -98,9 +98,6 @@ namespace DataAccess.Migrations
                     Venue = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    PostTitle = table.Column<string>(type: "text", nullable: false),
-                    PostDescription = table.Column<string>(type: "text", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CategoryId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
@@ -267,8 +264,8 @@ namespace DataAccess.Migrations
                     Rating = table.Column<int>(type: "integer", nullable: true),
                     Context = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    TicketId = table.Column<int>(type: "integer", nullable: true),
-                    UserId = table.Column<int>(type: "integer", nullable: true)
+                    TicketId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -277,12 +274,14 @@ namespace DataAccess.Migrations
                         name: "FK_Feedback_Ticket_TicketId",
                         column: x => x.TicketId,
                         principalTable: "Ticket",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Feedback_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(

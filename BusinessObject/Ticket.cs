@@ -19,10 +19,6 @@ public class Ticket
     public TicketStatus Status { get; set; }
     public bool IsDeleted { get; set; }
     
-    public string PostTitle { get; set; }
-    public string PostDescription { get; set; }
-    public DateTime CreateDate { get; set; }
-    
     //public int? TicketRequestId { get; set; }
     public int? CategoryId { get; set; }
     //public int? UserId { get; set; }

@@ -47,10 +47,38 @@ public class AuthenticationService : IAuthenticationService
                     userCheck.VerificationTokenId = null;
                     userCheck.VerificationToken = null;
                     await _userRepository.UpdateAsync(userCheck);
-                    int verificationId = (await _verificationTokenRepository.FindByUserIdAsync(userId)).Id;
-                    await _verificationTokenRepository.DeleteAsync(verificationId);
-                    return ResponseUtil.Error("Email is already in use", "Failed", HttpStatusCode.BadRequest);
+                    var verification = await _verificationTokenRepository.FindByUserIdAsync(userId);
+                    if (verification != null)
+                    {
+                        await _verificationTokenRepository.DeleteAsync(verification.Id);
+                    }
+                    return ResponseUtil.GetObject(null, "Please Sign Up", HttpStatusCode.OK, 0);;
                 }
+
+                if (await _userRepository.ExistsByEmailAsync(email) &&
+                    !(await _userRepository.FindUserByEmailAsync(email)).IsEnabled)
+                {
+                    User userCheck = await _userRepository.FindUserByEmailAsync(email);
+                    int userId = userCheck.Id;
+                    userCheck.VerificationTokenId = null;
+                    userCheck.VerificationToken = null;
+                    await _userRepository.UpdateAsync(userCheck);
+                    var verification = await _verificationTokenRepository.FindByUserIdAsync(userId);
+                    if (verification != null)
+                    {
+                        await _verificationTokenRepository.DeleteAsync(verification.Id);
+                    }
+                    var sendEmail1 = await _emailService.SendEmail(email);
+                    if (sendEmail1.StatusCode.Equals(HttpStatusCode.BadRequest) )
+                    {
+                        return ResponseUtil.Error("Can't Send", "Failed", HttpStatusCode.BadRequest);
+                    }
+                    var result1 = _mapper.Map<UpsertUserDTO>(userCheck);
+
+                    return ResponseUtil.GetObject(result1, "ok", HttpStatusCode.Created, 0);
+                }
+                
+                
                 
                 var user = new User()
                 {
