@@ -31,44 +31,43 @@ namespace Service.Impl
             _ticketCategoryRepository = ticketCategoryRepository;
         }
 
-        public async Task<ResponseDTO> CreatePost(NewPostRequest post)
-        {
-            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-            {
-                Ticket? ticket = (await _ticketRepository.Find(t => t.Id == post.ticketId)).SingleOrDefault();
+        //public async Task<ResponseDTO> CreatePost(NewPostRequest post)
+        //{
+        //    using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+        //    {
+        //        Ticket? ticket = (await _ticketRepository.Find(t => t.Id == post.ticketId)).SingleOrDefault();
 
-                if (ticket == null)
-                {
-                    return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
-                }
+        //        if (ticket == null)
+        //        {
+        //            return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
+        //        }
 
-                Post? isPostExist = (await _postRespository.Find(p => p.TicketId == post.ticketId && p.Status.Equals(PostStatus.ACTIVE ))).SingleOrDefault();
+        //        Post? isPostExist = (await _postRespository.Find(p => p.TicketId == post.ticketId && p.Status.Equals(PostStatus.ACTIVE ))).SingleOrDefault();
 
-                if (isPostExist != null )
-                {
-                    return ResponseUtil.Error("Request fails", "There is a post active with this ticket!", HttpStatusCode.BadRequest);
-                }
+        //        if (isPostExist != null )
+        //        {
+        //            return ResponseUtil.Error("Request fails", "There is a post active with this ticket!", HttpStatusCode.BadRequest);
+        //        }
 
-                Post newPost = _mapper.Map<Post>(post);
+        //        Post newPost = _mapper.Map<Post>(post);
+        //        newPost.Status = PostStatus.PENDING;
 
-                    Ticket reqTicket = _mapper.Map<Ticket>(post);
-                reqTicket.Status = TicketStatus.PENDING;
-                await _ticketRepository.SaveAsync(reqTicket);
+        //        await _ticketRepository.SaveAsync(reqTicket);
 
-                Commit transaction
+        //        //Commit transaction
 
-                Post savedPost = _mapper.Map<Post>(post);
-                savedPost.Status = false;
-                await _postRespository.SaveAsync(savedPost);
+        //        Post savedPost = _mapper.Map<Post>(post);
+        //        savedPost.Status = false;
+        //        await _postRespository.SaveAsync(savedPost);
 
 
-                PostDTO postDTO = _mapper.Map<PostDTO>(savedPost);
+        //        PostDTO postDTO = _mapper.Map<PostDTO>(savedPost);
 
-                scope.Complete();
+        //        scope.Complete();
 
-                return ResponseUtil.GetObject(postDTO, "Post created successfully", HttpStatusCode.OK, 0);
-            }
-        }
+        //        return ResponseUtil.GetObject(postDTO, "Post created successfully", HttpStatusCode.OK, 0);
+        //    }
+        //}
 
         //public async Task<ResponseDTO> DeletePost(int TicketId)
         //{
