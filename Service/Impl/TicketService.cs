@@ -116,7 +116,7 @@ namespace Service.Impl
 
             if (result == null)
             {
-                return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
+                return ResponseUtil.GetObject(result, "Ticket retrieved successfully", HttpStatusCode.OK, 0);
             }
 
             return await getTicketInfoResponse(result);
@@ -135,10 +135,9 @@ namespace Service.Impl
                t.Status == status);
             }
 
-
             if (result == null)
             {
-                return ResponseUtil.Error("request fails", "no ticket found !", HttpStatusCode.BadRequest);
+                return ResponseUtil.GetObject(result, "Ticket retrieved successfully", HttpStatusCode.OK, 0);
             }
 
             return await getListTicketInforResponse(result.ToList(), page, limit);
@@ -314,10 +313,9 @@ namespace Service.Impl
             else
             {
                 ticket.imageTicketDTOs = null;
-
             }
 
-            return ResponseUtil.GetObject(ticket, "Ticket retrieved successfully", HttpStatusCode.OK, 0);
+            return ResponseUtil.GetObject(ticket, "Ticket retrieved successfully", HttpStatusCode.OK, 1);
         }
 
         private async Task<ResponseDTO> getListTicketInforResponse(List<Ticket?> result, int page, int limit)
