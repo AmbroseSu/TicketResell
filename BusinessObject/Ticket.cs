@@ -25,11 +25,11 @@ public class Ticket
     
     //public int? TicketRequestId { get; set; }
     public int? CategoryId { get; set; }
-    public int? UserId { get; set; }
+    //public int? UserId { get; set; }
     public List<Feedback>? Feedbacks { get; set; }
     public List<CartItem>? CartItems { get; set; }
-    //public List<Post>? Posts { get; set; }
-    public User User { get; set; }
+    public List<Post>? Posts { get; set; }
+    //public User User { get; set; }
     public List<ImageTicket>? ImageTickets { get; set; }
     public List<Order>? Orders { get; set; }
     public List<TicketRequest>? TicketRequest { get; set; }
