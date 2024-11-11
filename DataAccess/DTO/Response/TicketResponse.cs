@@ -12,7 +12,7 @@ namespace DataAccess.DTO.Response
 {
     public class TicketResponse
     {
-        public TicketResponse(int id, string? ticketName, float? price, int? quantity, DateTime? expirationDate, string? venue, TicketStatus status, int? categoryId, string? categoryName,int? postId, string? postTitle, string? postDescription,PostStatus? postStatus, DateTime? createdDate, int? userId, string email)
+        public TicketResponse(int id, string? ticketName, float? price, int? quantity, DateTime? expirationDate, string? venue, TicketStatus status, bool? isDeleted, int? categoryId, string? categoryName,int? postId, string? postTitle, string? postDescription,PostStatus? postStatus, DateTime? createdDate, int? userId, string email)
         {
             Id = id;
             TicketName = ticketName;
@@ -21,6 +21,7 @@ namespace DataAccess.DTO.Response
             ExpirationDate = expirationDate;
             Venue = venue;
             Status = status;
+            IsDeleted = IsDeleted;
             CategoryId = categoryId;
             CategoryName = categoryName;
             PostId = postId;
@@ -31,7 +32,7 @@ namespace DataAccess.DTO.Response
             UserId = userId;
             Email = email;
         }
-        public TicketResponse(int id, string? ticketName, float? price, int? quantity, DateTime? expirationDate, string? venue, TicketStatus status, int? categoryId, string? categoryName, int? userId, string email)
+        public TicketResponse(int id, string? ticketName, float? price, int? quantity, DateTime? expirationDate, string? venue, TicketStatus status, bool? isDeleted, int? categoryId, string? categoryName, int? userId, string email)
         {
             Id = id;
             TicketName = ticketName;
@@ -40,6 +41,7 @@ namespace DataAccess.DTO.Response
             ExpirationDate = expirationDate;
             Venue = venue;
             Status = status;
+            IsDeleted = IsDeleted;
             CategoryId = categoryId;
             CategoryName = categoryName;
             //PostId = postId;
@@ -62,6 +64,7 @@ namespace DataAccess.DTO.Response
         public DateTime? ExpirationDate { get; set; }
         public string? Venue { get; set; }
         public TicketStatus Status { get; set; }
+        public bool IsDeleted { get; set; }
         public int? CategoryId { get; set; }
         public string? CategoryName { get; set; }
         public int? PostId { get; set; }
