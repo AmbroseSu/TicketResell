@@ -34,7 +34,19 @@ namespace Service.Impl
 
         public async Task<ResponseDTO> CreatePost(NewPostRequest post)
         {
-            User? user = await _userRepository.FindUserByIdAsync(post.userId);
+            Ticket? ticket = (await _ticketRepository.Find(t => t.Id == post.ticketId && t.IsDeleted == false)).SingleOrDefault();
+
+            if (ticket == null)
+            {
+                return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
+            }
+
+            if (ticket.Status != TicketStatus.ACTIVE)
+            {
+                return ResponseUtil.Error("Request fails", "Ticket is not active !", HttpStatusCode.BadRequest);
+            }
+
+            User? user = await _userRepository.FindUserByIdAsync(ticket.UserId);
 
             if (user == null)
             {
@@ -49,18 +61,6 @@ namespace Service.Impl
             if (!user.IsEnabled)
             {
                 return ResponseUtil.Error("Request fails", "User is disabled", HttpStatusCode.BadRequest);
-            }
-
-            Ticket? ticket = (await _ticketRepository.Find(t => t.Id == post.ticketId && t.IsDeleted == false)).SingleOrDefault();
-
-            if (ticket == null)
-            {
-                return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
-            }
-
-            if (ticket.Status != TicketStatus.ACTIVE)
-            {
-                return ResponseUtil.Error("Request fails", "Ticket is not active !", HttpStatusCode.BadRequest);
             }
 
             IEnumerable<Post?> isPostExist = (await _postRespository.Find(p => p.TicketId == post.ticketId));
@@ -79,7 +79,6 @@ namespace Service.Impl
                     }
                 }
             }
-
 
             Post newPost = _mapper.Map<Post>(post);
             newPost.Status = PostStatus.PENDING;

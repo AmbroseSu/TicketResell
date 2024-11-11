@@ -13,7 +13,9 @@ namespace DataAccess.DTO.Request
     {
 
         public string? Name { get; set; }
+        [Range(20000, float.MaxValue, ErrorMessage = "Price must be between 20000 - float max value")]
         public float? Price { get; set; }
+        [Range(1, 100, ErrorMessage = "Quantity must be between 1 - 100")]
         public int? Quantity { get; set; }
         public String ExpirationDate { get; set; }
         public string? Venue { get; set; }
