@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(TicketResellDbContext))]
-    [Migration("20241111080408_FirstDatabase")]
+    [Migration("20241111083741_FirstDatabase")]
     partial class FirstDatabase
     {
         /// <inheritdoc />
@@ -373,8 +373,8 @@ namespace DataAccess.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("boolean");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("TicketId")
                         .HasColumnType("integer");
