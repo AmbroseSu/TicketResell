@@ -18,4 +18,6 @@ public class Feedback
     public Ticket? Ticket { get; set; }
     public User? User { get; set; }
     
+    public List<ImageFeedback>? ImageFeedbacks { get; set; }
+    
 }

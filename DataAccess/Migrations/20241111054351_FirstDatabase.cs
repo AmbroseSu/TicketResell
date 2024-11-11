@@ -442,6 +442,26 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ImageFeedback",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ImageUrl = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    FeedbackId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ImageFeedback", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ImageFeedback_Feedback_FeedbackId",
+                        column: x => x.FeedbackId,
+                        principalTable: "Feedback",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OrderStatus",
                 columns: table => new
                 {
@@ -492,6 +512,11 @@ namespace DataAccess.Migrations
                 name: "IX_Feedback_UserId",
                 table: "Feedback",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ImageFeedback_FeedbackId",
+                table: "ImageFeedback",
+                column: "FeedbackId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ImageTicket_TicketId",
@@ -586,7 +611,7 @@ namespace DataAccess.Migrations
                 name: "CartItem");
 
             migrationBuilder.DropTable(
-                name: "Feedback");
+                name: "ImageFeedback");
 
             migrationBuilder.DropTable(
                 name: "ImageTicket");
@@ -614,6 +639,9 @@ namespace DataAccess.Migrations
 
             migrationBuilder.DropTable(
                 name: "Cart");
+
+            migrationBuilder.DropTable(
+                name: "Feedback");
 
             migrationBuilder.DropTable(
                 name: "Order");

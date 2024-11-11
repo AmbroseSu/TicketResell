@@ -32,4 +32,5 @@ public class UserRepository : IUserRepository
 
     public Task<List<User>> FindAllUsersAsync() => UserDAO.Instance.FindAllUsersAsync();
     public Task<List<User>> FindAllCustomersByDateAndYearAsync(int month, int year) => UserDAO.Instance.FindAllCustomersByDateAndYearAsync(month, year);
+    public Task<List<User>> SearchUsersByEmailAndFullNameAsync(string search) => UserDAO.Instance.SearchUsersByEmailAndFullNameAsync(search);
 }

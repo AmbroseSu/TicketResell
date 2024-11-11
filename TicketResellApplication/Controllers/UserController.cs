@@ -68,6 +68,13 @@ namespace TicketResellApplication.Controllers
             return await _userService.EditProfileAsync(upsertUserDto);
         }
         
+        [HttpGet("search")]
+        public async Task<ResponseDTO> SearchUser([FromQuery] string search, [FromQuery, Required] int page = 1,
+            [FromQuery, Required] int limit = 10)
+        {
+            return await _userService.SearchUsersByEmailAndFullNameAsync(search, page, limit);
+        }
+        
         
     }
 }

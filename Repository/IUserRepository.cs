@@ -20,5 +20,6 @@ public interface IUserRepository
     Task<List<User>> FindAllByRoleAsync(Role role);
     Task<List<User>> FindAllUsersAsync();
     Task<List<User>> FindAllCustomersByDateAndYearAsync(int month, int year);
+    Task<List<User>> SearchUsersByEmailAndFullNameAsync(string search);
 
 }

@@ -211,5 +211,20 @@ public class UserService : IUserService
             return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
         }
     }
-    
+
+    public async Task<ResponseDTO> SearchUsersByEmailAndFullNameAsync(string search, int page, int limit)
+    {
+        try
+        {
+            IEnumerable<User?> users = await _userRepository.SearchUsersByEmailAndFullNameAsync(search);
+            IEnumerable<UserDTO> userDtos = _mapper.Map<IEnumerable<UserDTO>>(users);
+            List<UserDTO> result = userDtos.Skip((page - 1) * limit).Take(limit).ToList();
+
+            return ResponseUtil.GetCollection(result, "ok", HttpStatusCode.Created,users.Count(),  page, limit, users.Count());
+        }
+        catch (Exception ex)
+        {
+            return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
+        }
+    }
 }
