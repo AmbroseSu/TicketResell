@@ -90,24 +90,25 @@ namespace Service.Impl
             return ResponseUtil.GetObject(reqTicket, "Ticket created successfully", HttpStatusCode.OK, 0);
         }
 
-        //public async Task<ResponseDTO> DeleteTicketAsync(int id)
-        //{
-        //    Ticket? result = await IsTicketValid(id);
+        public async Task<ResponseDTO> DeleteTicketAsync(int id)
+        {
+            Ticket? result = await IsTicketValid(id);
 
-        //    if (result == null)
-        //    {
-        //        return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
-        //    }
+            if (result == null)
+            {
+                return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
+            }
 
-        //    if (result.IsDeleted == true)
-        //    {
-        //        return ResponseUtil.Error("Request fails", "Ticket already deleted !", HttpStatusCode.BadRequest);
-        //    }
+            if (result.IsDeleted == true)
+            {
+                return ResponseUtil.Error("Request fails", "Ticket already deleted !", HttpStatusCode.BadRequest);
+            }
 
-        //    result.IsDeleted = true;
-        //    await _ticketRepository.DeleteAsync(id);
-        //    return ResponseUtil.GetObject("Request accepted", "Ticket Deleted successfully", HttpStatusCode.Accepted, 0);
-        //}
+            result.IsDeleted = true;
+            result.Status = TicketStatus.CLOSED;
+            await _ticketRepository.DeleteAsync(id);
+            return ResponseUtil.GetObject("Request accepted", "Ticket Deleted successfully", HttpStatusCode.Accepted, 0);
+        }
 
         public async Task<ResponseDTO> GetTicketAsync(int id)
         {
@@ -121,9 +122,19 @@ namespace Service.Impl
             return await getTicketInfoResponse(result);
         }
 
-        public async Task<ResponseDTO> GetAllTicket(int page, int limit)
+        public async Task<ResponseDTO> GetAllTicket(int page, int limit, TicketStatus? status, String? searchTerm)
         {
-            IEnumerable<Ticket?> result = await _ticketRepository.GetAllAsync();
+            IEnumerable<Ticket?> result = new List<Ticket?>();
+            if (status == null)
+            {
+                result = await _ticketRepository.Find(t => t.Name.Contains(searchTerm.Trim()));
+            }
+            else
+            {
+                result = await _ticketRepository.Find(t => t.Name.Contains(searchTerm.Trim()) &&
+               t.Status == status);
+            }
+
 
             if (result == null)
             {
@@ -133,42 +144,57 @@ namespace Service.Impl
             return await getListTicketInforResponse(result.ToList(), page, limit);
         }
 
-        //public async Task<ResponseDTO> UpdateStatus(int id, string status)
-        //{
-        //    Ticket? result = (await IsTicketValid(id));
+        /// <summary>
+        /// Update ticket status cho manager, chỉ có thể update từ pending -> active, closed hoặc active -> closed
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public async Task<ResponseDTO> UpdateStatus(int id, TicketStatus status)
+        {
+            if (!StatusExtensions.IsValidEnum(status))
+            {
+                return ResponseUtil.Error("Request fails", "Invalid status !", HttpStatusCode.BadRequest);
+            }
 
-        //    if (result == null)
-        //    {
-        //        return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
-        //    }
+            Ticket? result = (await IsTicketValid(id));
 
-        //    if (result.Status != TicketStatus.PENDING)
-        //    {
-        //        return ResponseUtil.Error("Request fails", "Ticket status is not pending !", HttpStatusCode.BadRequest);
-        //    }
+            if (result == null)
+            {
+                return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
+            }
 
-        //    status = status.ToUpper();
+            if (result.IsDeleted)
+            {
+                return ResponseUtil.Error("Request fails", "Ticket already deleted !", HttpStatusCode.BadRequest);
+            }
 
-        //    if (!TicketStatusExtensions.IsValidStatus(status))
-        //    {
-        //        return ResponseUtil.Error("Request fails", "Invalid status !", HttpStatusCode.BadRequest);
-        //    }
+            if (result.Status == TicketStatus.CLOSED)
+            {
+                return ResponseUtil.Error("Request fails", "Ticket status = CLOSED can not be update !", HttpStatusCode.BadRequest);
+            }
 
-        //    if (status.Equals(TicketStatus.REJECTED.ToString()))
-        //    {
-        //        result.Status = TicketStatus.REJECTED;
-        //    }
+            if (result.Status == TicketStatus.ACTIVE)
+            {
+                if (status == TicketStatus.PENDING || status == TicketStatus.ACTIVE)
+                {
+                    return ResponseUtil.Error("Request fails", "Ticket status = ACTIVE can only be update to CLOSED !", HttpStatusCode.BadRequest);
+                }
+            }
 
-        //    if (status.Equals(TicketStatus.VERIFIED.ToString()))
-        //    {
-        //        result.Status = TicketStatus.VERIFIED;
-        //    }
+            if (result.Status == TicketStatus.PENDING)
+            {
+                if (status == TicketStatus.PENDING)
+                {
+                    return ResponseUtil.Error("Request fails", "Ticket status currently is already PENDING !", HttpStatusCode.BadRequest);
+                }
+            }
 
-        //    Ticket newTicket = _mapper.Map<Ticket>(result);
-        //    await _ticketRepository.UpdateAsync(newTicket);
+            result.Status = status;
+            await _ticketRepository.UpdateAsync(result);
 
-        //    return ResponseUtil.GetObject("Request accepted", "Ticket Updated successfully", HttpStatusCode.Accepted, 0);
-        //}
+            return ResponseUtil.GetObject("Request accepted", "Ticket Updated successfully", HttpStatusCode.Accepted, 0);
+        }
 
         //public async Task<ResponseDTO> UpdateTicketAsync(updateTicketRequest ticket)
         //{
@@ -212,6 +238,7 @@ namespace Service.Impl
           result.ExpirationDate,
           result.Venue,
           result.Status,
+          result.IsDeleted,
           result.CategoryId,
           cat.Name,
           post.Id,
@@ -233,6 +260,7 @@ namespace Service.Impl
           result.ExpirationDate,
           result.Venue,
           result.Status,
+          result.IsDeleted,
           result.CategoryId,
           cat.Name,
           result.UserId,

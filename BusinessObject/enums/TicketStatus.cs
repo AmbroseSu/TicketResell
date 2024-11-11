@@ -7,12 +7,10 @@ public enum TicketStatus
     CLOSED
 }
 
-public static class TicketStatusExtensions
+public static class StatusExtensions
 {
-
-    public static bool IsValidStatus(string status)
+    public static bool IsValidEnum<TEnum>(TEnum status) where TEnum : Enum
     {
-        return Enum.TryParse(typeof(TicketStatus), status, true, out _);
+        return Enum.IsDefined(typeof(TEnum), status);
     }
-
 }

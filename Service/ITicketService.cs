@@ -1,4 +1,5 @@
-﻿using DataAccess.DTO;
+﻿using BusinessObject.Enums;
+using DataAccess.DTO;
 using DataAccess.DTO.Request;
 using DataAccess.DTO.Response;
 using System;
@@ -13,10 +14,10 @@ namespace Service
     {
         Task<ResponseDTO> CreateTicket(NewTicket post);
         //Task<ResponseDTO> UpdateTicketAsync(updateTicketRequest ticket);
-        //Task<ResponseDTO> DeleteTicketAsync(int id);
+        Task<ResponseDTO> DeleteTicketAsync(int id);
         Task<ResponseDTO> GetTicketAsync(int id);
-        Task<ResponseDTO> GetAllTicket(int page, int limit);
-        //Task<ResponseDTO> UpdateStatus(int id, string status);
+        Task<ResponseDTO> GetAllTicket(int page, int limit, TicketStatus? status, String? searchTerm);
+        Task<ResponseDTO> UpdateStatus(int id, TicketStatus status);
         Task<ResponseDTO> GetTicketByCategoryId(int id, int page, int limit);
         Task<ResponseDTO> GetTicketByEmail(string email, int page, int limit);
         Task<ResponseDTO> UpdateTicketImg(List<string> imgList, int ticketId);
