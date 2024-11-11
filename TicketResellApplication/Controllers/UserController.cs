@@ -29,22 +29,22 @@ namespace TicketResellApplication.Controllers
         }
         
         [HttpGet("get-all-user-by-role")]
-        public async Task<ResponseDTO> GetAllUserByRole([FromQuery] Role role, [FromQuery, Required] int page = 1,
-            [FromQuery, Required] int limit = 10)
+        public async Task<ResponseDTO> GetAllUserByRole([FromQuery] Role role, [FromQuery] int page = 1,
+            [FromQuery] int limit = 10)
         {
             return await _userService.FindAllByRoleAsync(role, page, limit);
         }
         
         [HttpGet("get-all-user")]
-        public async Task<ResponseDTO> GetAllUser([FromQuery, Required] int page = 1,
-            [FromQuery, Required] int limit = 10)
+        public async Task<ResponseDTO> GetAllUser([FromQuery] int page = 1,
+            [FromQuery] int limit = 10)
         {
             return await _userService.FindAllUsersAsync(page, limit);
         }
         
         [HttpGet("get-all-user-by-month-and-year")]
-        public async Task<ResponseDTO> GetAllUserByMonthAndYear([FromQuery] int month, [FromQuery] int year, [FromQuery, Required] int page = 1,
-            [FromQuery, Required] int limit = 10)
+        public async Task<ResponseDTO> GetAllUserByMonthAndYear([FromQuery] int month, [FromQuery] int year, [FromQuery] int page = 1,
+            [FromQuery] int limit = 10)
         {
             return await _userService.FindAllCustomersByDateAndYearAsync(month, year, page, limit);
         }
@@ -69,12 +69,17 @@ namespace TicketResellApplication.Controllers
         }
         
         [HttpGet("search")]
-        public async Task<ResponseDTO> SearchUser([FromQuery] string search, [FromQuery, Required] int page = 1,
-            [FromQuery, Required] int limit = 10)
+        public async Task<ResponseDTO> SearchUser([FromQuery] string search, [FromQuery] int page = 1,
+            [FromQuery] int limit = 10)
         {
             return await _userService.SearchUsersByEmailAndFullNameAsync(search, page, limit);
         }
         
+        [HttpGet("change-active")]
+        public async Task<ResponseDTO> ChangeActiveUser([FromQuery] int id)
+        {
+            return await _userService.ChangeActiveUserAsync(id);
+        }
         
     }
 }

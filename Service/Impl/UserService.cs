@@ -227,4 +227,32 @@ public class UserService : IUserService
             return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
         }
     }
+
+    public async Task<ResponseDTO> ChangeActiveUserAsync(int userId)
+    {
+        try
+        {
+            User? user = await _userRepository.FindUserByIdAsync(userId);
+            if (user is null)
+            {
+                return ResponseUtil.Error("User not found", "Faild", HttpStatusCode.NotFound);
+            }
+
+            if (user.IsDeleted == false)
+            {
+                user.IsDeleted = true;
+            }
+            else
+            {
+                user.IsDeleted = false;
+            }
+            await  _userRepository.UpdateAsync(user);
+            var result = _mapper.Map<UserDTO>(user);
+            return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, 0); 
+        }
+        catch (Exception ex)
+        {
+            return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
+        }
+    }
 }
