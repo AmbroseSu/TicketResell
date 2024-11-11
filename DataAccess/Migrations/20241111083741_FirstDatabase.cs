@@ -345,7 +345,7 @@ namespace DataAccess.Migrations
                     Description = table.Column<string>(type: "character varying(3000)", maxLength: 3000, nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    Status = table.Column<bool>(type: "boolean", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: true),
                     TicketId = table.Column<int>(type: "integer", nullable: true)
                 },

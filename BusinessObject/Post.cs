@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using BusinessObject.enums;
 
 namespace BusinessObject;
 
@@ -14,7 +15,7 @@ public class Post
     public string? Description { get; set; }
     public DateTime? CreatedDate { get; set; }
     public bool IsDeleted { get; set; } = false;
-    public bool Status { get; set; }
+    public PostStatus Status { get; set; }
     public int? UserId { get; set; }
     public int? TicketId { get; set; }
     public User? User { get; set; }
