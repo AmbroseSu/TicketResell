@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(TicketResellDbContext))]
-    [Migration("20241107030655_FirstDatabase")]
+    [Migration("20241111025805_FirstDatabase")]
     partial class FirstDatabase
     {
         /// <inheritdoc />
@@ -328,6 +328,46 @@ namespace DataAccess.Migrations
                     b.ToTable("PlatformFee", (string)null);
                 });
 
+            modelBuilder.Entity("BusinessObject.Post", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(3000)
+                        .HasColumnType("character varying(3000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("TicketId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TicketId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Post");
+                });
+
             modelBuilder.Entity("BusinessObject.Ticket", b =>
                 {
                     b.Property<int>("Id")
@@ -369,9 +409,6 @@ namespace DataAccess.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Venue")
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
@@ -379,8 +416,6 @@ namespace DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Ticket", (string)null);
                 });
@@ -705,19 +740,28 @@ namespace DataAccess.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("BusinessObject.Post", b =>
+                {
+                    b.HasOne("BusinessObject.Ticket", "Ticket")
+                        .WithMany("Posts")
+                        .HasForeignKey("TicketId");
+
+                    b.HasOne("BusinessObject.User", "User")
+                        .WithMany("Posts")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Ticket");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("BusinessObject.Ticket", b =>
                 {
                     b.HasOne("BusinessObject.Category", "Category")
                         .WithMany("Tickets")
                         .HasForeignKey("CategoryId");
 
-                    b.HasOne("BusinessObject.User", "User")
-                        .WithMany("Tickets")
-                        .HasForeignKey("UserId");
-
                     b.Navigation("Category");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BusinessObject.TicketPostingQuota", b =>
@@ -828,6 +872,8 @@ namespace DataAccess.Migrations
 
                     b.Navigation("Orders");
 
+                    b.Navigation("Posts");
+
                     b.Navigation("TicketRequest");
                 });
 
@@ -848,9 +894,9 @@ namespace DataAccess.Migrations
 
                     b.Navigation("Orders");
 
-                    b.Navigation("TicketRequests");
+                    b.Navigation("Posts");
 
-                    b.Navigation("Tickets");
+                    b.Navigation("TicketRequests");
 
                     b.Navigation("Transactions");
 

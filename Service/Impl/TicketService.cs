@@ -35,7 +35,7 @@ namespace Service.Impl
             _imageTicketRepository = imageTicketRepository;
             _userRepository = userRepository;
         }
-        public async Task<ResponseDTO> CreateTicket(NewTicketRequest ticket)
+        /*public async Task<ResponseDTO> CreateTicket(NewTicketRequest ticket)
         {
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
@@ -359,7 +359,7 @@ namespace Service.Impl
             }
 
             return ResponseUtil.GetObject("Request accepted", "Image updated successfully", HttpStatusCode.Accepted, 0);
-        }
+        }*/
     }
 }
 

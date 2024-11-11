@@ -23,7 +23,7 @@ namespace TicketResellApplication.Controllers
             _ticketService = ticketService;
         }
 
-        [HttpPost("new")]
+        /*[HttpPost("new")]
         public async Task<ResponseDTO> CreatePostAsync([FromBody] NewTicketRequest post
            )
         {
@@ -89,6 +89,6 @@ namespace TicketResellApplication.Controllers
         public async Task<ResponseDTO> AddImage([FromBody] List<string> imgList, int ticketId)
         {
             return await _ticketService.UpdateTicketImg(imgList, ticketId);
-        }
+        }*/
     }
 }
