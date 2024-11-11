@@ -16,18 +16,18 @@ namespace TicketResellApplication.Controllers
         private readonly IPostService _postService;
         private readonly ILogger<PostController> _logger;
 
-        //public PostController(IPostService postService, ILogger<PostController> logger)
-        //{
-        //    _postService = postService;
-        //    _logger = logger;
-        //}
+        public PostController(IPostService postService, ILogger<PostController> logger)
+        {
+            _postService = postService;
+            _logger = logger;
+        }
 
-        //[HttpPost("new")]
-        //public async Task<ResponseDTO> CreatePostAsync([FromBody] NewPostRequest post
-        //    )
-        //{
-        //    return await _postService.CreatePost(post);
-        //}
+        [HttpPost("new")]
+        public async Task<ResponseDTO> CreatePost([FromBody] NewPostRequest post
+            )
+        {
+            return await _postService.CreatePost(post);
+        }
 
         //[HttpPut("edit")]
         //public async Task<ResponseDTO> UpdatePostAsync([FromQuery] string description, [FromQuery] int ticketId)

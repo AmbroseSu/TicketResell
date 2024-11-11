@@ -35,43 +35,40 @@ namespace Service.Impl
             _imageTicketRepository = imageTicketRepository;
             _userRepository = userRepository;
         }
-        //public async Task<ResponseDTO> CreateTicket(NewTicket ticket)
-        //{
-        //    using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-        //    {
-        //        User? user = await _userRepository.FindUserByIdAsync(ticket.UserId);
+        public async Task<ResponseDTO> CreateTicket(NewTicket ticket)
+        {
 
-        //        if (user == null)
-        //        {
-        //            return ResponseUtil.Error("Request fails", "User not found !", HttpStatusCode.BadRequest);
-        //        }
+            User? user = await _userRepository.FindUserByIdAsync(ticket.UserId);
 
-        //        //Create ticket
-        //        //tim ticket category
-        //        IEnumerable<Category?> category = await _ticketCategoryRepository.Find(c => c.Id == ticket.CategoryId);
+            if (user == null)
+            {
+                return ResponseUtil.Error("Request fails", "User not found !", HttpStatusCode.BadRequest);
+            }
 
-        //        if (category == null)
-        //        {
-        //            return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
-        //        }
+            //Create ticket
+            //tim ticket category
+            IEnumerable<Category?> category = await _ticketCategoryRepository.Find(c => c.Id == ticket.CategoryId);
 
-        //        Ticket reqTicket = _mapper.Map<Ticket>(ticket);
-        //        reqTicket.Status = TicketStatus.PENDING;
-        //        string format = "dd/MM/yyyy HH:mm";
+            if (category == null)
+            {
+                return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
+            }
 
-        //        DateTime expiredDate = DateTime.ParseExact(ticket.ExpirationDate, format, CultureInfo.InvariantCulture);
+            Ticket reqTicket = _mapper.Map<Ticket>(ticket);
+            reqTicket.Status = TicketStatus.PENDING;
+            string format = "dd/MM/yyyy HH:mm";
 
-        //        DateTime utcDateTime = expiredDate.ToUniversalTime();
+            DateTime expiredDate = DateTime.ParseExact(ticket.ExpirationDate, format, CultureInfo.InvariantCulture);
 
-        //        reqTicket.ExpirationDate = utcDateTime;
-        //        await _ticketRepository.SaveAsync(reqTicket);
+            DateTime utcDateTime = expiredDate.ToUniversalTime();
 
-        //        //Commit transaction
+            reqTicket.ExpirationDate = utcDateTime;
+            await _ticketRepository.SaveAsync(reqTicket);
 
-        //        scope.Complete();
-        //        return ResponseUtil.GetObject(reqTicket, "Ticket created successfully", HttpStatusCode.OK, 0);
-        //    }
-        //}
+            //Commit transaction
+
+            return ResponseUtil.GetObject(reqTicket, "Ticket created successfully", HttpStatusCode.OK, 0);
+        }
 
         //public async Task<ResponseDTO> DeleteTicketAsync(int id)
         //{
