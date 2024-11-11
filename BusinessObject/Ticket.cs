@@ -20,8 +20,8 @@ public class Ticket
     public bool IsDeleted { get; set; } = false;
     
     //public int? TicketRequestId { get; set; }
-    public int? CategoryId { get; set; }
-    public int? UserId { get; set; }
+    public int CategoryId { get; set; }
+    public int UserId { get; set; }
     public List<Feedback>? Feedbacks { get; set; }
     public List<CartItem>? CartItems { get; set; }
     public List<Post>? Posts { get; set; }
