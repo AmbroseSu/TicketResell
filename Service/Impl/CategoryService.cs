@@ -32,9 +32,9 @@ namespace Service.Impl
 
         }
 
-        public async Task<ResponseDTO> getAllCategories(int page, int limit)
+        public async Task<ResponseDTO> getAllCategories(int page, int limit, String? searchTerm)
         {
-            IEnumerable<Category?> result = await _categoryRepository.GetAllAsync();
+            IEnumerable<Category?> result = await _categoryRepository.Find(c => c.Name.ToLower().Contains(searchTerm.ToLower().Trim()));
             IEnumerable<Category?> data = result.Skip((page - 1) * limit).Take(limit);
             return ResponseUtil.GetCollection(data, "All categories retrieved sucessfully", HttpStatusCode.OK, result.Count(), page, limit, result.Count());
 

@@ -11,7 +11,7 @@ namespace Service
     public interface ICategoryService
     {
         Task<ResponseDTO> getCurrentCategories(int page, int limit);
-        Task<ResponseDTO> getAllCategories(int page, int limit);
+        Task<ResponseDTO> getAllCategories(int page, int limit, String? searchTerm);
         Task<ResponseDTO> GetCategory(int id);
         Task<ResponseDTO> CreateCategory(string categoryName);
         Task<ResponseDTO> SearchCategory(string searchTerm);
