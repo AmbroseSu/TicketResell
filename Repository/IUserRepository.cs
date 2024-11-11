@@ -15,7 +15,7 @@ public interface IUserRepository
     Task<bool> ExistsByPhoneAsync(string phone);
     Task<User?> FindByRoleAsync(Role role);
     Task<User?> FindUserByEmailAsync(string email);
-    Task<User?> FindUserByIdAsync(long id);
+    Task<User?> FindUserByIdAsync(int id);
     Task<User?> FindUserByPhoneAsync(string phone);
     Task<List<User>> FindAllByRoleAsync(Role role);
     Task<List<User>> FindAllUsersAsync();

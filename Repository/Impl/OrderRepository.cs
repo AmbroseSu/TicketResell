@@ -1,5 +1,6 @@
 ﻿using BusinessObject;
 using DataAccess.DAO;
+using System.Linq.Expressions;
 
 namespace Repository.Impl;
 
@@ -14,4 +15,5 @@ public class OrderRepository : IOrderRepository
     public Task<Order?> FindByIdAsync(long id) => OrderDAO.Instance.FindByIdAsync(id);
 
     public Task<List<Order>> GetAllOrdersByUserId(long userId) => OrderDAO.Instance.GetAllOrdersByUserId(userId);
+    public Task<IEnumerable<Order?>> Find(Expression<Func<Order, bool>> predicate) => OrderDAO.Instance.Find(predicate);
 }

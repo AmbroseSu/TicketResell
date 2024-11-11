@@ -41,8 +41,8 @@
 //                    return ResponseUtil.Error("Request fails", "User not found !", HttpStatusCode.BadRequest);
 //                }
 
-//                //Create ticket
-//                //tim ticket category 
+//                Create ticket
+//                tim ticket category
 //                IEnumerable<Category?> category = await _ticketCategoryRepository.Find(c => c.Id == post.CategoryId);
 
 //                if (category.Count() == 0)
@@ -53,7 +53,7 @@
 //                reqTicket.Status = TicketStatus.PENDING;
 //                await _ticketRepository.SaveAsync(reqTicket);
 
-//                // Commit transaction
+//                Commit transaction
 
 //                Post savedPost = _mapper.Map<Post>(post);
 //                savedPost.Status = false;
@@ -76,7 +76,7 @@
 //            {
 //                return ResponseUtil.Error("Request fails", "Post not found !", HttpStatusCode.BadRequest);
 //            }
-//            //result.Status = Post.Status;
+//            result.Status = Post.Status;
 //            await _postRespository.DeleteAsync(TicketId);
 //            return ResponseUtil.GetObject(result, "Post created successfully", HttpStatusCode.OK, 0);
 //        }

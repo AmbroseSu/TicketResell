@@ -13,6 +13,6 @@ public class TicketRequestDTO
     public bool IsDeleted { get; set; }
     public string? UserFullname { get; set; }
     public string? UserEmail { get; set; }
-    public int? UserId { get; set; }
+    public int UserId { get; set; }
     public int? TicketId { get; set; }
 }
