@@ -10,7 +10,7 @@ public class Category
     public int Id { get; set; }
     [StringLength(500)]
     public string? Name { get; set; }
-    public bool IsDeleted { get; set; }
+    public bool IsDeleted { get; set; } = false;
     
     public List<Ticket>? Tickets { get; set; }
 }
