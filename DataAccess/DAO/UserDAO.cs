@@ -147,6 +147,16 @@ public class UserDAO
                         && u.CreatedAt.Value.Month == month)
             .ToListAsync();
     }
+    
+    public async Task<List<User>> SearchUsersByEmailAndFullNameAsync(string search)
+    {
+        using var context = new TicketResellDbContext();
+        return await context.Users
+            .Where(u => EF.Functions.Like(u.Email, $"%{search}%") ||
+                        EF.Functions.Like(u.Fullname, $"%{search}%"))
+            .ToListAsync();
+    }
+
 
 
 }

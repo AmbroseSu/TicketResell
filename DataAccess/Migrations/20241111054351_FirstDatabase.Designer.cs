@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(TicketResellDbContext))]
-    [Migration("20241111032329_FirstDatabase")]
+    [Migration("20241111054351_FirstDatabase")]
     partial class FirstDatabase
     {
         /// <inheritdoc />
@@ -178,6 +178,30 @@ namespace DataAccess.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Feedback", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObject.ImageFeedback", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("FeedbackId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeedbackId");
+
+                    b.ToTable("ImageFeedback", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.ImageTicket", b =>
@@ -368,7 +392,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Post");
+                    b.ToTable("Post", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Ticket", b =>
@@ -692,6 +716,15 @@ namespace DataAccess.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("BusinessObject.ImageFeedback", b =>
+                {
+                    b.HasOne("BusinessObject.Feedback", "Feedback")
+                        .WithMany("ImageFeedbacks")
+                        .HasForeignKey("FeedbackId");
+
+                    b.Navigation("Feedback");
+                });
+
             modelBuilder.Entity("BusinessObject.ImageTicket", b =>
                 {
                     b.HasOne("BusinessObject.Ticket", "Ticket")
@@ -856,6 +889,11 @@ namespace DataAccess.Migrations
                     b.Navigation("Messages");
 
                     b.Navigation("UserChats");
+                });
+
+            modelBuilder.Entity("BusinessObject.Feedback", b =>
+                {
+                    b.Navigation("ImageFeedbacks");
                 });
 
             modelBuilder.Entity("BusinessObject.Order", b =>

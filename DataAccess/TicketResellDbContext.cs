@@ -20,11 +20,12 @@ public class TicketResellDbContext : DbContext
     public virtual DbSet<Chat> Chats { get; set; }
     public virtual DbSet<Feedback> Feedbacks { get; set; }
     public virtual DbSet<ImageTicket> ImageTickets { get; set; }
+    public virtual DbSet<ImageFeedback> ImageFeedbacks { get; set; }
     public virtual DbSet<Message> Messages { get; set; }
     public virtual DbSet<Order> Orders { get; set; }
     public virtual DbSet<OrderStatus> OrderStatuses { get; set; }
     public virtual DbSet<PlatformFee> PlatformFees { get; set; }
-    //public virtual DbSet<Post> Posts { get; set; }
+    public virtual DbSet<Post> Posts { get; set; }
     public virtual DbSet<Ticket> Tickets { get; set; }
     public virtual DbSet<TicketPostingQuota> TicketPostingQuotas { get; set; }
     public virtual DbSet<TicketRequest> TicketRequests { get; set; }
@@ -127,11 +128,23 @@ public class TicketResellDbContext : DbContext
             entity.Property(e => e.Rating);
             entity.Property(e => e.Context);
             entity.Property(e => e.IsDeleted);
+            
+            entity.HasMany(e => e.ImageFeedbacks)
+                .WithOne(e => e.Feedback)
+                .HasForeignKey(e => e.FeedbackId);
         });
 
         modelBuilder.Entity<ImageTicket>(entity =>
         {
             entity.ToTable("ImageTicket");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.ImageUrl);
+            entity.Property(e => e.IsDeleted);
+        });
+        
+        modelBuilder.Entity<ImageFeedback>(entity =>
+        {
+            entity.ToTable("ImageFeedback");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.ImageUrl);
             entity.Property(e => e.IsDeleted);
@@ -184,7 +197,7 @@ public class TicketResellDbContext : DbContext
                 .HasForeignKey(e => e.PlatformFeeId);
         });
 
-        /*modelBuilder.Entity<Post>(entity =>
+        modelBuilder.Entity<Post>(entity =>
         {
             entity.ToTable("Post");
             entity.HasKey(e => e.Id);
@@ -193,7 +206,7 @@ public class TicketResellDbContext : DbContext
             entity.Property(e => e.CreatedDate);
             entity.Property(e => e.Status);
             entity.Property(e => e.IsDeleted);
-        });*/
+        });
 
         modelBuilder.Entity<Ticket>(entity =>
         {
