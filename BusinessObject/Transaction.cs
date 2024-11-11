@@ -14,6 +14,7 @@ public class Transaction
     public PaymentMethod PaymentMethod { get; set; }
     public int? Promotion { get; set; }
     public bool Status { get; set; }
+    public int? Number {get; set;}
 
     public int? PlatformFeeId { get; set; }
     public int? UserId { get; set; }

@@ -317,6 +317,9 @@ namespace DataAccess.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<long?>("Price")
+                        .HasColumnType("bigint");
+
                     b.Property<int?>("Quantity")
                         .HasColumnType("integer");
 
@@ -488,6 +491,9 @@ namespace DataAccess.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("Number")
+                        .HasColumnType("integer");
 
                     b.Property<int>("PaymentMethod")
                         .HasColumnType("integer");

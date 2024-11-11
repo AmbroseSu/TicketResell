@@ -48,6 +48,7 @@ namespace DataAccess.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     Quantity = table.Column<int>(type: "integer", nullable: true),
+                    Price = table.Column<long>(type: "bigint", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -192,6 +193,7 @@ namespace DataAccess.Migrations
                     PaymentMethod = table.Column<int>(type: "integer", nullable: false),
                     Promotion = table.Column<int>(type: "integer", nullable: true),
                     Status = table.Column<bool>(type: "boolean", nullable: false),
+                    Number = table.Column<int>(type: "integer", nullable: true),
                     PlatformFeeId = table.Column<int>(type: "integer", nullable: true),
                     UserId = table.Column<int>(type: "integer", nullable: true),
                     TicketPostingQuotaId = table.Column<int>(type: "integer", nullable: true)

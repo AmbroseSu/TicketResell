@@ -176,6 +176,7 @@ public class TicketResellDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Name);
             entity.Property(e => e.Quantity);
+            entity.Property(e => e.Price);
             entity.Property(e => e.IsDeleted);
             
             entity.HasMany(e => e.Transactions)
@@ -256,6 +257,7 @@ public class TicketResellDbContext : DbContext
             entity.Property(e => e.TransactionDate);
             entity.Property(e => e.PaymentMethod);
             entity.Property(e => e.Promotion);
+            entity.Property(e => e.Number);
             entity.Property(e => e.Status);
             
             entity.HasOne(e => e.TicketPostingQuota)
