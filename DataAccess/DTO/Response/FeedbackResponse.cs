@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BusinessObject;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -16,5 +17,7 @@ namespace DataAccess.DTO.Response
         public int? TicketId { get; set; }
         public int? UserId { get; set; }
         public int? PostId { get; set; }
+        public List<ImageFeedbackDTO> imgs { get; set; }
+
     }
 }

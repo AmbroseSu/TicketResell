@@ -27,8 +27,8 @@ namespace Repository.Impl
 
         public async Task<IEnumerable<ImageTicket>> GetAllAsync() => await BaseDAO<ImageTicket>.Instance.GetAllAsync();
 
-        public async Task SaveAsync(ImageTicket category) => await BaseDAO<ImageTicket>.Instance.SaveAsync(category);
+        public async Task SaveAsync(ImageTicket img) => await BaseDAO<ImageTicket>.Instance.SaveAsync(img);
 
-        public async Task UpdateAsync(ImageTicket category) => await BaseDAO<ImageTicket>.Instance.UpdateAsync(category);
+        public async Task UpdateAsync(ImageTicket img) => await BaseDAO<ImageTicket>.Instance.UpdateAsync(img);
     }
 }

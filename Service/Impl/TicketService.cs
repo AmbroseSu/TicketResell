@@ -35,7 +35,7 @@ namespace Service.Impl
             _imageTicketRepository = imageTicketRepository;
             _userRepository = userRepository;
         }
-        /*public async Task<ResponseDTO> CreateTicket(NewTicketRequest ticket)
+        public async Task<ResponseDTO> CreateTicket(NewTicket ticket)
         {
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
@@ -50,15 +50,13 @@ namespace Service.Impl
                 //tim ticket category
                 IEnumerable<Category?> category = await _ticketCategoryRepository.Find(c => c.Id == ticket.CategoryId);
 
-                if (category.Count() == 0)
+                if (category == null)
                 {
                     return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
                 }
+
                 Ticket reqTicket = _mapper.Map<Ticket>(ticket);
                 reqTicket.Status = TicketStatus.PENDING;
-                reqTicket.IsDeleted = false;
-                reqTicket.PostTitle = ticket.Title;
-                reqTicket.PostDescription = ticket.Description;
                 string format = "dd/MM/yyyy HH:mm";
 
                 DateTime expiredDate = DateTime.ParseExact(ticket.ExpirationDate, format, CultureInfo.InvariantCulture);
@@ -66,7 +64,6 @@ namespace Service.Impl
                 DateTime utcDateTime = expiredDate.ToUniversalTime();
 
                 reqTicket.ExpirationDate = utcDateTime;
-                reqTicket.CreateDate = DateTime.UtcNow;
                 await _ticketRepository.SaveAsync(reqTicket);
 
                 //Commit transaction
@@ -245,7 +242,8 @@ namespace Service.Impl
             {
                 List<ImageTicketDTO> imgList = _mapper.Map<List<ImageTicketDTO>>(imageTickets);
                 ticket.imageTicketDTOs = imgList;
-            } else
+            }
+            else
             {
                 ticket.imageTicketDTOs = null;
 
@@ -260,7 +258,7 @@ namespace Service.Impl
 
             //Duyệt qua list ticket lấy ticket info tương ứng
 
-            foreach (Ticket ticket in result)
+                foreach (Ticket ticket in result)
             {
 
                 Category? cat = (await _ticketCategoryRepository.Find(c => c.Id == ticket.CategoryId)).SingleOrDefault();
@@ -284,7 +282,8 @@ namespace Service.Impl
                 {
                     List<ImageTicketDTO> imgList = _mapper.Map<List<ImageTicketDTO>>(imageTickets);
                     ticketResponse.imageTicketDTOs = imgList;
-                } else
+                }
+                else
                 {
                     ticketResponse.imageTicketDTOs = null;
                 }
@@ -359,7 +358,7 @@ namespace Service.Impl
             }
 
             return ResponseUtil.GetObject("Request accepted", "Image updated successfully", HttpStatusCode.Accepted, 0);
-        }*/
+        }
     }
 }
 

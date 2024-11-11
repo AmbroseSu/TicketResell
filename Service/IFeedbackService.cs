@@ -18,5 +18,6 @@ namespace Service
         Task<ResponseDTO> GetFeedbackByUserId(int id, int page, int limit);
         Task<ResponseDTO> AddFeedback(FeedbackDTO feedback);
         Task<ResponseDTO> DeleteFeedback(int id);
+        Task<ResponseDTO> UploadImg(List<String> imgs, int feedbackId);
     }
 }
