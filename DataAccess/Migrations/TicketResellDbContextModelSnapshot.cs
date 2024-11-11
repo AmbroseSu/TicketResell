@@ -162,10 +162,10 @@ namespace DataAccess.Migrations
                     b.Property<int?>("Rating")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("TicketId")
+                    b.Property<int>("TicketId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -403,9 +403,6 @@ namespace DataAccess.Migrations
                     b.Property<int?>("CategoryId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<DateTime?>("ExpirationDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -415,14 +412,6 @@ namespace DataAccess.Migrations
                     b.Property<string>("Name")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
-
-                    b.Property<string>("PostDescription")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PostTitle")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<float?>("Price")
                         .HasColumnType("real");
@@ -702,11 +691,15 @@ namespace DataAccess.Migrations
                 {
                     b.HasOne("BusinessObject.Ticket", "Ticket")
                         .WithMany("Feedbacks")
-                        .HasForeignKey("TicketId");
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("BusinessObject.User", "User")
                         .WithMany("Feedbacks")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Ticket");
 
