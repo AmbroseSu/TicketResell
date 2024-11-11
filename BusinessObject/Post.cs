@@ -16,8 +16,6 @@ public class Post
     public DateTime? CreatedDate { get; set; } = DateTime.Now.ToUniversalTime();
     public bool IsDeleted { get; set; } = false;
     public PostStatus Status { get; set; }
-    public int? UserId { get; set; }
     public int? TicketId { get; set; }
-    public User? User { get; set; }
     public Ticket? Ticket { get; set; }
 }
