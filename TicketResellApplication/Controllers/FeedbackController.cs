@@ -58,10 +58,17 @@ namespace TicketResellApplication.Controllers
             return await _feedbackService.AddFeedback(feedback);
         }
 
-        [HttpDelete("remove")]
+        [HttpPut("remove")]
         public async Task<ResponseDTO> DeleteFeedback([FromQuery, Required] int id)
         {
             return await _feedbackService.DeleteFeedback(id);
         }
+
+        [HttpPut("img")]
+        public async Task<ResponseDTO> UpdateFeedbackImg([FromBody] List<String> imgList, [FromQuery, Required] int feedbackId)
+        {
+            return await _feedbackService.UploadImg(imgList, feedbackId);
+        }
+
     }
 }

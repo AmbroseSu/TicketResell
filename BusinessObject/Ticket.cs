@@ -17,7 +17,7 @@ public class Ticket
     [StringLength(1000)]
     public string? Venue { get; set; }
     public TicketStatus Status { get; set; }
-    public bool IsDeleted { get; set; }
+    public bool IsDeleted { get; set; } = false;
     
     //public int? TicketRequestId { get; set; }
     public int? CategoryId { get; set; }

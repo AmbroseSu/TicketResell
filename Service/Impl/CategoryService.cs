@@ -31,7 +31,7 @@ namespace Service.Impl
             return ResponseUtil.GetCollection(data, "current categories retrieved sucessfully", HttpStatusCode.OK, result.Count(), page, limit, result.Count());
 
         }
-        
+
         public async Task<ResponseDTO> getAllCategories(int page, int limit)
         {
             IEnumerable<Category?> result = await _categoryRepository.GetAllAsync();
@@ -40,7 +40,8 @@ namespace Service.Impl
 
         }
 
-        public async Task<ResponseDTO> CreateCategory(string categoryName) {
+        public async Task<ResponseDTO> CreateCategory(string categoryName)
+        {
 
             Category category = new Category()
             {
@@ -49,7 +50,7 @@ namespace Service.Impl
             };
 
             await _categoryRepository.SaveAsync(category);
-            return ResponseUtil.GetObject("New category accepted","Category created successfully", HttpStatusCode.OK, 0);
+            return ResponseUtil.GetObject("New category accepted", "Category created successfully", HttpStatusCode.OK, 0);
         }
 
         public async Task<ResponseDTO> GetCategory(int id)
@@ -61,7 +62,22 @@ namespace Service.Impl
                 return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
             }
 
-            return ResponseUtil .GetObject(result, "Category retrieved successfully", HttpStatusCode.OK, 0);
+            return ResponseUtil.GetObject(result, "Category retrieved successfully", HttpStatusCode.OK, 0);
+        }
+
+        public async Task<ResponseDTO> SearchCategory(string searchTerm)
+        {
+            IEnumerable<Category?> categories = await _categoryRepository.Find(c => c.Name.Contains(searchTerm.ToLower().Trim()));
+            List<CategoryDTO> result = new List<CategoryDTO>();
+            if (categories.Count() != 0)
+            {
+                foreach (Category item in categories)
+                {
+                    result.Add(_mapper.Map<CategoryDTO>(item));
+                }
+            }
+
+            return ResponseUtil.GetCollection(result, "Categories retrieved successfully", HttpStatusCode.OK, categories.Count(), 1, categories.Count(), categories.Count());
         }
     }
 }

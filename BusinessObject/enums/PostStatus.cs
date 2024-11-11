@@ -9,8 +9,7 @@ namespace BusinessObject.enums
     public enum PostStatus
     {
         PENDING,
-        OPENING,
-        REJECTED,
+        ACTIVE,
         CLOSED
     }
 
@@ -21,8 +20,7 @@ namespace BusinessObject.enums
             return status.ToString().ToLowerInvariant() switch
             {
                 "pending" => "PENDING",
-                "opening" => "OPENING",
-                "rejected" => "REJECTED",
+                "active" => "ACTIVE",
                 "closed" => "CLOSED",
                 _ => status.ToString()
             };

@@ -3,8 +3,7 @@
 public enum TicketStatus
 {
     PENDING,
-    VERIFIED,
-    REJECTED,
+    ACTIVE,
     CLOSED
 }
 

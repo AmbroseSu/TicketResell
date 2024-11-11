@@ -22,12 +22,17 @@ namespace Service.Impl
         private readonly IUserRepository _userRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
-        public FeedbackService(ITicketRepository ticketRepository, IFeedbackRepository feedbackRepository, IPostRepository postRepository, IUserRepository userRepository)
+        private readonly IImageFeedbackRepository _imageFeedbackRepository;
+
+        public FeedbackService(ITicketRepository ticketRepository, IFeedbackRepository feedbackRepository, IPostRepository postRepository, IUserRepository userRepository, IOrderRepository orderRepository, IMapper mapper, IImageFeedbackRepository imageFeedbackRepository)
         {
             _ticketRepository = ticketRepository;
             _feedbackRepository = feedbackRepository;
             _postRepository = postRepository;
             _userRepository = userRepository;
+            _orderRepository = orderRepository;
+            _mapper = mapper;
+            _imageFeedbackRepository = imageFeedbackRepository;
         }
 
         public async Task<ResponseDTO> AddFeedback(FeedbackDTO feedback)
@@ -198,6 +203,18 @@ namespace Service.Impl
                 }
 
                 FeedbackResponse feedback = _mapper.Map<FeedbackResponse>(item);
+
+                List<ImageFeedback?> imgs = (await _imageFeedbackRepository.Find(i => i.FeedbackId == feedback.Id)).ToList();
+
+                if (imgs.Count != 0)
+                {
+                    List<ImageFeedbackDTO> imgList = _mapper.Map<List<ImageFeedbackDTO>>(imgs);
+                    feedback.imgs = imgList;
+                }
+                else
+                {
+                    feedback.imgs = null;
+                }
                 feedback.PostId = post.Id;
                 responseData.Add(feedback);
             }
@@ -229,7 +246,19 @@ namespace Service.Impl
                 return ResponseUtil.Error("Request fails", "Post not found", HttpStatusCode.BadRequest);
             }
 
+            List<ImageFeedback?> imgs = (await _imageFeedbackRepository.Find(i => i.FeedbackId == feedback.Id)).ToList();
             FeedbackResponse data = _mapper.Map<FeedbackResponse>(feedback);
+
+            if (imgs.Count != 0)
+            {
+                List<ImageFeedbackDTO> imgList = _mapper.Map<List<ImageFeedbackDTO>>(imgs);
+                data.imgs = imgList;
+            }
+            else
+            {
+                data.imgs = null;
+            }
+
             data.PostId = post.Id;
 
             return ResponseUtil.GetObject(data, "Feedback retrieved successfully", HttpStatusCode.OK, 1);
@@ -245,6 +274,38 @@ namespace Service.Impl
             }
 
             return await GetFeedbackToResponse(feedback);
+        }
+
+        public async Task<ResponseDTO> UploadImg(List<String> imgs, int feedbackId)
+        {
+
+            Feedback? feedback = (await _feedbackRepository.Find(t => t.Id == feedbackId)).SingleOrDefault();
+
+            if (feedback == null)
+            {
+                return ResponseUtil.Error("Request fails", "Feedback not found !", HttpStatusCode.BadRequest);
+            }
+
+            List<ImageFeedback?> images = (await _imageFeedbackRepository.Find(i => i.FeedbackId == feedbackId)).ToList();
+
+            if (images.Count != 0)
+            {
+                return ResponseUtil.Error("Request fails", "Image already exists !", HttpStatusCode.BadRequest);
+            }
+
+            foreach (string imgUrl in imgs)
+            {
+                ImageFeedback image = new ImageFeedback()
+                {
+                    ImageUrl = imgUrl,
+                    FeedbackId = feedbackId
+
+                };
+                await _imageFeedbackRepository.SaveAsync(image);
+            }
+
+            return ResponseUtil.GetObject("Request accepted", "Image updated successfully", HttpStatusCode.Accepted, 0);
+
         }
     }
 
