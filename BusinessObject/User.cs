@@ -38,8 +38,8 @@ public class User
     public List<Transaction>? Transactions { get; set; }
     public List<Feedback>? Feedbacks { get; set; }
     public List<Address>? Addresses { get; set; }
-    public List<Post>? Posts { get; set; }
-    //public List<Ticket>? Tickets { get; set; }
+    //public List<Post>? Posts { get; set; }
+    public List<Ticket>? Tickets { get; set; }
     public List<TicketRequest>? TicketRequests { get; set; }
     public List<Order>? Orders { get; set; }
     public List<Message>? Messages { get; set; }

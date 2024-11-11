@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(TicketResellDbContext))]
-    [Migration("20241111083741_FirstDatabase")]
+    [Migration("20241111102719_FirstDatabase")]
     partial class FirstDatabase
     {
         /// <inheritdoc />
@@ -383,14 +383,9 @@ namespace DataAccess.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("TicketId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Post", (string)null);
                 });
@@ -425,6 +420,9 @@ namespace DataAccess.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Venue")
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
@@ -432,6 +430,8 @@ namespace DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Ticket", (string)null);
                 });
@@ -778,13 +778,7 @@ namespace DataAccess.Migrations
                         .WithMany("Posts")
                         .HasForeignKey("TicketId");
 
-                    b.HasOne("BusinessObject.User", "User")
-                        .WithMany("Posts")
-                        .HasForeignKey("UserId");
-
                     b.Navigation("Ticket");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BusinessObject.Ticket", b =>
@@ -793,7 +787,13 @@ namespace DataAccess.Migrations
                         .WithMany("Tickets")
                         .HasForeignKey("CategoryId");
 
+                    b.HasOne("BusinessObject.User", "User")
+                        .WithMany("Tickets")
+                        .HasForeignKey("UserId");
+
                     b.Navigation("Category");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BusinessObject.TicketPostingQuota", b =>
@@ -931,9 +931,9 @@ namespace DataAccess.Migrations
 
                     b.Navigation("Orders");
 
-                    b.Navigation("Posts");
-
                     b.Navigation("TicketRequests");
+
+                    b.Navigation("Tickets");
 
                     b.Navigation("Transactions");
 

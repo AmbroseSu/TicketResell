@@ -238,6 +238,9 @@ public class TicketResellDbContext : DbContext
             entity.HasMany(e => e.TicketRequest)
                 .WithOne(e => e.Ticket)
                 .HasForeignKey(e => e.TicketId);
+            entity.HasMany(e => e.Posts)
+                .WithOne(e => e.Ticket)
+                .HasForeignKey(e => e.TicketId);
             //entity.HasOne(e => e.TicketRequest)
             //    .WithOne(e => e.Ticket)
             //    .HasForeignKey<TicketRequest>(e => e.TicketId);
@@ -307,12 +310,12 @@ public class TicketResellDbContext : DbContext
             entity.HasMany(e => e.Addresses)
                 .WithOne(e => e.User)
                 .HasForeignKey(e => e.UserId);
-            entity.HasMany(e => e.Posts)
+            /*entity.HasMany(e => e.Posts)
                 .WithOne(e => e.User)
-                .HasForeignKey(e => e.UserId);            
-            /*entity.HasMany(e => e.Tickets)
+                .HasForeignKey(e => e.UserId);   */         
+            entity.HasMany(e => e.Tickets)
                 .WithOne(e => e.User)
-                .HasForeignKey(e => e.UserId);*/
+                .HasForeignKey(e => e.UserId);
             entity.HasMany(e => e.TicketRequests)
                 .WithOne(e => e.User)
                 .HasForeignKey(e => e.UserId);
