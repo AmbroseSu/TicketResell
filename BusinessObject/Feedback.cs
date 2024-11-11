@@ -13,8 +13,8 @@ public class Feedback
     [StringLength(2000)]
     public string? Context { get; set; }
     public bool IsDeleted { get; set; } = false;
-    public int? TicketId { get; set; }
-    public int? UserId { get; set; }
+    public int TicketId { get; set; }
+    public int UserId { get; set; }
     public Ticket? Ticket { get; set; }
     public User? User { get; set; }
     

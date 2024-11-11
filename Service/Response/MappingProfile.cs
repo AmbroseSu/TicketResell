@@ -28,6 +28,8 @@ public class MappingProfile : Profile
         //CreateMap<Post, PostDTO>();
         CreateMap<Order, OrderDTO>();
         CreateMap<OrderDTO, Order>();
+        CreateMap<Feedback, FeedbackResponse>();
+        CreateMap<FeedbackDTO, Feedback>();
         
 
     }

@@ -156,7 +156,7 @@ public class UserService : IUserService
     {
         try
         {
-            User? user = await _userRepository.FindUserByIdAsync(userId);
+            User? user = await _userRepository.FindUserByIdAsync((int)userId);
             if (user is null)
             {
                 return ResponseUtil.Error("User not found", "Faild", HttpStatusCode.NotFound);

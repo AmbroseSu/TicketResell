@@ -45,7 +45,7 @@ public class TicketRequestService : ITicketRequestService
                 return ResponseUtil.Error("Request fails", "Ticket Request has exists !", HttpStatusCode.BadRequest);
             }
             Ticket? ticket = (await _ticketRepository.Find(t => t.Id == requestTicket.TicketId)).SingleOrDefault();
-            User? user = await _userRepository.FindUserByIdAsync((long)requestTicket.UserId!);
+            User? user = await _userRepository.FindUserByIdAsync(requestTicket.UserId!);
             if (ticket == null || user == null)
             {
                 return ResponseUtil.Error("Request fails", "Ticket or User not found !", HttpStatusCode.BadRequest);
@@ -149,7 +149,7 @@ public class TicketRequestService : ITicketRequestService
             orderStatus.OrderId = order.Id;
             await _orderStatusRepository.SaveAsync(orderStatus);
             TicketRequestDTO ticketRequestDto = _mapper.Map<TicketRequestDTO>(ticketRequest);
-            User? user = await _userRepository.FindUserByIdAsync((long)ticketRequestDto.UserId!);
+            User? user = await _userRepository.FindUserByIdAsync(ticketRequestDto.UserId);
             ticketRequestDto.UserEmail = user.Email;
             ticketRequestDto.UserFullname = user.Fullname;
             return ResponseUtil.GetObject(ticketRequestDto, "Ticket Request created successfully", HttpStatusCode.OK, 0);
@@ -170,7 +170,7 @@ public class TicketRequestService : ITicketRequestService
         try
         {
             TicketRequest ticketRequest = await _ticketRequestRepository.FindByIdAsync(id);
-            User? user = await _userRepository.FindUserByIdAsync((long)ticketRequest.UserId);
+            User? user = await _userRepository.FindUserByIdAsync(ticketRequest.UserId);
             TicketRequestDTO ticketRequestDto = _mapper.Map<TicketRequestDTO>(ticketRequest);
             ticketRequestDto.UserFullname = user.Fullname;
             ticketRequestDto.UserEmail = user.Email;
@@ -241,7 +241,7 @@ public class TicketRequestService : ITicketRequestService
         List<TicketRequestDTO> ticketRequestDtos = new List<TicketRequestDTO>();
         foreach (var ticketRequest in ticketRequests)
         {
-            User? user = await _userRepository.FindUserByIdAsync((long)ticketRequest.UserId);
+            User? user = await _userRepository.FindUserByIdAsync(ticketRequest.UserId);
             if (user != null)
             {
                 TicketRequestDTO ticketRequestDto = _mapper.Map<TicketRequestDTO>(ticketRequest);

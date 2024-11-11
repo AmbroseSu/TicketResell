@@ -1,5 +1,6 @@
 ﻿using BusinessObject;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace DataAccess.DAO;
 
@@ -105,6 +106,19 @@ public class OrderDAO : IBaseDAO<Order>
         try
         {
             return await _context.Orders.Include(o => o.OrderStatuses).Where(o => o.UserId == userId).ToListAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    public async Task<IEnumerable<Order?>> Find(Expression<Func<Order, bool>> predicate)
+    {
+        try
+        {
+            return await _context.Orders.Where(predicate).ToListAsync();
         }
         catch (Exception e)
         {

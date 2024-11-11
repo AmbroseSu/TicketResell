@@ -49,7 +49,7 @@ public class OrderService : IOrderService
     {
         try
         {
-            User? user = await _userRepository.FindUserByIdAsync(userId);
+            User? user = await _userRepository.FindUserByIdAsync((int)userId);
             if (user == null)
             {
                 return ResponseUtil.Error("Request fails", "User not found !", HttpStatusCode.BadRequest);

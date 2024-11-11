@@ -5,6 +5,7 @@ using DataAccess.DTO.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,12 +13,7 @@ namespace Repository.Impl
 {
     public class FeedbackRepository : IFeedbackRepository
     {
-        public Task<FeedbackResponse> AddFeedback(FeedbackDTO feedback)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task DeleteFeedback(int id)
+        public async Task DeleteAsync(int id)
         {
             Feedback? result = (await BaseDAO<Feedback>.Instance.Find(c => c.Id == id && c.IsDeleted == false)).SingleOrDefault();
 
@@ -29,24 +25,24 @@ namespace Repository.Impl
             }
         }
 
-        public Task<IEnumerable<FeedbackResponse>> GetAllFeedbacks()
+        public async Task<IEnumerable<Feedback?>> Find(Expression<Func<Feedback, bool>> predicate)
         {
-            throw new NotImplementedException();
+           return await BaseDAO<Feedback>.Instance.Find(predicate);
         }
 
-        public Task<FeedbackResponse> GetFeedbackById(int id)
+        public async Task<IEnumerable<Feedback>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await BaseDAO<Feedback>.Instance.GetAllAsync();
         }
 
-        public Task<IEnumerable<FeedbackResponse>> GetFeedBacksByPostId()
+        public async Task SaveAsync(Feedback feedback)
         {
-            throw new NotImplementedException();
+            await BaseDAO<Feedback>.Instance.SaveAsync(feedback);
         }
 
-        public Task<IEnumerable<FeedbackResponse>> GetFeedBacksByTicketId()
+        public async Task UpdateAsync(Feedback feedback)
         {
-            throw new NotImplementedException();
+            await BaseDAO<Feedback>.Instance.UpdateAsync(feedback);
         }
     }
 }
