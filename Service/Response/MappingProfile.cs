@@ -16,7 +16,7 @@ public class MappingProfile : Profile
         CreateMap<UserDTO, User>();
         CreateMap<Ticket, TicketDTO>();
         CreateMap<TicketDTO, Ticket>();
-        CreateMap<NewTicketRequest, Ticket>();
+        CreateMap<NewTicket, Ticket>();
         CreateMap<updateTicketRequest, Ticket>();
         //CreateMap<NewPostRequest, Post>();
         CreateMap<TicketRequest, RequestTicket>();
@@ -24,12 +24,12 @@ public class MappingProfile : Profile
         CreateMap<TicketRequest, TicketRequestDTO>();
         CreateMap<TicketRequestDTO, TicketRequest>();
         CreateMap<ImageTicket, ImageTicketDTO>();
-        CreateMap<NewTicketRequest, Ticket>();
         //CreateMap<Post, PostDTO>();
         CreateMap<Order, OrderDTO>();
         CreateMap<OrderDTO, Order>();
         CreateMap<Feedback, FeedbackResponse>();
         CreateMap<FeedbackDTO, Feedback>();
+        CreateMap<ImageFeedback, ImageFeedbackDTO>();
         
 
     }

@@ -9,7 +9,7 @@ public class ImageFeedback
     [Key]
     public int Id { get; set; }
     public string? ImageUrl { get; set; }
-    public bool IsDeleted { get; set; }
+    public bool IsDeleted { get; set; } = false;
     
     public int? FeedbackId { get; set; }
     public Feedback? Feedback { get; set; }

@@ -17,7 +17,6 @@ public class Feedback
     public int UserId { get; set; }
     public Ticket? Ticket { get; set; }
     public User? User { get; set; }
-    
     public List<ImageFeedback>? ImageFeedbacks { get; set; }
     
 }
