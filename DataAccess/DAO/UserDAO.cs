@@ -1,4 +1,5 @@
 ﻿using BusinessObject;
+using BusinessObject.enums;
 using BusinessObject.Enums;
 using Microsoft.EntityFrameworkCore;
 
@@ -158,5 +159,12 @@ public class UserDAO
     }
 
 
+    public async Task<List<User>> FindByGenderAsync(Gender gender)
+    {
+        using var context = new TicketResellDbContext();
+        return await context.Users
+            .Where(u => u.Gender == gender)
+            .ToListAsync();
+    }
 
 }

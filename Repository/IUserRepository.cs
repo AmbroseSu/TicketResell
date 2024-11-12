@@ -1,4 +1,5 @@
 ﻿using BusinessObject;
+using BusinessObject.enums;
 using BusinessObject.Enums;
 using DataAccess.DAO;
 
@@ -21,5 +22,6 @@ public interface IUserRepository
     Task<List<User>> FindAllUsersAsync();
     Task<List<User>> FindAllCustomersByDateAndYearAsync(int month, int year);
     Task<List<User>> SearchUsersByEmailAndFullNameAsync(string search);
+    Task<List<User>> FindByGenderAsync(Gender gender);
 
 }
