@@ -14,6 +14,7 @@ using Service.Response;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Transactions;
 using static System.Formats.Asn1.AsnWriter;
 
@@ -66,6 +67,11 @@ namespace Service.Impl
             if (category == null)
             {
                 return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
+            }
+
+            if (!Regex.IsMatch(ticket.Name.Trim(), @"^[a-zA-Z 1-9]+$"))
+            {
+                return ResponseUtil.Error("Request fails", "Ticket name must contain only letters or number", HttpStatusCode.BadRequest);
             }
 
             Ticket reqTicket = _mapper.Map<Ticket>(ticket);

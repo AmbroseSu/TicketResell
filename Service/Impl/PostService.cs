@@ -139,7 +139,8 @@ namespace Service.Impl
 
             }
 
-            return await GetAllPostInfo(result.ToList(), page, limit);
+            //return await GetAllPostInfo(result.ToList(), page, limit);
+            return null;
 
         }
 
@@ -174,27 +175,27 @@ namespace Service.Impl
         //    return ResponseUtil.GetObject(result, "Post verified successfully", HttpStatusCode.OK, 0);
         //}
 
-        private async Task<ResponseDTO> GetAllPostInfo(List<Post?> result, int page, int limit)
-        {
-            List<PostResponse?> responseData = new List<PostResponse?>();
+        //private async Task<ResponseDTO> GetAllPostInfo(List<Post?> result, int page, int limit)
+        //{
+        //    List<PostResponse?> responseData = new List<PostResponse?>();
 
-            foreach (Post item in result)
-            {
-                PostElement postElement = new PostElement();
+        //    foreach (Post item in result)
+        //    {
+        //        PostElement postElement = new PostElement();
 
-                Ticket? ticket = (await _ticketRepository.Find(t => t.Id == item.TicketId)).SingleOrDefault();
+        //        Ticket? ticket = (await _ticketRepository.Find(t => t.Id == item.TicketId)).SingleOrDefault();
 
-                if (ticket == null)
-                {
-                    return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
-                }
+        //        if (ticket == null)
+        //        {
+        //            return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
+        //        }
 
 
-            }
+        //    }
 
-            List<PostResponse> data = responseData.Skip((page - 1) * limit).Take(limit);
-            return ResponseUtil.GetCollection(data, "All posts retrieved sucessfully", HttpStatusCode.OK, result.Count(), page, limit, result.Count());
-        }
+        //    List<PostResponse> data = responseData.Skip((page - 1) * limit).Take(limit);
+        //    return ResponseUtil.GetCollection(data, "All posts retrieved sucessfully", HttpStatusCode.OK, result.Count(), page, limit, result.Count());
+        //}
     }
 }
 

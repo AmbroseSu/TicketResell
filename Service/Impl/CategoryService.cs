@@ -46,7 +46,7 @@ namespace Service.Impl
 
             if (categoryName == null || !Regex.IsMatch(categoryName.Trim(), @"^[a-zA-Z 1-9]+$"))
             {
-                return ResponseUtil.Error("Request fails", "Category name must contain only letters", HttpStatusCode.BadRequest);
+                return ResponseUtil.Error("Request fails", "Category name must contain only letters or number", HttpStatusCode.BadRequest);
             }
 
             Category? category = (await _categoryRepository.Find(c => c.Name.ToLower().Equals(categoryName.Trim().ToLower()))).SingleOrDefault();
