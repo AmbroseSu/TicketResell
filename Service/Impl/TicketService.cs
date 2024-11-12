@@ -69,11 +69,6 @@ namespace Service.Impl
                 return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
             }
 
-            if (!Regex.IsMatch(ticket.Name.Trim(), @"^[a-zA-Z 1-9]+$"))
-            {
-                return ResponseUtil.Error("Request fails", "Ticket name must contain only letters or number", HttpStatusCode.BadRequest);
-            }
-
             Ticket reqTicket = _mapper.Map<Ticket>(ticket);
             reqTicket.Status = TicketStatus.PENDING;
             string format = "dd/MM/yyyy HH:mm";

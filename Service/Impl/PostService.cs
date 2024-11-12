@@ -190,6 +190,24 @@ namespace Service.Impl
         //            return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
         //        }
 
+        //        Category? category = (await _ticketCategoryRepository.Find(c => c.Id == ticket.CategoryId)).SingleOrDefault();
+
+        //        if (category == null)
+        //        {
+        //            return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
+        //        }
+
+        //        User? user = await _userRepository.FindUserByIdAsync(ticket.UserId);
+        //        if (user == null)
+        //        {
+        //            return ResponseUtil.Error("Request fails", "User not found !", HttpStatusCode.BadRequest);
+        //        }
+
+        //        //IEnumerable<ImageTicket> imageTickets = (await _ticketRepository.FindImageTicket(t => t.TicketId == ticket.Id));
+
+        //        List<ImageTicketDTO> imageTicketDTOs = new List<ImageTicketDTO>();
+
+
 
         //    }
 
