@@ -131,7 +131,29 @@ namespace TicketResellApplication.Controllers
             
         }
         
+        [HttpPost("check-email-forgot-password")]
+        public async Task<ResponseDTO> CheckEmailForgotPasswordAsync([FromQuery] string email)
+        {
+            return await _authenticationService.CheckEmailForgotPasswordAsync(email.ToLower());
+        }
         
+        [HttpPost("validate-email-forgot-password")]
+        public async Task<ResponseDTO> ValidateEmailForgotPasswordAsync([FromQuery] string token, [FromQuery] int id)
+        {
+            return await _authenticationService.VerifyEmailForgotPasswordAsync(token, id);
+        }
+        
+        [HttpPost("change-forgot-password")]
+        public async Task<ResponseDTO> ChangeForgotPasswordAsync([FromQuery] string email, [FromQuery] string password)
+        {
+            return await _authenticationService.ChangePasswordForgotPasswordAsync(email.ToLower(), password);
+        }
+        
+        [HttpPost("resend-otp-email-forgot-password")]
+        public async Task<ResponseDTO> ResetCheckEmailForgotPasswordAsync([FromQuery] string email, [FromQuery] int id)
+        {
+            return await _authenticationService.ResetVerifyEmailForgotPasswordAsync(email.ToLower(), id);
+        }
         
     }
 }
