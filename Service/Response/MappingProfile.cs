@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Globalization;
+using AutoMapper;
 using BusinessObject;
 using DataAccess.DTO;
 using DataAccess.DTO.Request;
@@ -16,7 +17,10 @@ public class MappingProfile : Profile
         CreateMap<UserDTO, User>();
         CreateMap<Ticket, TicketDTO>();
         CreateMap<TicketDTO, Ticket>();
-        CreateMap<NewTicket, Ticket>();
+        //CreateMap<NewTicket, Ticket>();
+        CreateMap<NewTicket, Ticket>()
+            .ForMember(dest => dest.ExpirationDate, opt => opt.MapFrom(src => 
+                DateTime.ParseExact(src.ExpirationDate, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture)));
         CreateMap<updateTicketRequest, Ticket>();
         CreateMap<NewPostRequest, Post>();
         CreateMap<TicketRequest, RequestTicket>();

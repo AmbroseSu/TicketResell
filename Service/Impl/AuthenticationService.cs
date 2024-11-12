@@ -286,6 +286,7 @@ public class AuthenticationService : IAuthenticationService
                     user.Email = email;
                     user.Role = Role.CUSTOMER;
                     user.IsEnabled = true;
+                    user.IsDeleted = false;
                     await _userRepository.SaveAsync(user);
                 }
                 else
@@ -345,4 +346,40 @@ public class AuthenticationService : IAuthenticationService
                 return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
             }
         }
+        
+        
+        public async Task<ResponseDTO> SaveInfoGoogle(SignUpGoogle signUpGoogle)
+        {
+            try
+            {
+                User? user = await _userRepository.FindUserByEmailAsync(signUpGoogle.Email);
+                if (user == null)
+                {
+                    return ResponseUtil.Error("Email not exist", "Failed", HttpStatusCode.BadRequest);
+                }
+
+                if (user.Fullname == null &&
+                    user.PhoneNumber == null &&
+                    user.Address == null)
+                {
+                    user.Fullname = signUpGoogle.Fullname;
+                    user.PhoneNumber = signUpGoogle.PhoneNumber;
+                    user.Address = signUpGoogle.Address;
+                    user.Gender = signUpGoogle.Gender;
+                    user.Image = signUpGoogle.Image;
+                    user.FcmToken = signUpGoogle.FcmToken;
+                }
+                
+                var result = _mapper.Map<UpsertUserDTO>(user);
+                await _userRepository.UpdateAsync(user);
+                return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, 0);
+            }
+            catch (Exception ex)
+            {
+                return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
+            }
+            
+        }
+        
+        
 }

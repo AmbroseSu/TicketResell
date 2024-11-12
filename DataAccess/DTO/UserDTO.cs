@@ -15,7 +15,7 @@ public class UserDTO
     public string Image { get; set; }
     public Role Role { get; set; }
     public string FcmToken { get; set; }
-    public bool IsDelete { get; set; }
+    public bool IsDeleted { get; set; }
     
     public List<int> DeliveryIds { get; set; }
     public List<int> OrdersIds { get; set; }
@@ -28,7 +28,7 @@ public class UserDTO
     {
     }
 
-    public UserDTO(int id, string fullname, string address, string email, string phoneNumber, string status, Gender gender, string image, Role role, string fcmToken, bool isDelete, List<int> deliveryIds, List<int> ordersIds, List<int> returnsIds, List<int> messagesIds, List<int> userChatsIds, int cartId)
+    public UserDTO(int id, string fullname, string address, string email, string phoneNumber, string status, Gender gender, string image, Role role, string fcmToken, bool isDeleted, List<int> deliveryIds, List<int> ordersIds, List<int> returnsIds, List<int> messagesIds, List<int> userChatsIds, int cartId)
     {
         Id = id;
         Fullname = fullname;
@@ -40,7 +40,7 @@ public class UserDTO
         Image = image;
         Role = role;
         FcmToken = fcmToken;
-        IsDelete = isDelete;
+        IsDeleted = isDeleted;
         DeliveryIds = deliveryIds;
         OrdersIds = ordersIds;
         ReturnsIds = returnsIds;

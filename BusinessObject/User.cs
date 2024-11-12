@@ -30,8 +30,8 @@ public class User
     public DateTime? CreatedAt { get; set; }
     public int? Points { get; set; }
     public bool Status { get; set; }
-    public bool IsDeleted { get; set; } = false;
-    public bool IsEnabled { get; set; } = false;
+    public bool IsDeleted { get; set; }
+    public bool IsEnabled { get; set; }
     
     public int? CartId { get; set; }
     public int? VerificationTokenId { get; set; }

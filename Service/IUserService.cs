@@ -19,4 +19,5 @@ public interface IUserService
     Task<ResponseDTO> FindUserByIdAsync(long userId);
     Task<ResponseDTO> EditProfileAsync(UpsertUserDTO userDTO);
     Task<ResponseDTO> SearchUsersByEmailAndFullNameAsync(string search, int page, int limit);
+    Task<ResponseDTO> ChangeActiveUserAsync(int userId);
 }

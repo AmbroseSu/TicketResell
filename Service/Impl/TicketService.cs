@@ -71,7 +71,7 @@ namespace Service.Impl
 
             Ticket reqTicket = _mapper.Map<Ticket>(ticket);
             reqTicket.Status = TicketStatus.PENDING;
-            string format = "dd/MM/yyyy HH:mm";
+            /*string format = "dd/MM/yyyy HH:mm";
 
             //expiredDate theo LocalTime
             DateTime expiredDate = DateTime.ParseExact(ticket.ExpirationDate, format, CultureInfo.InvariantCulture);
@@ -87,7 +87,31 @@ namespace Service.Impl
 
             reqTicket.ExpirationDate = expiredDate.ToUniversalTime();
 
+            await _ticketRepository.SaveAsync(reqTicket);*/
+            
+            string format = "dd/MM/yyyy HH:mm";
+
+// Kiểm tra và chuyển đổi ExpirationDate
+            if (!DateTime.TryParseExact(ticket.ExpirationDate, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime expiredDate))
+            {
+                return ResponseUtil.Error("Request fails", "Invalid expiration date format!", HttpStatusCode.BadRequest);
+            }
+
+// Thời gian hiện tại theo LocalTime
+            DateTime currentTime = DateTime.Now;
+
+// Kiểm tra điều kiện ngày hết hạn
+            if (expiredDate < currentTime.AddDays(1) || expiredDate > currentTime.AddYears(1))
+            {
+                return ResponseUtil.Error("Request fails", "Invalid expiration date!", HttpStatusCode.BadRequest);
+            }
+
+// Chuyển expiredDate sang UTC và gán vào reqTicket
+            reqTicket.ExpirationDate = expiredDate.ToUniversalTime();
+
+// Lưu ticket vào repository
             await _ticketRepository.SaveAsync(reqTicket);
+
 
             //Commit transaction
 

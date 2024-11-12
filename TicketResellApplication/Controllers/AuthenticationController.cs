@@ -107,6 +107,22 @@ namespace TicketResellApplication.Controllers
             }
         }
         
+        [HttpPost("sign-in-google")]
+        public async Task<ResponseDTO> SiginGoogleAsync([FromQuery] string email )
+        {
+            var result = await _authenticationService.SignInGoogle(email);
+            return result;
+            
+        }
+        
+        [HttpPost("save-infor-google")]
+        public async Task<ResponseDTO> SaveInforGoogle([FromBody] SignUpGoogle signUpGoogle )
+        {
+            var result = await _authenticationService.SaveInfoGoogle(signUpGoogle);
+            return result;
+            
+        }
+        
         
         
     }
