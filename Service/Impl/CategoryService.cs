@@ -43,7 +43,6 @@ namespace Service.Impl
 
         public async Task<ResponseDTO> CreateCategory(string categoryName)
         {
-
             if (categoryName == null || !Regex.IsMatch(categoryName.Trim(), @"^[a-zA-Z 1-9]+$"))
             {
                 return ResponseUtil.Error("Request fails", "Category name must contain only letters or number", HttpStatusCode.BadRequest);
