@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using AutoMapper;
 using BusinessObject;
+using BusinessObject.enums;
 using BusinessObject.Enums;
 using DataAccess.DTO;
 using DataAccess.DTO.Response;
@@ -249,6 +250,22 @@ public class UserService : IUserService
             await  _userRepository.UpdateAsync(user);
             var result = _mapper.Map<UserDTO>(user);
             return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, 0); 
+        }
+        catch (Exception ex)
+        {
+            return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
+        }
+    }
+
+    public async Task<ResponseDTO> FindByGenderAsync()
+    {
+        try
+        {
+            NumberGender numberGender = new NumberGender();
+            numberGender.Male = (await _userRepository.FindByGenderAsync(Gender.MALE)).Count;
+            numberGender.Female = (await _userRepository.FindByGenderAsync(Gender.FEMALE)).Count;
+            numberGender.Other = (await _userRepository.FindByGenderAsync(Gender.OTHER)).Count;
+            return ResponseUtil.GetObject(numberGender, "ok", HttpStatusCode.Created, 0); 
         }
         catch (Exception ex)
         {
