@@ -72,16 +72,19 @@ namespace Service.Impl
             reqTicket.Status = TicketStatus.PENDING;
             string format = "dd/MM/yyyy HH:mm";
 
+            //expiredDate theo LocalTime
             DateTime expiredDate = DateTime.ParseExact(ticket.ExpirationDate, format, CultureInfo.InvariantCulture);
 
-            DateTime utcDateTime = DateTime.Now;
+            //Thời gian hết hạn của ticket phải sau ngày hiện tại ít nhất 1 ngày và không quá 1 năm
+            //Giờ hiện tại theo LocalTime
+            DateTime CurrentTime = DateTime.Now;
 
-            if (utcDateTime > expiredDate )
+            if (expiredDate < CurrentTime.AddDays(1) || expiredDate > CurrentTime.AddYears(1) )
             {
                 return ResponseUtil.Error("Request fails", "Invalid expiration date !", HttpStatusCode.BadRequest);
             }
 
-            reqTicket.ExpirationDate = utcDateTime;
+            reqTicket.ExpirationDate = expiredDate.ToUniversalTime();
 
             await _ticketRepository.SaveAsync(reqTicket);
 
@@ -292,7 +295,7 @@ namespace Service.Impl
                 return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
             }
 
-            User? user = await _userRepository.FindUserByIdAsync(result.Id);
+            User? user = await _userRepository.FindUserByIdAsync(result.UserId);
 
             if (user == null)
             {
@@ -348,6 +351,18 @@ namespace Service.Impl
 
                 Post? post = (await _postRepository.Find(p => p.TicketId == ticket.Id && p.Status == PostStatus.ACTIVE)).SingleOrDefault();
 
+                DateTime localExpiredTime = ticket.ExpirationDate;
+                localExpiredTime = localExpiredTime.ToLocalTime();
+                ticket.ExpirationDate = localExpiredTime;
+
+                if (post!= null)
+                {
+                    DateTime localCreatedDateTime = post.CreatedDate;
+                    localCreatedDateTime = localCreatedDateTime.ToLocalTime();
+                    post.CreatedDate = localCreatedDateTime;
+
+                }
+
                 List<ImageTicket?> imageTickets = (await _imageTicketRepository.Find(i => i.TicketId == ticket.Id)).ToList();
                 TicketResponse ticketResponse = getTicketInfo(ticket, cat, user, post);
 
@@ -360,7 +375,7 @@ namespace Service.Impl
                 {
                     ticketResponse.imageTicketDTOs = null;
                 }
-                //ticketResponse.
+
                 responseData.Add(ticketResponse);
             }
 
