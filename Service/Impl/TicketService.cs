@@ -71,45 +71,28 @@ namespace Service.Impl
 
             Ticket reqTicket = _mapper.Map<Ticket>(ticket);
             reqTicket.Status = TicketStatus.PENDING;
-            /*string format = "dd/MM/yyyy HH:mm";
-
-            //expiredDate theo LocalTime
-            DateTime expiredDate = DateTime.ParseExact(ticket.ExpirationDate, format, CultureInfo.InvariantCulture);
-
-            //Thời gian hết hạn của ticket phải sau ngày hiện tại ít nhất 1 ngày và không quá 1 năm
-            //Giờ hiện tại theo LocalTime
-            DateTime CurrentTime = DateTime.Now;
-
-            if (expiredDate < CurrentTime.AddDays(1) || expiredDate > CurrentTime.AddYears(1) )
-            {
-                return ResponseUtil.Error("Request fails", "Invalid expiration date !", HttpStatusCode.BadRequest);
-            }
-
-            reqTicket.ExpirationDate = expiredDate.ToUniversalTime();
-
-            await _ticketRepository.SaveAsync(reqTicket);*/
             
             string format = "dd/MM/yyyy HH:mm";
 
-// Kiểm tra và chuyển đổi ExpirationDate
+            // Kiểm tra và chuyển đổi ExpirationDate
             if (!DateTime.TryParseExact(ticket.ExpirationDate, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime expiredDate))
             {
                 return ResponseUtil.Error("Request fails", "Invalid expiration date format!", HttpStatusCode.BadRequest);
             }
 
-// Thời gian hiện tại theo LocalTime
+            // Thời gian hiện tại theo LocalTime
             DateTime currentTime = DateTime.Now;
 
-// Kiểm tra điều kiện ngày hết hạn
+            // Kiểm tra điều kiện ngày hết hạn
             if (expiredDate < currentTime.AddDays(1) || expiredDate > currentTime.AddYears(1))
             {
                 return ResponseUtil.Error("Request fails", "Invalid expiration date!", HttpStatusCode.BadRequest);
             }
 
-// Chuyển expiredDate sang UTC và gán vào reqTicket
+            // Chuyển expiredDate sang UTC và gán vào reqTicket
             reqTicket.ExpirationDate = expiredDate.ToUniversalTime();
 
-// Lưu ticket vào repository
+            // Lưu ticket vào repository
             await _ticketRepository.SaveAsync(reqTicket);
 
 
@@ -380,7 +363,7 @@ namespace Service.Impl
                 localExpiredTime = localExpiredTime.ToLocalTime();
                 ticket.ExpirationDate = localExpiredTime;
 
-                if (post!= null)
+                if (post != null)
                 {
                     DateTime localCreatedDateTime = post.CreatedDate;
                     localCreatedDateTime = localCreatedDateTime.ToLocalTime();

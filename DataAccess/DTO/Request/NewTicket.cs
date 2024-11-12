@@ -13,7 +13,8 @@ namespace DataAccess.DTO.Request
     public class NewTicket
     {
         [Required(ErrorMessage = "Name is required")]
-        [RegularExpression(@"^[a-zA-Z 1-9]+$", ErrorMessage = "Venue must contain only letters or number")]
+        [StringLength(150, ErrorMessage = "Name must be less than 150 characters")]
+        [RegularExpression(@"^[a-zA-Z 1-9]+$", ErrorMessage = "Name must contain only letters or number")]
         public string Name { get; set; }
         [Range(20000, float.MaxValue, ErrorMessage = "Price must be between 20000 - float max value")]
         public float Price { get; set; }
@@ -21,6 +22,7 @@ namespace DataAccess.DTO.Request
         public int Quantity { get; set; }
         public String ExpirationDate { get; set; }
         [Required(ErrorMessage = "Name is required")]
+        [StringLength(1500, ErrorMessage = "Name must be less than 1500 characters")]
         [RegularExpression(@"^[a-zA-Z 1-9]+$", ErrorMessage = "Venue must contain only letters or number")]
         public string Venue { get; set; }
         public int CategoryId { get; set; }
