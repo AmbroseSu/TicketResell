@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.RegularExpressions;
 
 namespace BusinessObject;
 
@@ -18,5 +19,5 @@ public class Feedback
     public Ticket? Ticket { get; set; }
     public User? User { get; set; }
     public List<ImageFeedback>? ImageFeedbacks { get; set; }
-    
+
 }

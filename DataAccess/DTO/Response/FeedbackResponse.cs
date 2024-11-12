@@ -16,6 +16,8 @@ namespace DataAccess.DTO.Response
         public bool IsDeleted { get; set; }
         public int? TicketId { get; set; }
         public int? UserId { get; set; }
+        public string? FullName { get; set; }
+        public DateTime CreatedDate { get; set; }
         public int? PostId { get; set; }
         public List<ImageFeedbackDTO> imgs { get; set; }
 

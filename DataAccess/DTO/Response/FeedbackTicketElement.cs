@@ -12,6 +12,9 @@ namespace DataAccess.DTO.Response
         public int? Rating { get; set; }
         public string? Context { get; set; }
         public bool IsDeleted { get; set; }
+        public int UserId { get; set; }
+        public string? FullName { get; set; }
+        public DateTime CreatedDate { get; set; }
         public List<ImageFeedbackDTO> imgs { get; set; }
     }
 }
