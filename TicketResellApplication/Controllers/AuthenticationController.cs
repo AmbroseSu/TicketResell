@@ -123,6 +123,14 @@ namespace TicketResellApplication.Controllers
             
         }
         
+        [HttpPost("change-password")]
+        public async Task<ResponseDTO> ChangePassword([FromBody] ChangePassword changePassword )
+        {
+            var result = await _authenticationService.ChangePasswordAsync(changePassword);
+            return result;
+            
+        }
+        
         
         
     }

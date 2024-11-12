@@ -22,4 +22,5 @@ public interface IUserService
     Task<ResponseDTO> SearchUsersByEmailAndFullNameAsync(string search, int page, int limit);
     Task<ResponseDTO> ChangeActiveUserAsync(int userId);
     Task<ResponseDTO> FindByGenderAsync();
+    
 }
