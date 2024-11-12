@@ -193,9 +193,8 @@ namespace Service.Impl
 
         //    }
 
-
         //    List<PostResponse> data = responseData.Skip((page - 1) * limit).Take(limit);
-        //    return ResponseUtil.GetCollection(data, "All posts retrieved sucessfully", HttpStatusCode.OK, result.Count(), page, limit, result.Count()); 
+        //    return ResponseUtil.GetCollection(data, "All posts retrieved sucessfully", HttpStatusCode.OK, result.Count(), page, limit, result.Count());
         //}
     }
 }
