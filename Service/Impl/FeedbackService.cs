@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using BusinessObject;
+using BusinessObject.enums;
+using BusinessObject.Enums;
 using DataAccess.DTO;
+using DataAccess.DTO.Request;
 using DataAccess.DTO.Response;
 using Repository;
 using Repository.Impl;
@@ -35,7 +38,7 @@ namespace Service.Impl
             _imageFeedbackRepository = imageFeedbackRepository;
         }
 
-        public async Task<ResponseDTO> AddFeedback(FeedbackDTO feedback)
+        public async Task<ResponseDTO> AddFeedback(NewFeedback feedback)
         {
             User? user = await _userRepository.FindUserByIdAsync(feedback.UserId);
 
@@ -57,7 +60,6 @@ namespace Service.Impl
             //Kiểm tra xem item
             Ticket? ticket = (await _ticketRepository.Find(c => c.Id == feedback.TicketId)).SingleOrDefault();
 
-
             if (ticket == null)
             {
                 String msg = "Ticket not found";
@@ -66,15 +68,15 @@ namespace Service.Impl
             }
 
             //kiểm tra xem user có đặt item ko
-            Order? order = (await _orderRepository.Find(c => c.TicketId == ticket.Id)).SingleOrDefault();
+            //Order? order = (await _orderRepository.Find(c => c.TicketId == ticket.Id)).SingleOrDefault();
 
-            if (order == null)
-            {
-                String msg = "Order not found to be feedback";
-                //Kiểm tra order status là đã giao dịch hoàn tất chưa?
+            //if (order == null)
+            //{
+            //    String msg = "Order not found to be feedback";
+            //    //Kiểm tra order status là đã giao dịch hoàn tất chưa?
 
-                return ResponseUtil.Error("Request fails", msg, HttpStatusCode.BadRequest);
-            }
+            //    return ResponseUtil.Error("Request fails", msg, HttpStatusCode.BadRequest);
+            //}
 
             //post có tồn tại ko
             Post? post = (await _postRepository.Find(c => c.TicketId == ticket.Id)).SingleOrDefault();
@@ -83,7 +85,13 @@ namespace Service.Impl
             {
                 return ResponseUtil.Error("Request fails", "Post not found", HttpStatusCode.BadRequest);
             }
-
+            else
+            {
+                if (post.Status != PostStatus.ACTIVE)
+                {
+                    return ResponseUtil.Error("Request fails", "Post status is not active to be feedback", HttpStatusCode.BadRequest);
+                }
+            }
             //Kiểm tra xem user này đã feedback chưa
             Feedback? feedbackExist = (await _feedbackRepository.Find(c => c.UserId == feedback.UserId && c.TicketId == feedback.TicketId)).SingleOrDefault();
 
@@ -94,7 +102,6 @@ namespace Service.Impl
 
             Feedback result = _mapper.Map<Feedback>(feedback);
             await _feedbackRepository.SaveAsync(result);
-
             return ResponseUtil.GetObject(result, "Feedback added successfully", HttpStatusCode.Created, 0);
         }
 
@@ -284,6 +291,11 @@ namespace Service.Impl
             if (feedback == null)
             {
                 return ResponseUtil.Error("Request fails", "Feedback not found !", HttpStatusCode.BadRequest);
+            }
+
+            if (feedback.IsDeleted)
+            {
+                return ResponseUtil.Error("Request fails", "Feedback is deleted !", HttpStatusCode.BadRequest);
             }
 
             List<ImageFeedback?> images = (await _imageFeedbackRepository.Find(i => i.FeedbackId == feedbackId)).ToList();
