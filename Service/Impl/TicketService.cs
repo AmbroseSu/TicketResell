@@ -29,8 +29,9 @@ namespace Service.Impl
         private readonly IImageTicketRepository _imageTicketRepository;
         private readonly IUserRepository _userRepository;
         private readonly IPostRepository _postRepository;
+        private readonly IFeedbackService _feedbackService;
 
-        public TicketService(ITicketRepository ticketRepository, ICategoryRepository ticketCategoryRepository, IMapper mapper, IImageTicketRepository imageTicketRepository, IUserRepository userRepository, IPostRepository postRepository)
+        public TicketService(ITicketRepository ticketRepository, ICategoryRepository ticketCategoryRepository, IMapper mapper, IImageTicketRepository imageTicketRepository, IUserRepository userRepository, IPostRepository postRepository, IFeedbackService feedbackService)
         {
             _ticketRepository = ticketRepository;
             _ticketCategoryRepository = ticketCategoryRepository;
@@ -38,6 +39,7 @@ namespace Service.Impl
             _imageTicketRepository = imageTicketRepository;
             _userRepository = userRepository;
             _postRepository = postRepository;
+            _feedbackService = feedbackService;
         }
 
         public async Task<ResponseDTO> CreateTicket(NewTicket ticket)
@@ -138,11 +140,11 @@ namespace Service.Impl
             IEnumerable<Ticket?> result = new List<Ticket?>();
             if (status == null)
             {
-                result = await _ticketRepository.Find(t => t.Name.Contains(searchTerm.Trim()));
+                result = await _ticketRepository.Find(t => t.Name.ToLower().Contains(searchTerm.Trim()));
             }
             else
             {
-                result = await _ticketRepository.Find(t => t.Name.Contains(searchTerm.Trim()) &&
+                result = await _ticketRepository.Find(t => t.Name.ToLower().Contains(searchTerm.Trim()) &&
                t.Status == status);
             }
 
@@ -235,48 +237,9 @@ namespace Service.Impl
             return result.SingleOrDefault();
         }
 
-        private TicketResponse getTicketInfo(Ticket result, Category cat, User user, Post? post)
+        private TicketResponse getTicketInfo(Ticket result, Category cat, User user, Post? post, List<FeedbackResponse>? feedbacks)
         {
             TicketResponse ticketResponse = new();
-            if (post != null)
-            {
-                ticketResponse = new TicketResponse(
-          result.Id,
-          result.Name,
-          result.Price,
-          result.Quantity,
-          result.ExpirationDate,
-          result.Venue,
-          result.Status,
-          result.IsDeleted,
-          result.CategoryId,
-          cat.Name,
-          post.Id,
-          post.Title,
-          post.Description,
-          post.Status,
-          post.CreatedDate,
-          result.UserId,
-          user.Email
-          );
-            }
-            else
-            {
-                ticketResponse = new TicketResponse(
-          result.Id,
-          result.Name,
-          result.Price,
-          result.Quantity,
-          result.ExpirationDate,
-          result.Venue,
-          result.Status,
-          result.IsDeleted,
-          result.CategoryId,
-          cat.Name,
-          result.UserId,
-          user.Email
-          );
-            }
 
             return ticketResponse;
         }
@@ -312,8 +275,13 @@ namespace Service.Impl
 
             Post? post = (await _postRepository.Find(p => p.TicketId == result.Id && p.Status == PostStatus.ACTIVE)).SingleOrDefault();
 
-            TicketResponse ticket = getTicketInfo(result, cat, user, post);
-
+            List<FeedbackResponse> feedbacks = (List<FeedbackResponse>) _feedbackService.GetFeedBacksByTicketId(result.Id, 1,100).Result.Content;
+            TicketResponse ticket = new TicketResponse();
+            ticket = _mapper.Map<TicketResponse>(result);
+            ticket = _mapper.Map<TicketResponse>(cat);
+            List<FeedbackTicketElement> elements = _mapper.Map<List<FeedbackTicketElement>>(feedbacks);
+            ticket.feedbackDTOs = elements;
+            ticket = getTicketInfo(result, cat, user, post, feedbacks);
             List<ImageTicket?> imageTickets = (await _imageTicketRepository.Find(i => i.TicketId == result.Id)).ToList();
 
             if (imageTickets.Count != 0)
@@ -372,7 +340,11 @@ namespace Service.Impl
                 }
 
                 List<ImageTicket?> imageTickets = (await _imageTicketRepository.Find(i => i.TicketId == ticket.Id)).ToList();
-                TicketResponse ticketResponse = getTicketInfo(ticket, cat, user, post);
+                List<FeedbackResponse> feedbacks = (List<FeedbackResponse>)_feedbackService.GetFeedBacksByTicketId(ticket.Id, 1, 100).Result.Content;
+                TicketResponse ticketResponse = getTicketInfo(ticket, cat, user, post, feedbacks);
+
+                List<FeedbackTicketElement> elements = _mapper.Map<List<FeedbackTicketElement>>(feedbacks);
+                ticketResponse.feedbackDTOs = elements;
 
                 if (imageTickets.Count != 0)
                 {

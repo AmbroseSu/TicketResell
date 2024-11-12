@@ -12,47 +12,6 @@ namespace DataAccess.DTO.Response
 {
     public class TicketResponse
     {
-        public TicketResponse(int id, string? ticketName, float? price, int? quantity, DateTime expirationDate, string? venue, TicketStatus status, bool? isDeleted, int? categoryId, string? categoryName, int? postId, string? postTitle, string? postDescription, PostStatus? postStatus, DateTime createdDate, int? userId, string email)
-        {
-            Id = id;
-            TicketName = ticketName;
-            Price = price;
-            Quantity = quantity;
-            ExpirationDate = expirationDate;
-            Venue = venue;
-            Status = status;
-            IsDeleted = IsDeleted;
-            CategoryId = categoryId;
-            CategoryName = categoryName;
-            PostId = postId;
-            PostTitle = postTitle;
-            PostDescription = postDescription;
-            CurrentPostStatus = postStatus;
-            CreatedDate = createdDate;
-            UserId = userId;
-            Email = email;
-        }
-        public TicketResponse(int id, string? ticketName, float? price, int? quantity, DateTime expirationDate, string? venue, TicketStatus status, bool? isDeleted, int? categoryId, string? categoryName, int? userId, string email)
-        {
-            Id = id;
-            TicketName = ticketName;
-            Price = price;
-            Quantity = quantity;
-            ExpirationDate = expirationDate;
-            Venue = venue;
-            Status = status;
-            IsDeleted = IsDeleted;
-            CategoryId = categoryId;
-            CategoryName = categoryName;
-            //PostId = postId;
-            //PostTitle = postTitle;
-            //PostDescription = postDescription;
-            //CurrentPostStatus = postStatus;
-            //CreatedDate = createdDate;
-            UserId = userId;
-            Email = email;
-        }
-
         public TicketResponse()
         {
         }
@@ -75,7 +34,7 @@ namespace DataAccess.DTO.Response
         public int? UserId { get; set; }
         public string Email { get; set; }
         public List<ImageTicketDTO> imageTicketDTOs { get; set; }
-        public List<FeedbackDTO>? feedbackDTOs { get; set; }
+        public List<FeedbackTicketElement>? feedbackDTOs { get; set; }
 
 
     }
