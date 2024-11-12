@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Service.Impl
@@ -43,11 +44,20 @@ namespace Service.Impl
         public async Task<ResponseDTO> CreateCategory(string categoryName)
         {
 
-            Category category = new Category()
+            if (categoryName == null || !Regex.IsMatch(categoryName.Trim(), @"^[a-zA-Z 1-9]+$"))
             {
-                Name = categoryName,
-                IsDeleted = false
-            };
+                return ResponseUtil.Error("Request fails", "Category name must contain only letters", HttpStatusCode.BadRequest);
+            }
+
+            Category? category = (await _categoryRepository.Find(c => c.Name.ToLower().Equals(categoryName.Trim().ToLower()))).SingleOrDefault();
+
+            if (category != null)
+            {
+                return ResponseUtil.Error("Request fails", "Category already exists", HttpStatusCode.BadRequest);
+            }
+            category = new Category();
+            category.Name = categoryName;
+            category.IsDeleted = false;
 
             await _categoryRepository.SaveAsync(category);
             return ResponseUtil.GetObject("New category accepted", "Category created successfully", HttpStatusCode.OK, 0);
@@ -78,6 +88,27 @@ namespace Service.Impl
             }
 
             return ResponseUtil.GetCollection(result, "Categories retrieved successfully", HttpStatusCode.OK, categories.Count(), 1, categories.Count(), categories.Count());
+        }
+
+        public async Task<ResponseDTO> InactiveCategory(int id)
+        {
+            Category? category = (await _categoryRepository.Find(c => c.Id == id)).SingleOrDefault();
+
+            if (category == null)
+            {
+                return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
+            }
+
+            if (category.IsDeleted == true)
+            {
+                category.IsDeleted = false;
+            }
+            else
+            {
+                category.IsDeleted = true;
+            }
+            _categoryRepository.UpdateAsync(category);
+            return ResponseUtil.GetObject(category, "Category updated successfully", HttpStatusCode.OK, 1);
         }
     }
 }

@@ -52,5 +52,12 @@ namespace TicketResellApplication.Controllers
         {
             return await categoryService.GetCategory(id);
         }
+        
+        [HttpPost("inactive")]
+        public async Task<ResponseDTO> DisableCategory(
+           [FromQuery, Required] int id)
+        {
+            return await categoryService.InactiveCategory(id);
+        }
     }
 }

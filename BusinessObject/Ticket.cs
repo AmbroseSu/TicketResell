@@ -13,7 +13,7 @@ public class Ticket
     public string? Name { get; set; }
     public float? Price { get; set; }
     public int? Quantity { get; set; }
-    public DateTime? ExpirationDate { get; set; }
+    public DateTime ExpirationDate { get; set; }
     [StringLength(1000)]
     public string? Venue { get; set; }
     public TicketStatus Status { get; set; }

@@ -12,7 +12,7 @@ namespace DataAccess.DTO.Response
 {
     public class TicketResponse
     {
-        public TicketResponse(int id, string? ticketName, float? price, int? quantity, DateTime? expirationDate, string? venue, TicketStatus status, bool? isDeleted, int? categoryId, string? categoryName,int? postId, string? postTitle, string? postDescription,PostStatus? postStatus, DateTime? createdDate, int? userId, string email)
+        public TicketResponse(int id, string? ticketName, float? price, int? quantity, DateTime expirationDate, string? venue, TicketStatus status, bool? isDeleted, int? categoryId, string? categoryName,int? postId, string? postTitle, string? postDescription,PostStatus? postStatus, DateTime createdDate, int? userId, string email)
         {
             Id = id;
             TicketName = ticketName;
@@ -32,7 +32,7 @@ namespace DataAccess.DTO.Response
             UserId = userId;
             Email = email;
         }
-        public TicketResponse(int id, string? ticketName, float? price, int? quantity, DateTime? expirationDate, string? venue, TicketStatus status, bool? isDeleted, int? categoryId, string? categoryName, int? userId, string email)
+        public TicketResponse(int id, string? ticketName, float? price, int? quantity, DateTime expirationDate, string? venue, TicketStatus status, bool? isDeleted, int? categoryId, string? categoryName, int? userId, string email)
         {
             Id = id;
             TicketName = ticketName;
@@ -61,7 +61,7 @@ namespace DataAccess.DTO.Response
         public string? TicketName { get; set; }
         public float? Price { get; set; }
         public int? Quantity { get; set; }
-        public DateTime? ExpirationDate { get; set; }
+        public DateTime ExpirationDate { get; set; }
         public string? Venue { get; set; }
         public TicketStatus Status { get; set; }
         public bool IsDeleted { get; set; }
@@ -71,7 +71,7 @@ namespace DataAccess.DTO.Response
         public string? PostTitle { get; set; }
         public string? PostDescription { get; set; }
         public PostStatus? CurrentPostStatus { get; set; }
-        public DateTime? CreatedDate { get; set; }
+        public DateTime CreatedDate { get; set; }
         public int? UserId { get; set; }
         public string Email { get; set; }
         public List<ImageTicketDTO> imageTicketDTOs { get; set; }
