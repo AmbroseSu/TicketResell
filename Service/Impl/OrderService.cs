@@ -2,6 +2,7 @@
 using System.Net;
 using AutoMapper;
 using BusinessObject;
+using BusinessObject.Enums;
 using DataAccess.DTO;
 using DataAccess.DTO.Response;
 using Repository;
@@ -16,13 +17,17 @@ public class OrderService : IOrderService
     private readonly IOrderStatusRepository _orderStatusRepository;
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
+    private readonly IPlatformFeeRepository _platformFeeRepository;
+    private readonly ITransactionRepository _transactionRepository;
 
-    public OrderService(IOrderRepository orderRepository, IOrderStatusRepository orderStatusRepository, IUserRepository userRepository, IMapper mapper)
+    public OrderService(IOrderRepository orderRepository, IOrderStatusRepository orderStatusRepository, IUserRepository userRepository, IMapper mapper, ITransactionRepository transactionRepository, IPlatformFeeRepository platformFeeRepository)
     {
         _orderRepository = orderRepository;
         _orderStatusRepository = orderStatusRepository;
         _userRepository = userRepository;
         _mapper = mapper;
+        _transactionRepository = transactionRepository;
+        _platformFeeRepository = platformFeeRepository;
     }
 
     public Task SaveAsync(Order order)
@@ -69,5 +74,23 @@ public class OrderService : IOrderService
             return ResponseUtil.Error(e.Message, "Failed!", HttpStatusCode.BadRequest);
         }
         
+    }
+
+    public async Task<Transaction> CreateTransaction(int platformFeeId, int userId, int number)
+    {
+        PlatformFee? platformFee = (await _platformFeeRepository.Find(c => c.Id == platformFeeId)).SingleOrDefault();
+        User? user = await _userRepository.FindUserByIdAsync(userId);
+        Transaction transaction = new Transaction();
+        transaction.Number = number;
+        transaction.Price = platformFee!.Price;
+        transaction.TransactionDate = DateTime.Now.ToUniversalTime();
+        transaction.PaymentMethod = PaymentMethod.QRCODE;
+        transaction.Promotion = 0;
+        transaction.Status = true;
+        transaction.Number = number;
+        transaction.PlatformFeeId = platformFeeId;
+        transaction.UserId = userId;
+        await _transactionRepository.SaveAsync(transaction);
+        return transaction;
     }
 }
