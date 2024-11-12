@@ -1,4 +1,5 @@
 ﻿using DataAccess.DTO;
+using DataAccess.DTO.Request;
 using DataAccess.DTO.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -53,7 +54,7 @@ namespace TicketResellApplication.Controllers
         }
 
         [HttpPost("new")]
-        public async Task<ResponseDTO> AddFeedback([FromBody] FeedbackDTO feedback)
+        public async Task<ResponseDTO> AddFeedback([FromBody] NewFeedback feedback)
         {
             return await _feedbackService.AddFeedback(feedback);
         }

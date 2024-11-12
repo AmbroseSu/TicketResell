@@ -91,7 +91,7 @@ namespace TicketResellApplication.Controllers
         }
 
         [HttpPost("images")]
-        public async Task<ResponseDTO> AddImage([FromBody] List<string> imgList, int ticketId)
+        public async Task<ResponseDTO> AddImage([FromBody] List<string> imgList, [FromQuery, Required] int ticketId)
         {
             return await _ticketService.UpdateTicketImg(imgList, ticketId);
         }

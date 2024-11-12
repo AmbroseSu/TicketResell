@@ -1,5 +1,6 @@
 ﻿using BusinessObject;
 using DataAccess.DTO;
+using DataAccess.DTO.Request;
 using DataAccess.DTO.Response;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace Service
         Task<ResponseDTO> GetFeedBacksByPostId(int postId, int page, int limit);
         Task<ResponseDTO> GetFeedbackById(int id);
         Task<ResponseDTO> GetFeedbackByUserId(int id, int page, int limit);
-        Task<ResponseDTO> AddFeedback(FeedbackDTO feedback);
+        Task<ResponseDTO> AddFeedback(NewFeedback feedback);
         Task<ResponseDTO> DeleteFeedback(int id);
         Task<ResponseDTO> UploadImg(List<String> imgs, int feedbackId);
     }
