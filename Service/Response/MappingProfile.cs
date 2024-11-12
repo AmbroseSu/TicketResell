@@ -34,16 +34,37 @@ public class MappingProfile : Profile
         CreateMap<Feedback, FeedbackResponse>();
         CreateMap<FeedbackDTO, Feedback>();
         CreateMap<ImageFeedback, ImageFeedbackDTO>();
-        CreateMap<Post, TicketResponse>();
         CreateMap<NewFeedback, Feedback>();
 
         //TicketResponse
         CreateMap<FeedbackResponse, FeedbackTicketElement>();
-        CreateMap<FeedbackTicketElement, TicketResponse>();
+        CreateMap<List<FeedbackTicketElement>, TicketResponse>();
         CreateMap<Category, TicketResponse>()
             .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Name))
-            .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Id));
-
+            .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Id))
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+        CreateMap<Ticket, TicketResponse>()
+            .ForMember(dest => dest.TicketId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.TicketName, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+            .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
+            .ForMember(dest => dest.ExpirationDate, opt => opt.MapFrom(src => src.ExpirationDate))
+            .ForMember(dest => dest.Venue, opt => opt.MapFrom(src => src.Venue))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+            .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => src.IsDeleted))
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+        CreateMap<User, TicketResponse>()
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.Status, opt => opt.Ignore())
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+        CreateMap<Post, TicketResponse>()
+            .ForMember(dest => dest.PostId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.PostTitle, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.PostDescription, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.CurrentPostStatus, opt => opt.MapFrom(src => src.Status))
+            .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.CreatedDate))
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
 
     }
 }

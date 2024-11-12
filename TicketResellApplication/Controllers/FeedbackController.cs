@@ -65,7 +65,7 @@ namespace TicketResellApplication.Controllers
             return await _feedbackService.DeleteFeedback(id);
         }
 
-        [HttpPut("img")]
+        [HttpPost("img")]
         public async Task<ResponseDTO> UpdateFeedbackImg([FromBody] List<String> imgList, [FromQuery, Required] int feedbackId)
         {
             return await _feedbackService.UploadImg(imgList, feedbackId);
