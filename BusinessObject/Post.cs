@@ -13,7 +13,7 @@ public class Post
     public string? Title { get; set; }
     [StringLength(3000)]
     public string? Description { get; set; }
-    public DateTime? CreatedDate { get; set; } = DateTime.Now.ToUniversalTime();
+    public DateTime CreatedDate { get; set; } = DateTime.Now.ToUniversalTime();
     public bool IsDeleted { get; set; } = false;
     public PostStatus Status { get; set; }
     public int? TicketId { get; set; }

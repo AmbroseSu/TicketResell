@@ -74,9 +74,9 @@ namespace Service.Impl
 
             DateTime expiredDate = DateTime.ParseExact(ticket.ExpirationDate, format, CultureInfo.InvariantCulture);
 
-            DateTime utcDateTime = expiredDate.ToUniversalTime();
+            DateTime utcDateTime = DateTime.Now;
 
-            if (utcDateTime < DateTime.UtcNow)
+            if (utcDateTime > expiredDate )
             {
                 return ResponseUtil.Error("Request fails", "Invalid expiration date !", HttpStatusCode.BadRequest);
             }
@@ -314,7 +314,12 @@ namespace Service.Impl
             {
                 ticket.imageTicketDTOs = null;
             }
-
+            DateTime localExpiredTime = ticket.ExpirationDate;
+            DateTime localCreatedDateTime = ticket.CreatedDate;
+            localExpiredTime = localExpiredTime.ToLocalTime();
+            localCreatedDateTime = localCreatedDateTime.ToLocalTime();
+            ticket.ExpirationDate = localExpiredTime;
+            ticket.CreatedDate = localCreatedDateTime;
             return ResponseUtil.GetObject(ticket, "Ticket retrieved successfully", HttpStatusCode.OK, 1);
         }
 
@@ -355,7 +360,7 @@ namespace Service.Impl
                 {
                     ticketResponse.imageTicketDTOs = null;
                 }
-
+                //ticketResponse.
                 responseData.Add(ticketResponse);
             }
 

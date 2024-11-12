@@ -15,5 +15,6 @@ namespace Service
         Task<ResponseDTO> GetCategory(int id);
         Task<ResponseDTO> CreateCategory(string categoryName);
         Task<ResponseDTO> SearchCategory(string searchTerm);
+        Task<ResponseDTO> InactiveCategory(int id);
     }
 }
