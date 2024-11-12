@@ -12,4 +12,5 @@ public interface IAuthenticationService
     Task<ResponseDTO> SignIn(SignInRequest signInRequest);
     Task<ResponseDTO> SignInGoogle(String email);
     Task<ResponseDTO> SignUpForStaff(SignUpForStaff signUpForStaff);
+    Task<ResponseDTO> SaveInfoGoogle(SignUpGoogle signUpGoogle);
 }
