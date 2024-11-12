@@ -366,6 +366,7 @@ public class AuthenticationService : IAuthenticationService
                     user.PhoneNumber = signUpGoogle.PhoneNumber;
                     user.Address = signUpGoogle.Address;
                     user.Gender = signUpGoogle.Gender;
+                    user.CreatedAt = DateTime.UtcNow;
                     user.Image = signUpGoogle.Image;
                     user.FcmToken = signUpGoogle.FcmToken;
                 }
@@ -379,6 +380,38 @@ public class AuthenticationService : IAuthenticationService
                 return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
             }
             
+        }
+        
+        public async Task<ResponseDTO> ChangePasswordAsync(ChangePassword changePassword)
+        {
+            try
+            {
+                var user = await _userRepository.FindUserByEmailAsync(changePassword.Email);
+                
+                if (user == null)
+                {
+                    return ResponseUtil.Error("User does not exist", "Failed", HttpStatusCode.BadRequest);
+                }
+                
+                if (!BCrypt.Net.BCrypt.Verify(changePassword.Password, user.Password))
+                {
+                    return ResponseUtil.Error("Current password is incorrect", "Failed", HttpStatusCode.BadRequest);
+                }
+
+                string hashedNewPassword = BCrypt.Net.BCrypt.HashPassword(changePassword.NewPassword);
+        
+
+                user.Password = hashedNewPassword;
+        
+
+                await _userRepository.UpdateAsync(user);
+                var result = _mapper.Map<UpsertUserDTO>(user);
+                return ResponseUtil.GetObject(result, "Password changed successfully", HttpStatusCode.OK, 0);
+            }
+            catch (Exception ex)
+            {
+                return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.BadRequest);
+            }
         }
         
         

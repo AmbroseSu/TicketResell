@@ -39,6 +39,7 @@ public class ResponseUtil
     {
         return new ResponseDTO
         {
+            Content = error,
             Message = message,
             Size = 0,
             StatusCode = (int)status,
