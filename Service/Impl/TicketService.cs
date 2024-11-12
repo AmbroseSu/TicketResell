@@ -44,6 +44,12 @@ namespace Service.Impl
 
         public async Task<ResponseDTO> CreateTicket(NewTicket ticket)
         {
+            Ticket? result = (await _ticketRepository.Find(t => t.Name.ToLower().Trim().Equals(ticket.Name.ToLower().Trim()))).SingleOrDefault();
+
+            if (result != null)
+            {
+                return ResponseUtil.Error("Request fails", "Ticket already exists !", HttpStatusCode.BadRequest);
+            }
 
             User? user = await _userRepository.FindUserByIdAsync(ticket.UserId);
 

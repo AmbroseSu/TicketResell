@@ -10,6 +10,7 @@ using Repository.Impl;
 using Service.Response;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -101,6 +102,10 @@ namespace Service.Impl
             }
 
             Feedback result = _mapper.Map<Feedback>(feedback);
+            //Tạo prefix Time
+            String prefixDateTimeNow = DateTime.Now.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
+
+            result.Context = "[" + prefixDateTimeNow + "] " + result.Context;
             await _feedbackRepository.SaveAsync(result);
             return ResponseUtil.GetObject(result, "Feedback added successfully", HttpStatusCode.Created, 0);
         }
@@ -111,14 +116,16 @@ namespace Service.Impl
 
             if (feedback == null)
             {
-                String msg = "Feedback not found";
-
-                if (feedback.IsDeleted)
-                {
-                    msg = "Feedback is already deleted";
-                }
-                return ResponseUtil.Error("Request fails", msg, HttpStatusCode.NotFound);
+                return ResponseUtil.Error("Request fails", "Feedback not found", HttpStatusCode.NotFound);
             }
+
+            if (feedback.IsDeleted)
+            {
+                return ResponseUtil.Error("Request fails", "Feedback is already deleted", HttpStatusCode.BadRequest);
+            }
+
+            feedback.IsDeleted = true;
+            await _feedbackRepository.UpdateAsync(feedback);
 
             return ResponseUtil.GetObject(feedback, "Feedback deleted successfully", HttpStatusCode.OK, 0);
         }
@@ -223,6 +230,15 @@ namespace Service.Impl
                     feedback.imgs = null;
                 }
                 feedback.PostId = post.Id;
+                feedback.FullName = user.Fullname;
+                //Trim là bỏ phần trước [ 
+                //Split là tách chuỗi, ở đây tách xong lấy phần tử 0
+                string format = "yyyy-MM-dd HH:mm:ss";
+                string prefix = item.Context.Split(']')[0].TrimStart('[');
+                DateTime time = DateTime.ParseExact(prefix, format,
+                    CultureInfo.InvariantCulture);
+
+                feedback.CreatedDate = time;
                 responseData.Add(feedback);
             }
 
@@ -267,7 +283,15 @@ namespace Service.Impl
             }
 
             data.PostId = post.Id;
+            data.FullName = user.Fullname;
+            //Trim là bỏ phần trước [ 
+            //Split là tách chuỗi, ở đây tách xong lấy phần tử 0
+            string format = "yyyy-MM-dd HH:mm:ss";
+            string prefix = feedback.Context.Split(']')[0].TrimStart('[');
+            DateTime time = DateTime.ParseExact(prefix, format,
+                CultureInfo.InvariantCulture);
 
+            data.CreatedDate = time;
             return ResponseUtil.GetObject(data, "Feedback retrieved successfully", HttpStatusCode.OK, 1);
         }
 
