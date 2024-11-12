@@ -36,7 +36,14 @@ public class MappingProfile : Profile
         CreateMap<ImageFeedback, ImageFeedbackDTO>();
         CreateMap<Post, TicketResponse>();
         CreateMap<NewFeedback, Feedback>();
-        
+
+        //TicketResponse
+        CreateMap<FeedbackResponse, FeedbackTicketElement>();
+        CreateMap<FeedbackTicketElement, TicketResponse>();
+        CreateMap<Category, TicketResponse>()
+            .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Id));
+
 
     }
 }

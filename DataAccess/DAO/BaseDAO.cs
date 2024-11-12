@@ -34,8 +34,6 @@ namespace DataAccess.DAO
         {
         }
 
-    
-
         public async Task SaveAsync(T T)
         {
             using var context = new TicketResellDbContext();
