@@ -16,7 +16,7 @@ namespace DataAccess.DTO.Response
         {
         }
 
-        public int Id { get; set; }
+        public int TicketId { get; set; }
         public string? TicketName { get; set; }
         public float? Price { get; set; }
         public int? Quantity { get; set; }
@@ -32,7 +32,7 @@ namespace DataAccess.DTO.Response
         public PostStatus? CurrentPostStatus { get; set; }
         public DateTime CreatedDate { get; set; }
         public int? UserId { get; set; }
-        public string Email { get; set; }
+        public string? Email { get; set; }
         public List<ImageTicketDTO> imageTicketDTOs { get; set; }
         public List<FeedbackTicketElement>? feedbackDTOs { get; set; }
 

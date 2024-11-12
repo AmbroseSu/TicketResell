@@ -73,7 +73,7 @@ namespace Service.Impl
 
             Ticket reqTicket = _mapper.Map<Ticket>(ticket);
             reqTicket.Status = TicketStatus.PENDING;
-            
+
             string format = "dd/MM/yyyy HH:mm";
 
             // Kiểm tra và chuyển đổi ExpirationDate
@@ -275,13 +275,18 @@ namespace Service.Impl
 
             Post? post = (await _postRepository.Find(p => p.TicketId == result.Id && p.Status == PostStatus.ACTIVE)).SingleOrDefault();
 
-            List<FeedbackResponse> feedbacks = (List<FeedbackResponse>) _feedbackService.GetFeedBacksByTicketId(result.Id, 1,100).Result.Content;
-            TicketResponse ticket = new TicketResponse();
-            ticket = _mapper.Map<TicketResponse>(result);
-            ticket = _mapper.Map<TicketResponse>(cat);
+            List<FeedbackResponse> feedbacks = (List<FeedbackResponse>)_feedbackService.GetFeedBacksByTicketId(result.Id, 1, 100).Result.Content;
+            TicketResponse ticket = _mapper.Map<TicketResponse>(result);
+            _mapper.Map(cat, ticket);
+            _mapper.Map(user, ticket);
+
+            if (post != null)
+            {
+                _mapper.Map(post, ticket);
+            }
+
             List<FeedbackTicketElement> elements = _mapper.Map<List<FeedbackTicketElement>>(feedbacks);
             ticket.feedbackDTOs = elements;
-            ticket = getTicketInfo(result, cat, user, post, feedbacks);
             List<ImageTicket?> imageTickets = (await _imageTicketRepository.Find(i => i.TicketId == result.Id)).ToList();
 
             if (imageTickets.Count != 0)
@@ -341,7 +346,14 @@ namespace Service.Impl
 
                 List<ImageTicket?> imageTickets = (await _imageTicketRepository.Find(i => i.TicketId == ticket.Id)).ToList();
                 List<FeedbackResponse> feedbacks = (List<FeedbackResponse>)_feedbackService.GetFeedBacksByTicketId(ticket.Id, 1, 100).Result.Content;
-                TicketResponse ticketResponse = getTicketInfo(ticket, cat, user, post, feedbacks);
+                TicketResponse ticketResponse = _mapper.Map<TicketResponse>(ticket);
+                _mapper.Map(cat, ticketResponse);
+                _mapper.Map(user, ticketResponse);
+
+                if (post != null)
+                {
+                    _mapper.Map(post, ticketResponse);
+                }
 
                 List<FeedbackTicketElement> elements = _mapper.Map<List<FeedbackTicketElement>>(feedbacks);
                 ticketResponse.feedbackDTOs = elements;
