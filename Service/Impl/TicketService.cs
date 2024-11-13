@@ -381,9 +381,9 @@ namespace Service.Impl
             return ResponseUtil.GetCollection(data, "All tickets retrieved sucessfully", HttpStatusCode.OK, result.Count(), page, limit, result.Count());
         }
 
-        public async Task<ResponseDTO> GetTicketByEmail(string email, int page, int limit)
+        public async Task<ResponseDTO> GetTicketByUserId(int id, int page, int limit)
         {
-            User? user = await _userRepository.FindUserByEmailAsync(email);
+            User? user = await _userRepository.FindUserByIdAsync(id);
 
             if (user == null)
             {

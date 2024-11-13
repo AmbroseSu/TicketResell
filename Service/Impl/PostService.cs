@@ -24,14 +24,20 @@ namespace Service.Impl
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly ICategoryRepository _ticketCategoryRepository;
+        private readonly IImageTicketRepository _imageTicketRepository;
+        private readonly IFeedbackRepository _feedbackRepository;
+        private readonly IFeedbackService _feedbackService;
 
-        public PostService(IPostRepository postRespository, ITicketRepository ticketRepository, IUserRepository userRepository, IMapper mapper, ICategoryRepository ticketCategoryRepository)
+        public PostService(IPostRepository postRespository, ITicketRepository ticketRepository, IUserRepository userRepository, IMapper mapper, ICategoryRepository ticketCategoryRepository, IImageTicketRepository imageTicketRepository, IFeedbackRepository feedbackRepository, IFeedbackService feedbackService)
         {
             _postRespository = postRespository;
             _ticketRepository = ticketRepository;
             _userRepository = userRepository;
             _mapper = mapper;
             _ticketCategoryRepository = ticketCategoryRepository;
+            _imageTicketRepository = imageTicketRepository;
+            _feedbackRepository = feedbackRepository;
+            _feedbackService = feedbackService;
         }
 
         public async Task<ResponseDTO> CreatePost(NewPostRequest post)
@@ -124,23 +130,23 @@ namespace Service.Impl
         //    return ResponseUtil.GetObject(result, "Post created successfully", HttpStatusCode.OK, 0);
         //}
 
-        public async Task<ResponseDTO> getAllPosts(int page, int limit, PostStatus? status, String? searchTerm)
+        public async Task<ResponseDTO> GetAllPosts(int page, int limit, PostStatus? status, String? searchTerm)
         {
             IEnumerable<Post?> result = new List<Post?>();
             if (status == null)
             {
-                result = await _postRespository.Find(p => p.Title.Contains(searchTerm.Trim()) || p.Description.Contains(searchTerm.Trim()));
+                result = await _postRespository.Find(p => p.Title.Contains(searchTerm.Trim()));
             }
             else
             {
-                result = await _postRespository.Find(p => p.Title.Contains(searchTerm.Trim()) || p.Description.Contains(searchTerm.Trim())
+                result = await _postRespository.Find(p => p.Title.Contains(searchTerm.Trim())
                 && p.Status == status
                 );
 
             }
 
-            //return await GetAllPostInfo(result.ToList(), page, limit);
-            return null;
+            return await GetAllPostInfo(result.ToList(), page, limit);
+            //return null;
 
         }
 
@@ -151,16 +157,30 @@ namespace Service.Impl
         //    return ResponseUtil.GetCollection(data, "All available posts retrieved sucessfully", HttpStatusCode.OK, result.Count(), page, limit, result.Count());
         //}
 
-        //public async Task<ResponseDTO> GetPost(int id)
+        public async Task<ResponseDTO> GetPostByPostId(int id)
+        {
+            Post? result = (await _postRespository.Find(c => c.Id == id)).SingleOrDefault();
+
+            if (result == null)
+            {
+                return ResponseUtil.Error("Request fails", "Post not found !", HttpStatusCode.BadRequest);
+            }
+
+            return await GetPostInfo(result);
+            //return ResponseUtil.GetObject(result, "Post retrieved successfully", HttpStatusCode.OK, 0);
+        }
+
+        //public async Task<ResponseDTO> GetPostByTicketId(int id, int page, int limit)
         //{
-        //    Post? result = (await _postRespository.Find(c => c.Id == id)).SingleOrDefault();
+        //    List<Post?> result = (await _postRespository.Find(c => c.TicketId == id)).SingleOrDefault();
 
         //    if (result == null)
         //    {
         //        return ResponseUtil.Error("Request fails", "Post not found !", HttpStatusCode.BadRequest);
         //    }
 
-        //    return ResponseUtil.GetObject(result, "Post retrieved successfully", HttpStatusCode.OK, 0);
+        //    return await GetAllPostInfo(result, page, limit);
+
         //}
 
         //public async Task<ResponseDTO> PostVerify(int id)
@@ -175,45 +195,209 @@ namespace Service.Impl
         //    return ResponseUtil.GetObject(result, "Post verified successfully", HttpStatusCode.OK, 0);
         //}
 
-        //private async Task<ResponseDTO> GetAllPostInfo(List<Post?> result, int page, int limit)
-        //{
-        //    List<PostResponse?> responseData = new List<PostResponse?>();
+        private async Task<ResponseDTO> GetAllPostInfo(List<Post?> result, int page, int limit)
+        {
+            List<PostResponse?> responseData = new List<PostResponse?>();
 
-        //    foreach (Post item in result)
-        //    {
-        //        PostElement postElement = new PostElement();
+            //TicketResponse chỉ chứa 1 post vì chỉ lấy post Active hoặc ko lấy post nào
+            //PostResponse sẽ lấy tất cả các post dựa theo kết quả trả về từ repo. Ảnh hưởng bởi search, status
+            //Khác với TicketResponse chỉ có 1 ticket - 1 post. PostResponse sẽ có nhiều post và chỉ 1 ticket
+            //Get all post sẽ có unique là ticket id vì 1 ticket có nhiều post
+            //Kiểu map có key là ticket id và value là post id
 
-        //        Ticket? ticket = (await _ticketRepository.Find(t => t.Id == item.TicketId)).SingleOrDefault();
+            Dictionary<Ticket, List<Post>> TicketPostMap = new Dictionary<Ticket, List<Post>>();
 
-        //        if (ticket == null)
-        //        {
-        //            return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
-        //        }
+            //Vòng lặp này dùng để set Ticket và Post vào map
+            foreach (Post post in result)
+            {
+                Ticket? ticket = (await _ticketRepository.Find(t => t.Id == post.TicketId)).SingleOrDefault();
 
-        //        Category? category = (await _ticketCategoryRepository.Find(c => c.Id == ticket.CategoryId)).SingleOrDefault();
+                if (ticket == null)
+                {
+                    return ResponseUtil.Error("Request fails", "Ticket not found in post !", HttpStatusCode.BadRequest);
+                }
 
-        //        if (category == null)
-        //        {
-        //            return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
-        //        }
+                //Nếu đã có key ticket trong map thì add post vào list
+                if (TicketPostMap.ContainsKey(ticket))
+                {
+                    TicketPostMap[ticket].Add(post);
+                }
+                else //Nếu chưa có key thì tạo mới key => thêm value
+                {
+                    TicketPostMap.Add(ticket, new List<Post>() { post });
+                }
 
-        //        User? user = await _userRepository.FindUserByIdAsync(ticket.UserId);
-        //        if (user == null)
-        //        {
-        //            return ResponseUtil.Error("Request fails", "User not found !", HttpStatusCode.BadRequest);
-        //        }
+            }
 
-        //        //IEnumerable<ImageTicket> imageTickets = (await _ticketRepository.FindImageTicket(t => t.TicketId == ticket.Id));
+            foreach (KeyValuePair<Ticket, List<Post>> tpm in TicketPostMap)
+            {
 
-        //        List<ImageTicketDTO> imageTicketDTOs = new List<ImageTicketDTO>();
+                Category? category = (await _ticketCategoryRepository.Find(c => c.Id == tpm.Key.CategoryId)).SingleOrDefault();
+
+                if (category == null)
+                {
+                    return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
+                }
+
+                User? user = await _userRepository.FindUserByIdAsync(tpm.Key.UserId);
+                if (user == null)
+                {
+                    return ResponseUtil.Error("Request fails", "User not found !", HttpStatusCode.BadRequest);
+                }
+
+                PostResponse postResponse = new PostResponse();
+
+                DateTime localExpiredTime = tpm.Key.ExpirationDate;
+                //DateTime localCreatedDateTime = tpm.Key.CreatedDate;
+                localExpiredTime = localExpiredTime.ToLocalTime();
+                //localCreatedDateTime = localCreatedDateTime.ToLocalTime();
+                postResponse.ExpirationDate = localExpiredTime;
+                //item.CreatedDate = localCreatedDateTime;
+
+                List<ImageTicket?> imageTickets = (await _imageTicketRepository.Find(i => i.TicketId == tpm.Key.Id)).ToList();
+                List<FeedbackResponse> feedbacks = (List<FeedbackResponse>)_feedbackService.GetFeedBacksByTicketId(tpm.Key.Id, 1, 100).Result.Content;
+                List<FeedbackTicketElement> elements = _mapper.Map<List<FeedbackTicketElement>>(feedbacks);
+
+                _mapper.Map(tpm.Key, postResponse);
+                _mapper.Map(category, postResponse);
+                _mapper.Map(user, postResponse);
+                postResponse.feedbackDTOs = elements;
+
+                if (imageTickets.Count != 0)
+                {
+                    List<ImageTicketDTO> imgList = _mapper.Map<List<ImageTicketDTO>>(imageTickets);
+                    postResponse.imageTicketDTOs = imgList;
+                }
+                else
+                {
+                    postResponse.imageTicketDTOs = null;
+                }
+
+                List<PostElement> postElements = _mapper.Map<List<PostElement>>(tpm.Value);
+
+                foreach(PostElement pe in postElements)
+                {
+                    pe.CreatedDate = pe.CreatedDate.ToLocalTime();
+                }
+                postResponse.PostElements = postElements;
+                responseData.Add(postResponse);
+            }
 
 
+            //foreach (Post item in result)
+            //{
 
-        //    }
+            //    Ticket? ticket = (await _ticketRepository.Find(t => t.Id == item.TicketId)).SingleOrDefault();
 
-        //    List<PostResponse> data = responseData.Skip((page - 1) * limit).Take(limit);
-        //    return ResponseUtil.GetCollection(data, "All posts retrieved sucessfully", HttpStatusCode.OK, result.Count(), page, limit, result.Count());
-        //}
+            //    if (ticket == null)
+            //    {
+            //        return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
+            //    }
+
+            //    Category? category = (await _ticketCategoryRepository.Find(c => c.Id == ticket.CategoryId)).SingleOrDefault();
+
+            //    if (category == null)
+            //    {
+            //        return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
+            //    }
+
+            //    User? user = await _userRepository.FindUserByIdAsync(ticket.UserId);
+            //    if (user == null)
+            //    {
+            //        return ResponseUtil.Error("Request fails", "User not found !", HttpStatusCode.BadRequest);
+            //    }
+            //    PostResponse postResponse = new PostResponse();
+
+            //    DateTime localExpiredTime = ticket.ExpirationDate;
+            //    DateTime localCreatedDateTime = item.CreatedDate;
+            //    localExpiredTime = localExpiredTime.ToLocalTime();
+            //    localCreatedDateTime = localCreatedDateTime.ToLocalTime();
+            //    postResponse.ExpirationDate = localExpiredTime;
+            //    item.CreatedDate = localCreatedDateTime;
+
+            //    List<ImageTicket?> imageTickets = (await _imageTicketRepository.Find(i => i.TicketId == ticket.Id)).ToList();
+            //    List<FeedbackResponse> feedbacks = (List<FeedbackResponse>)_feedbackService.GetFeedBacksByTicketId(ticket.Id, 1, 100).Result.Content;
+            //    List<FeedbackTicketElement> elements = _mapper.Map<List<FeedbackTicketElement>>(feedbacks);
+
+            //    _mapper.Map(ticket, postResponse);
+            //    _mapper.Map(category, postResponse);
+            //    _mapper.Map(user, postResponse);
+            //    postResponse.feedbackDTOs = elements;
+
+            //    if (imageTickets.Count != 0)
+            //    {
+            //        List<ImageTicketDTO> imgList = _mapper.Map<List<ImageTicketDTO>>(imageTickets);
+            //        postResponse.imageTicketDTOs = imgList;
+            //    }
+            //    else
+            //    {
+            //        postResponse.imageTicketDTOs = null;
+            //    }
+
+            //    responseData.Add(postResponse);
+            //}
+
+            List<PostResponse?> data = responseData.Skip((page - 1) * limit).Take(limit).ToList();
+            return ResponseUtil.GetCollection(data, "All posts retrieved sucessfully", HttpStatusCode.OK, result.Count(), page, limit, result.Count());
+        }
+
+        private async Task<ResponseDTO> GetPostInfo(Post? result)
+        {
+            PostResponse? responseData = new();
+            List<PostElement> postElements = new List<PostElement>();
+            PostElement postElement = _mapper.Map<PostElement>(result);
+            postElements.Add(postElement);
+            responseData.PostElements = postElements;
+
+            Ticket? ticket = (await _ticketRepository.Find(t => t.Id == result.TicketId)).SingleOrDefault();
+
+            if (ticket == null)
+            {
+                return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
+            }
+
+            Category? category = (await _ticketCategoryRepository.Find(c => c.Id == ticket.CategoryId)).SingleOrDefault();
+
+            if (category == null)
+            {
+                return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
+            }
+
+            User? user = await _userRepository.FindUserByIdAsync(ticket.UserId);
+            if (user == null)
+            {
+                return ResponseUtil.Error("Request fails", "User not found !", HttpStatusCode.BadRequest);
+            }
+            PostResponse postResponse = new PostResponse();
+
+            DateTime localExpiredTime = ticket.ExpirationDate;
+            DateTime localCreatedDateTime = result.CreatedDate;
+            localExpiredTime = localExpiredTime.ToLocalTime();
+            localCreatedDateTime = localCreatedDateTime.ToLocalTime();
+            responseData.ExpirationDate = localExpiredTime;
+            result.CreatedDate = localCreatedDateTime;
+
+            List<ImageTicket?> imageTickets = (await _imageTicketRepository.Find(i => i.TicketId == ticket.Id)).ToList();
+            List<FeedbackResponse> feedbacks = (List<FeedbackResponse>)_feedbackService.GetFeedBacksByTicketId(ticket.Id, 1, 100).Result.Content;
+            List<FeedbackTicketElement> elements = _mapper.Map<List<FeedbackTicketElement>>(feedbacks);
+
+            _mapper.Map(ticket, responseData);
+            _mapper.Map(category, responseData);
+            _mapper.Map(user, responseData);
+            responseData.feedbackDTOs = elements;
+
+            if (imageTickets.Count != 0)
+            {
+                List<ImageTicketDTO> imgList = _mapper.Map<List<ImageTicketDTO>>(imageTickets);
+                responseData.imageTicketDTOs = imgList;
+            }
+            else
+            {
+                responseData.imageTicketDTOs = null;
+            }
+
+            return ResponseUtil.GetObject(responseData, "Post retrieved sucessfully", HttpStatusCode.OK, 1);
+        }
     }
 }
 

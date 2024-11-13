@@ -1,10 +1,13 @@
-﻿using DataAccess.DTO;
+﻿using BusinessObject.enums;
+using BusinessObject.Enums;
+using DataAccess.DTO;
 using DataAccess.DTO.Request;
 using DataAccess.DTO.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service;
+using System.ComponentModel.DataAnnotations;
 
 namespace TicketResellApplication.Controllers
 {
@@ -48,17 +51,26 @@ namespace TicketResellApplication.Controllers
         //    return await _postService.getCurrentPosts(page, limit);
         //}
 
-        //[HttpGet("get-lists")]
-        //public async Task<ResponseDTO> GetAllPosts([FromQuery] int page = 1,
-        // [FromQuery] int limit = 1)
-        //{
-        //    return await _postService.getAllPosts(page, limit);
-        //}
+        [HttpGet("get-lists")]
+        public async Task<ResponseDTO> GetAllPosts(
+            [FromQuery] PostStatus? status,
+         [FromQuery] string searchTerm = "",
+            [FromQuery, Required] int page = 1,
+         [FromQuery, Required] int limit = 10)
+        {
+            return await _postService.GetAllPosts(page, limit, status, searchTerm);
+        }
 
-        //[HttpGet("get")]
-        //public async Task<ResponseDTO> GetPostsAsync(int id)
+        [HttpGet("get")]
+        public async Task<ResponseDTO> GetPostByPostId([FromQuery, Required] int id)
+        {
+            return await _postService.GetPostByPostId(id);
+        }
+
+        //[HttpGet("get-by-ticket")]
+        //public async Task<ResponseDTO> GetPostByTicketId([FromQuery, Required] int id)
         //{
-        //    return await _postService.GetPost(id);
+        //    return await _postService.GetPostByTicketId(id);
         //}
     }
 }
