@@ -129,11 +129,11 @@ namespace Service.Impl
             IEnumerable<Post?> result = new List<Post?>();
             if (status == null)
             {
-                result = await _postRespository.Find(p => p.Title.Contains(searchTerm.Trim()));
+                result = await _postRespository.Find(p => p.Title.ToLower().Contains(searchTerm.Trim().ToLower()));
             }
             else
             {
-                result = await _postRespository.Find(p => p.Title.Contains(searchTerm.Trim())
+                result = await _postRespository.Find(p => p.Title.ToLower().Contains(searchTerm.Trim().ToLower())
                 && p.Status == status
                 );
 
