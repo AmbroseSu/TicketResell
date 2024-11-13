@@ -21,6 +21,6 @@ namespace Service
         Task<ResponseDTO> GetPostByPostId(int id);
         Task<ResponseDTO> UpdateStatus(int postId, PostStatus status);
         Task<ResponseDTO> GetPostByTicketId(int id, int page, int limit);
-        Task<ResponseDTO> GetPostByUserId(int id, int page, int limit);
+        Task<ResponseDTO> GetPostByUserId(int id, PostStatus? status, int page, int limit);
     }
 }

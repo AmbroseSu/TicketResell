@@ -39,6 +39,8 @@ builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 builder.Services.AddScoped<IImageFeedbackRepository, ImageFeedbackRepository>();
 
+builder.Services.AddHostedService<TicketBackgroundService>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
