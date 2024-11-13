@@ -33,14 +33,6 @@ namespace TicketResellApplication.Controllers
             return await _orderService.GetAllOrdersByUserId(userId, page, limit);
         }
 
-        [HttpPost("checkout-package-fee")]
-        public async Task<CreatePaymentResult> CheckoutPackageFee([FromBody] PackageFeeRequset packageFeeRequset)
-        {
-            Transaction transaction = await _orderService.CreateTransaction(packageFeeRequset.platformFeeId, packageFeeRequset.userId,
-                packageFeeRequset.quantity);
-            ResponseDTO responseDto = new ResponseDTO();
-            var test  = await _osService.CheckOut(_httpContextAccessor.HttpContext!.Request, transaction);
-            return test;
-        }
+        
     }
 }
