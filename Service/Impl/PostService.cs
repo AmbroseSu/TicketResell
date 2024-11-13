@@ -104,31 +104,25 @@ namespace Service.Impl
         }
 
 
-        //public async Task<ResponseDTO> DeletePost(int TicketId)
-        //{
-        //    Post? result = (await _postRespository.Find(c => c.Id == TicketId && c.IsDeleted == false)).SingleOrDefault();
+        public async Task<ResponseDTO> DeletePost(int postId)
+        {
+            Post? result = (await _postRespository.Find(c => c.Id == postId)).SingleOrDefault();
 
-        //    if (result == null)
-        //    {
-        //        return ResponseUtil.Error("Request fails", "Post not found !", HttpStatusCode.BadRequest);
-        //    }
-        //    result.Status = Post.Status;
-        //    await _postRespository.DeleteAsync(TicketId);
-        //    return ResponseUtil.GetObject(result, "Post created successfully", HttpStatusCode.OK, 0);
-        //}
+            if (result == null)
+            {
+                return ResponseUtil.Error("Request fails", "Post not found !", HttpStatusCode.BadRequest);
+            }
 
-        //public async Task<ResponseDTO> EditPost(int TicketId, string description)
-        //{
-        //    Post? result = (await _postRespository.Find(c => c.Id == TicketId)).SingleOrDefault();
+            if (result.IsDeleted)
+            {
+                return ResponseUtil.Error("Request fails", "Post is deleted !", HttpStatusCode.BadRequest);
+            }
 
-        //    if (result == null)
-        //    {
-        //        return ResponseUtil.Error("Request fails", "Post not found !", HttpStatusCode.BadRequest);
-        //    }
-        //    result.Description = description;
-        //    await _postRespository.UpdateAsync(result);
-        //    return ResponseUtil.GetObject(result, "Post created successfully", HttpStatusCode.OK, 0);
-        //}
+            result.IsDeleted = true;
+            result.Status = PostStatus.CLOSED;
+            await _postRespository.UpdateAsync(result);
+            return ResponseUtil.GetObject(result, "Post delete successfully", HttpStatusCode.OK, 1);
+        }
 
         public async Task<ResponseDTO> GetAllPosts(int page, int limit, PostStatus? status, String? searchTerm)
         {
@@ -146,16 +140,8 @@ namespace Service.Impl
             }
 
             return await GetAllPostInfo(result.ToList(), page, limit);
-            //return null;
 
         }
-
-        //public async Task<ResponseDTO> getCurrentPosts(int page, int limit)
-        //{
-        //    IEnumerable<Post?> result = await _postRespository.Find(p => p.Status.Equals("OPEN"));
-        //    IEnumerable<Post?> data = result.Skip((page - 1) * limit).Take(limit);
-        //    return ResponseUtil.GetCollection(data, "All available posts retrieved sucessfully", HttpStatusCode.OK, result.Count(), page, limit, result.Count());
-        //}
 
         public async Task<ResponseDTO> GetPostByPostId(int id)
         {
@@ -170,30 +156,65 @@ namespace Service.Impl
             //return ResponseUtil.GetObject(result, "Post retrieved successfully", HttpStatusCode.OK, 0);
         }
 
-        //public async Task<ResponseDTO> GetPostByTicketId(int id, int page, int limit)
-        //{
-        //    List<Post?> result = (await _postRespository.Find(c => c.TicketId == id)).SingleOrDefault();
+        public async Task<ResponseDTO> UpdateStatus(int postId, PostStatus status)
+        {
+            Post? post = (await _postRespository.Find(p => p.Id == postId)).SingleOrDefault();
 
-        //    if (result == null)
-        //    {
-        //        return ResponseUtil.Error("Request fails", "Post not found !", HttpStatusCode.BadRequest);
-        //    }
+            if (post == null)
+            {
+                return ResponseUtil.Error("Request fails", "Post not found !", HttpStatusCode.BadRequest);
+            }
 
-        //    return await GetAllPostInfo(result, page, limit);
+            if (post.IsDeleted)
+            {
+                return ResponseUtil.Error("Request fails", "Post is deleted !", HttpStatusCode.BadRequest);
+            }
 
-        //}
+            if (!StatusExtensions.IsValidEnum(status))
+            {
+                return ResponseUtil.Error("Request fails", "Invalid status !", HttpStatusCode.BadRequest);
+            }
 
-        //public async Task<ResponseDTO> PostVerify(int id)
-        //{
-        //    Post? result = (await _postRespository.Find(c => c.Id == id)).SingleOrDefault();
-        //    if (result == null)
-        //    {
-        //        return ResponseUtil.Error("Request fails", "Post not found !", HttpStatusCode.BadRequest);
-        //    }
-        //    result.Status = true;
-        //    await _postRespository.UpdateAsync(result);
-        //    return ResponseUtil.GetObject(result, "Post verified successfully", HttpStatusCode.OK, 0);
-        //}
+            if (post.Status == PostStatus.CLOSED)
+            {
+                return ResponseUtil.Error("Request fails", "Post status = CLOSED can not be update !", HttpStatusCode.BadRequest);
+            }
+
+            if (post.Status == PostStatus.ACTIVE)
+            {
+                if (status == PostStatus.PENDING || status == PostStatus.ACTIVE)
+                {
+                    return ResponseUtil.Error("Request fails", "Post status = ACTIVE can only be update to CLOSED !", HttpStatusCode.BadRequest);
+                }
+            }
+
+            if (post.Status == PostStatus.PENDING)
+            {
+                if (status == PostStatus.PENDING)
+                {
+                    return ResponseUtil.Error("Request fails", "Post status currently is already PENDING !", HttpStatusCode.BadRequest);
+                }
+            }
+
+            post.Status = status;
+            await _postRespository.UpdateAsync(post);
+            return ResponseUtil.GetObject(post, "Post status updated successfully", HttpStatusCode.OK, 1);
+
+        }
+
+        public async Task<ResponseDTO> GetPostByTicketId(int id, int page, int limit)
+        {
+            IEnumerable<Post?> result = await _postRespository.Find(c => c.TicketId == id);
+
+            if (result == null)
+            {
+                return ResponseUtil.Error("Request fails", "Post not found !", HttpStatusCode.BadRequest);
+            }
+
+            return await GetAllPostInfo(result.ToList(), page, limit);
+
+        }
+
 
         private async Task<ResponseDTO> GetAllPostInfo(List<Post?> result, int page, int limit)
         {
@@ -275,67 +296,13 @@ namespace Service.Impl
 
                 List<PostElement> postElements = _mapper.Map<List<PostElement>>(tpm.Value);
 
-                foreach(PostElement pe in postElements)
+                foreach (PostElement pe in postElements)
                 {
                     pe.CreatedDate = pe.CreatedDate.ToLocalTime();
                 }
                 postResponse.PostElements = postElements;
                 responseData.Add(postResponse);
             }
-
-
-            //foreach (Post item in result)
-            //{
-
-            //    Ticket? ticket = (await _ticketRepository.Find(t => t.Id == item.TicketId)).SingleOrDefault();
-
-            //    if (ticket == null)
-            //    {
-            //        return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
-            //    }
-
-            //    Category? category = (await _ticketCategoryRepository.Find(c => c.Id == ticket.CategoryId)).SingleOrDefault();
-
-            //    if (category == null)
-            //    {
-            //        return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
-            //    }
-
-            //    User? user = await _userRepository.FindUserByIdAsync(ticket.UserId);
-            //    if (user == null)
-            //    {
-            //        return ResponseUtil.Error("Request fails", "User not found !", HttpStatusCode.BadRequest);
-            //    }
-            //    PostResponse postResponse = new PostResponse();
-
-            //    DateTime localExpiredTime = ticket.ExpirationDate;
-            //    DateTime localCreatedDateTime = item.CreatedDate;
-            //    localExpiredTime = localExpiredTime.ToLocalTime();
-            //    localCreatedDateTime = localCreatedDateTime.ToLocalTime();
-            //    postResponse.ExpirationDate = localExpiredTime;
-            //    item.CreatedDate = localCreatedDateTime;
-
-            //    List<ImageTicket?> imageTickets = (await _imageTicketRepository.Find(i => i.TicketId == ticket.Id)).ToList();
-            //    List<FeedbackResponse> feedbacks = (List<FeedbackResponse>)_feedbackService.GetFeedBacksByTicketId(ticket.Id, 1, 100).Result.Content;
-            //    List<FeedbackTicketElement> elements = _mapper.Map<List<FeedbackTicketElement>>(feedbacks);
-
-            //    _mapper.Map(ticket, postResponse);
-            //    _mapper.Map(category, postResponse);
-            //    _mapper.Map(user, postResponse);
-            //    postResponse.feedbackDTOs = elements;
-
-            //    if (imageTickets.Count != 0)
-            //    {
-            //        List<ImageTicketDTO> imgList = _mapper.Map<List<ImageTicketDTO>>(imageTickets);
-            //        postResponse.imageTicketDTOs = imgList;
-            //    }
-            //    else
-            //    {
-            //        postResponse.imageTicketDTOs = null;
-            //    }
-
-            //    responseData.Add(postResponse);
-            //}
 
             List<PostResponse?> data = responseData.Skip((page - 1) * limit).Take(limit).ToList();
             return ResponseUtil.GetCollection(data, "All posts retrieved sucessfully", HttpStatusCode.OK, result.Count(), page, limit, result.Count());
@@ -397,6 +364,33 @@ namespace Service.Impl
             }
 
             return ResponseUtil.GetObject(responseData, "Post retrieved sucessfully", HttpStatusCode.OK, 1);
+        }
+
+        public async Task<ResponseDTO> GetPostByUserId(int id, int page, int limit)
+        {
+            User? user = await _userRepository.FindUserByIdAsync(id);
+
+            if (user == null)
+            {
+                return ResponseUtil.Error("Request fails", "User not found !", HttpStatusCode.BadRequest);
+            }
+
+            IEnumerable<Ticket?> tickets = await _ticketRepository.Find(t => t.UserId == id);
+
+            if (tickets == null)
+            {
+                return ResponseUtil.GetCollection(null, "No post found !", HttpStatusCode.OK, 0, page, limit, 0);
+            }
+
+            List<Post?> posts = new List<Post?>();
+
+            foreach(Ticket ticket in tickets)
+            {
+                IEnumerable<Post?> post = await _postRespository.Find(p => p.TicketId == ticket.Id);
+                posts.AddRange(post);
+            }
+
+            return await GetAllPostInfo(posts, page, limit);
         }
     }
 }
