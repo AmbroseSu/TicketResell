@@ -12,5 +12,6 @@ public interface IOrderRepository
     Task<List<Order>> GetAllOrdersByUserId(long userId);
     Task<IEnumerable<Order?>> Find(Expression<Func<Order, bool>> predicate);
     Task<List<Order>> GetAllOrdersByStartDayAndEndDay(DateTime startDay, DateTime endDay);
+    Task<List<Order>> GetAllOrders();
 
 }

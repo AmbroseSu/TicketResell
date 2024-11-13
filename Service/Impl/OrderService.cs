@@ -94,25 +94,37 @@ public class OrderService : IOrderService
         return transaction;
     }
 
-    public async Task<ResponseDTO> GetAllOrdersByStartDayAndEndDay(string startDay, string endDay, int page, int limit)
+    public async Task<ResponseDTO> GetAllOrdersByStartDayAndEndDay(string? startDay, string? endDay, int page, int limit)
     {
         try
         {
-            // Chuyển đổi chuỗi ngày tháng thành DateTime
-            DateTime startDateTime = DateTime.ParseExact(startDay, "dd/MM/yyyy", null).ToUniversalTime();
-            DateTime endDateTime = DateTime.ParseExact(endDay, "dd/MM/yyyy", null).ToUniversalTime();
-
-            // Kiểm tra xem endDateTime có lớn hơn startDateTime không
-            if (endDateTime < startDateTime)
+            if (startDay == null || endDay == null)
             {
-                return ResponseUtil.Error("End Day must be before Start Date", "Failed", HttpStatusCode.BadRequest);
+                IEnumerable<Order> orders = await _orderRepository.GetAllOrders();
+                IEnumerable<OrderDTO> ordersDTO = _mapper.Map<IEnumerable<OrderDTO>>(orders);
+                IEnumerable<OrderDTO?> data = ordersDTO.Skip((page - 1) * limit).Take(limit);
+                return ResponseUtil.GetCollection(data, "Successfully", HttpStatusCode.OK, orders.Count(), page, limit, orders.Count());
             }
+            else
+            {
+                //DateTime startDateTime = DateTime.ParseExact(startDay, "dd/MM/yyyy", null).ToUniversalTime();
+                DateTime startDateTime = DateTime.ParseExact(startDay, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.AssumeUniversal);
+                //DateTime endDateTime = DateTime.ParseExact(endDay, "dd/MM/yyyy", null).ToUniversalTime();
+                DateTime endDateTime = DateTime.ParseExact(endDay, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.AssumeUniversal);
 
-            // Truy vấn đơn hàng trong khoảng thời gian cho trước
-            IEnumerable<Order> orders = await _orderRepository.GetAllOrdersByStartDayAndEndDay(startDateTime, endDateTime);
-            IEnumerable<OrderDTO> ordersDTO = _mapper.Map<IEnumerable<OrderDTO>>(orders);
-            IEnumerable<OrderDTO?> data = ordersDTO.Skip((page - 1) * limit).Take(limit);
-            return ResponseUtil.GetCollection(data, "Successfully", HttpStatusCode.OK, orders.Count(), page, limit, orders.Count());
+                // Kiểm tra xem endDateTime có lớn hơn startDateTime không
+                if (endDateTime < startDateTime)
+                {
+                    return ResponseUtil.Error("End Day must be before Start Date", "Failed", HttpStatusCode.BadRequest);
+                }
+
+                // Truy vấn đơn hàng trong khoảng thời gian cho trước
+                IEnumerable<Order> orders = await _orderRepository.GetAllOrdersByStartDayAndEndDay(startDateTime, endDateTime);
+                IEnumerable<OrderDTO> ordersDTO = _mapper.Map<IEnumerable<OrderDTO>>(orders);
+                IEnumerable<OrderDTO?> data = ordersDTO.Skip((page - 1) * limit).Take(limit);
+                return ResponseUtil.GetCollection(data, "Successfully", HttpStatusCode.OK, orders.Count(), page, limit, orders.Count());
+            }
+            
         }
         catch (FormatException)
         {
