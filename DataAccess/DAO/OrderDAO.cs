@@ -126,4 +126,23 @@ public class OrderDAO : IBaseDAO<Order>
             throw;
         }
     }
+    
+    public async Task<List<Order>> GetAllOrdersByStartDayAndEndDay(DateTime startDay, DateTime endDay)
+    {
+        try
+        {
+            DateTime startUtc = startDay.ToUniversalTime();  
+            DateTime endUtc = endDay.ToUniversalTime();
+
+            // Đảm bảo startUtc bắt đầu từ 00:00:00 và endUtc kết thúc vào 23:59:59
+            startUtc = startUtc.Date;  // Đặt giờ là 00:00:00
+            endUtc = endUtc.Date.AddDays(1).AddSeconds(-1);
+            return await _context.Orders.Include(o => o.OrderStatuses).Where(o => o.OrderDate >= startUtc && o.OrderDate <= endUtc).ToListAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
 }

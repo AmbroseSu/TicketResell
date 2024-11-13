@@ -67,7 +67,7 @@ public class OrderService : IOrderService
             //IEnumerable<TicketRequestDTO> ticketRequestsDto = _mapper.Map<IEnumerable<TicketRequestDTO>>(ticketRequests);
             IEnumerable<OrderDTO> ordersDTO = _mapper.Map<IEnumerable<OrderDTO>>(orders);
             IEnumerable<OrderDTO?> data = ordersDTO.Skip((page - 1) * limit).Take(limit);
-            return ResponseUtil.GetCollection(data, "All tickets Request retrieved sucessfully", HttpStatusCode.OK, orders.Count(), page, limit, orders.Count());
+            return ResponseUtil.GetCollection(data, "All Orders sucessfully", HttpStatusCode.OK, orders.Count(), page, limit, orders.Count());
         }
         catch (Exception e)
         {
@@ -92,5 +92,35 @@ public class OrderService : IOrderService
         transaction.UserId = userId;
         await _transactionRepository.SaveAsync(transaction);
         return transaction;
+    }
+
+    public async Task<ResponseDTO> GetAllOrdersByStartDayAndEndDay(string startDay, string endDay, int page, int limit)
+    {
+        try
+        {
+            // Chuyển đổi chuỗi ngày tháng thành DateTime
+            DateTime startDateTime = DateTime.ParseExact(startDay, "dd/MM/yyyy", null).ToUniversalTime();
+            DateTime endDateTime = DateTime.ParseExact(endDay, "dd/MM/yyyy", null).ToUniversalTime();
+
+            // Kiểm tra xem endDateTime có lớn hơn startDateTime không
+            if (endDateTime < startDateTime)
+            {
+                return ResponseUtil.Error("End Day must be before Start Date", "Failed", HttpStatusCode.BadRequest);
+            }
+
+            // Truy vấn đơn hàng trong khoảng thời gian cho trước
+            IEnumerable<Order> orders = await _orderRepository.GetAllOrdersByStartDayAndEndDay(startDateTime, endDateTime);
+            IEnumerable<OrderDTO> ordersDTO = _mapper.Map<IEnumerable<OrderDTO>>(orders);
+            IEnumerable<OrderDTO?> data = ordersDTO.Skip((page - 1) * limit).Take(limit);
+            return ResponseUtil.GetCollection(data, "Successfully", HttpStatusCode.OK, orders.Count(), page, limit, orders.Count());
+        }
+        catch (FormatException)
+        {
+            throw new ArgumentException("Invalid date format. Please use dd/MM/yyyy.");
+        }
+        catch (Exception e)
+        {
+            return ResponseUtil.Error(e.Message, "Failed!", HttpStatusCode.BadRequest);
+        }
     }
 }

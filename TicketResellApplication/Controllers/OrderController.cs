@@ -27,10 +27,18 @@ namespace TicketResellApplication.Controllers
         }
         
         [HttpGet("get-order-by-userid")]
-        public async Task<ResponseDTO> GetTicketRequest([FromQuery] int userId, [FromQuery, Required] int page = 1,
+        public async Task<ResponseDTO> GetOrderByUserId([FromQuery] int userId, [FromQuery, Required] int page = 1,
             [FromQuery, Required] int limit = 10)
         {
             return await _orderService.GetAllOrdersByUserId(userId, page, limit);
+        }
+        
+        
+        [HttpGet("get-order-by-start-day-end-date")]
+        public async Task<ResponseDTO> GetOrderByStartEndDay([FromQuery] string startDay, [FromQuery] string endDay, [FromQuery, Required] int page = 1,
+            [FromQuery, Required] int limit = 10)
+        {
+            return await _orderService.GetAllOrdersByStartDayAndEndDay(startDay, endDay, page, limit);
         }
 
         
