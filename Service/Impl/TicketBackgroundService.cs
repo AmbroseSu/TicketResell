@@ -44,8 +44,8 @@ namespace Service.Impl
         private void ScheduleTask()
         {
             _logger.LogInformation("Begin schedule task");
-            DateTime now = DateTime.Now.ToLocalTime();
-            DateTime nextRunTime = DateTime.Today.ToLocalTime(); // 0 giờ sáng ngày hôm nay
+            DateTime now = DateTime.Now;
+            DateTime nextRunTime = DateTime.Today; // 0 giờ sáng ngày hôm nay
             TimeSpan timeToGo = nextRunTime - now;
 
             if (timeToGo <= TimeSpan.Zero)
@@ -55,9 +55,9 @@ namespace Service.Impl
             }
 
             // Sau 5s đầu chạy mỗi 5s
-            _timer = new Timer(test, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
+            //_timer = new Timer(test, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
             // Chạy mỗi 24 giờ sau lần chạy đầu
-            //_timer = new Timer(RunTask, null, TimeSpan.FromSeconds(5), TimeSpan.FromHours(24));
+            _timer = new Timer(RunTask, null, TimeSpan.FromSeconds(5), TimeSpan.FromHours(24));
         }
 
         private void test(object state)
@@ -65,7 +65,7 @@ namespace Service.Impl
             _logger.LogInformation("ScheduleTask");
         }
 
-        private void RunTask(object state)
+        private async void RunTask(object state)
         {
             _logger.LogInformation("Task processing");
 
@@ -73,45 +73,66 @@ namespace Service.Impl
             DateTime endOfTomorrow = tomorrow.AddDays(1).AddSeconds(-1).ToLocalTime();
 
             //Lấy các ticket đã hết hạn và sắp hết hạn trong 24 giờ tới
-            IEnumerable<Ticket?> tickets = _ticketRepository
-                .Find(c => c.ExpirationDate.ToLocalTime() >= tomorrow && 
-                c.ExpirationDate.ToLocalTime() <= endOfTomorrow).Result;
+            List<Ticket?> tickets = _ticketRepository
+                .Find(c => c.ExpirationDate.ToLocalTime() >= tomorrow &&
+                c.ExpirationDate.ToLocalTime() <= endOfTomorrow || 
+                c.ExpirationDate.ToLocalTime() < DateTime.Now).Result.OrderBy(c => c.ExpirationDate).ToList();
 
             if (tickets == null || !tickets.Any())
             {
                 return;
             }
-
             //Duyệt qua các ticket đã hết hạn
 
             foreach (var item in tickets)
             {
+                DateTime nearestExpirationTime = item.ExpirationDate.ToLocalTime();
+                TimeSpan timeToGo = nearestExpirationTime - DateTime.Now;
+                _logger.LogInformation("Next run time: " + timeToGo);
 
-
-                //Lấy các post ra và close post
-                IEnumerable<Post?> posts = _postRepository.Find(c => c.TicketId == item.Id).Result;
-
-                if (posts == null || !posts.Any())
+                if (timeToGo <= TimeSpan.Zero)
                 {
-                    return;
+                    CheckExpiration(item);
                 }
-
-                foreach (var post in posts)
+                else
                 {
-                    if (post.Status != PostStatus.CLOSED)
-                    {
-                        post.Status = PostStatus.CLOSED;
-                        _postRepository.UpdateAsync(post);
-                    }
+                    _logger.LogInformation("Start waiting for the next check: " + timeToGo);
+                    await Task.Delay(timeToGo);
+                    CheckExpiration(item);
                 }
+                _logger.LogInformation("Expiration status closed update successfully, ticketId: " + item.Id);
 
-                if (item.Status != TicketStatus.CLOSED)
-                {
-                    item.Status = TicketStatus.CLOSED;
-                    _ticketRepository.UpdateAsync(item);
-                }
+                //tickets.Remove(item);
             }
 
+            _logger.LogInformation("Task processed");
+
+        }
+
+        public void CheckExpiration(Ticket item)
+        {
+            if (item.ExpirationDate.ToLocalTime() <= DateTime.Now.ToLocalTime() && item.Status != TicketStatus.CLOSED)
+            {
+                item.Status = TicketStatus.CLOSED;
+                _ticketRepository.UpdateAsync(item);
+            }
+
+            //Lấy các post ra và close post
+            IEnumerable<Post?> posts = _postRepository.Find(c => c.TicketId == item.Id).Result;
+
+            if (posts == null || !posts.Any())
+            {
+                return;
+            }
+
+            foreach (var post in posts)
+            {
+                if (post.Status != PostStatus.CLOSED)
+                {
+                    post.Status = PostStatus.CLOSED;
+                    _postRepository.UpdateAsync(post);
+                }
+            }
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
