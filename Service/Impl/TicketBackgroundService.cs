@@ -57,7 +57,7 @@ namespace Service.Impl
             // Sau 5s đầu chạy mỗi 5s
             //_timer = new Timer(test, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
             // Chạy mỗi 24 giờ sau lần chạy đầu
-            _timer = new Timer(RunTask, null, TimeSpan.FromSeconds(5), TimeSpan.FromHours(24));
+            _timer = new Timer(RunTask, null, timeToGo, TimeSpan.FromHours(24));
         }
 
         private void test(object state)
