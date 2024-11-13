@@ -98,11 +98,38 @@ namespace Service.Impl
             }
 
             //Kiểm tra status của Transaction
-            IEnumerable<Transaction?> transactions = await _transactionRepository.Find(t => t.UserId == user.Id);
+            IEnumerable<Transaction?> transactions = await _transactionRepository.Find(t => t.UserId == user.Id && t.Status == TransactionStatus.SUCCESS);
 
+            if (transactions == null)
+            {
+                return ResponseUtil.Error("Request fails", "You have 0 slot. Please buy more slots for posting !", HttpStatusCode.BadRequest);
+            }
 
+            bool paid = false;
 
+            foreach (Transaction transaction in transactions)
+            {
+                TicketPostingQuota? ticketPostingQuota = (await _ticketPostingQuota.Find(t => t.Id == transaction.TicketPostingQuotaId)).SingleOrDefault();
 
+                if (ticketPostingQuota == null)
+                {
+                    return ResponseUtil.Error("Request fails", "Ticket Posting Quota not found !", HttpStatusCode.BadRequest);
+                }
+
+                if (ticketPostingQuota.Quantity != 0)
+                {
+                    ticketPostingQuota.Quantity -= 1;
+                    await _ticketPostingQuota.UpdateAsync(ticketPostingQuota);
+                    paid = true;
+                    break;
+                }
+
+            }
+
+            if (!paid)
+            {
+                return ResponseUtil.Error("Request fails", "You have 0 slot. Please buy more slots for posting !", HttpStatusCode.BadRequest);
+            }
 
             Post newPost = _mapper.Map<Post>(post);
             newPost.Status = PostStatus.PENDING;
