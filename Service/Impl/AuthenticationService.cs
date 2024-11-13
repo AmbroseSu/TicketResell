@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Text.RegularExpressions;
 using AutoMapper;
 using BusinessObject;
 using BusinessObject.Enums;
@@ -40,6 +41,10 @@ public class AuthenticationService : IAuthenticationService
         {
             try
             {
+                if (!IsValidEmail(email))
+                {
+                    return ResponseUtil.Error("Invalid email format", "Failed", HttpStatusCode.BadRequest);
+                }
                 if (await _userRepository.ExistsByEmailAsync(email) && (await _userRepository.FindUserByEmailAsync(email)).IsEnabled)
                 {
                     User userCheck = await _userRepository.FindUserByEmailAsync(email);
@@ -103,6 +108,11 @@ public class AuthenticationService : IAuthenticationService
             {
                 return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
             }
+        }
+        private bool IsValidEmail(string email)
+        {
+            var emailRegex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+            return emailRegex.IsMatch(email);
         }
 
         public async Task<ResponseDTO> VerifyEmailAsync(string token, int id)
@@ -181,6 +191,15 @@ public class AuthenticationService : IAuthenticationService
                 VerificationToken? verificationToken = await _verificationTokenRepository.FindByUserIdAsync(id);
                 if (user.Id.Equals(id) && !user.IsEnabled && verificationToken == null)
                 {
+                    int userId = user.Id;
+                    user.VerificationTokenId = null;
+                    user.VerificationToken = null;
+                    await _userRepository.UpdateAsync(user);
+                    var verification = await _verificationTokenRepository.FindByUserIdAsync(userId);
+                    if (verification != null)
+                    {
+                        await _verificationTokenRepository.DeleteAsync(verification.Id);
+                    }
                     var sendEmail = await _emailService.SendEmail(email);
                     if (sendEmail.StatusCode.Equals(HttpStatusCode.BadRequest) )
                     {
@@ -206,6 +225,10 @@ public class AuthenticationService : IAuthenticationService
         {
             try
             {
+                if (!IsValidPassword(signUp.Password))
+                {
+                    return ResponseUtil.Error("Invalid password format", "Failed", HttpStatusCode.BadRequest);
+                }
                 User? user = await _userRepository.FindUserByEmailAsync(signUp.Email);
                 if (user == null)
                 {
@@ -235,11 +258,28 @@ public class AuthenticationService : IAuthenticationService
             }
             
         }
+        private bool IsValidPassword(string password)
+        {
+            // Mật khẩu phải có ít nhất 8 ký tự
+            if (password.Length < 8)
+            {
+                return false;
+            }
+
+            // Biểu thức chính quy kiểm tra ít nhất 1 ký tự đặc biệt, 1 chữ hoa, 1 chữ thường và 1 số
+            var passwordRegex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$");
+
+            return passwordRegex.IsMatch(password);
+        }
 
         public async Task<ResponseDTO> SignIn(SignInRequest signInRequest)
         {
             try
             {
+                if (!IsValidEmail(signInRequest.Email))
+                {
+                    return ResponseUtil.Error("Invalid email format", "Failed", HttpStatusCode.BadRequest);
+                }
                 User? user = await _userRepository.FindUserByEmailAsync(signInRequest.Email.ToLower());
                 if (user == null || !BCrypt.Net.BCrypt.Verify(signInRequest.Password, user.Password))
                 {
@@ -316,6 +356,14 @@ public class AuthenticationService : IAuthenticationService
         {
             try
             {
+                if (!IsValidPassword(signUpForStaff.Password))
+                {
+                    return ResponseUtil.Error("Invalid password format", "Failed", HttpStatusCode.BadRequest);
+                }
+                if (!IsValidEmail(signUpForStaff.Email))
+                {
+                    return ResponseUtil.Error("Invalid email format", "Failed", HttpStatusCode.BadRequest);
+                }
                 User? user = await _userRepository.FindUserByEmailAsync(signUpForStaff.Email);
                 if (user != null)
                 {
@@ -386,6 +434,10 @@ public class AuthenticationService : IAuthenticationService
         {
             try
             {
+                if (!IsValidPassword(changePassword.NewPassword))
+                {
+                    return ResponseUtil.Error("Invalid password format", "Failed", HttpStatusCode.BadRequest);
+                }
                 var user = await _userRepository.FindUserByEmailAsync(changePassword.Email);
                 
                 if (user == null)
@@ -413,6 +465,166 @@ public class AuthenticationService : IAuthenticationService
                 return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.BadRequest);
             }
         }
+        
+        
+        public async Task<ResponseDTO> CheckEmailForgotPasswordAsync(string email)
+        {
+            try
+            {
+                if (!IsValidEmail(email))
+                {
+                    return ResponseUtil.Error("Invalid email format", "Failed", HttpStatusCode.BadRequest);
+                }
+                if (await _userRepository.ExistsByEmailAsync(email) && (await _userRepository.FindUserByEmailAsync(email)).IsEnabled)
+                {
+                    User userCheck = await _userRepository.FindUserByEmailAsync(email);
+                    int userId = userCheck.Id;
+                    userCheck.VerificationTokenId = null;
+                    userCheck.VerificationToken = null;
+                    await _userRepository.UpdateAsync(userCheck);
+                    var verification = await _verificationTokenRepository.FindByUserIdAsync(userId);
+                    if (verification != null)
+                    {
+                        await _verificationTokenRepository.DeleteAsync(verification.Id);
+                    }
+                    var sendEmail1 = await _emailService.SendEmail(email);
+                    if (sendEmail1.StatusCode.Equals(HttpStatusCode.BadRequest) )
+                    {
+                        return ResponseUtil.Error("Can't Send", "Failed", HttpStatusCode.BadRequest);
+                    }
+                    var result1 = _mapper.Map<UpsertUserDTO>(userCheck);
+
+                    return ResponseUtil.GetObject(result1, "ok", HttpStatusCode.Created, 0);
+                }
+                return ResponseUtil.Error("Account not exists", "Failed", HttpStatusCode.InternalServerError);
+            }
+            catch (Exception ex)
+            {
+                return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
+            }
+        }
+        
+        public async Task<ResponseDTO> VerifyEmailForgotPasswordAsync(string token, int id)
+        {
+            try
+            {
+                VerificationToken theToken = await _verificationTokenRepository.FindByTokenAsync(token);
+
+                if (theToken == null)
+                {
+                    return ResponseUtil.Error("Token not exist", "Failed", HttpStatusCode.BadRequest);
+                }
+                if (!id.Equals(theToken.UserId))
+                {
+                    return ResponseUtil.Error("Invalid verification token with user", "Failed", HttpStatusCode.BadRequest);
+                }
+                String verificationResult = await validateTokenForgotPassword(token, id);
+
+                if (verificationResult.Equals("Valid"))
+                {
+                    return ResponseUtil.GetObject(null, "Verification Email Successfully", HttpStatusCode.Created, 0);
+                }
+                if (verificationResult.Equals("Token already expired"))
+                {
+                    return ResponseUtil.Error("Token already expired", "Verification Email Failed", HttpStatusCode.BadRequest);
+                }
+                
+                return ResponseUtil.Error("Invalid verification token", "Invalid token", HttpStatusCode.BadRequest);
+            }
+            catch (Exception ex)
+            {
+                return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
+            }
+        }
+        
+        public async Task<ResponseDTO> ChangePasswordForgotPasswordAsync(string email, string newPassword)
+        {
+            try
+            {
+                if (!IsValidPassword(newPassword))
+                {
+                    return ResponseUtil.Error("Invalid password format", "Failed", HttpStatusCode.BadRequest);
+                }
+                var user = await _userRepository.FindUserByEmailAsync(email);
+                
+                if (user == null)
+                {
+                    return ResponseUtil.Error("User does not exist", "Failed", HttpStatusCode.BadRequest);
+                }
+
+                string hashedNewPassword = BCrypt.Net.BCrypt.HashPassword(newPassword);
+        
+
+                user.Password = hashedNewPassword;
+        
+
+                await _userRepository.UpdateAsync(user);
+                var result = _mapper.Map<UpsertUserDTO>(user);
+                return ResponseUtil.GetObject(result, "Password changed successfully", HttpStatusCode.OK, 0);
+            }
+            catch (Exception ex)
+            {
+                return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.BadRequest);
+            }
+        }
+        
+        public async Task<ResponseDTO> ResetVerifyEmailForgotPasswordAsync(string email, int id)
+        {
+            try
+            {
+                User user = await _userRepository.FindUserByEmailAsync(email);
+                VerificationToken? verificationToken = await _verificationTokenRepository.FindByUserIdAsync(id);
+                if (user.Id.Equals(id) && verificationToken == null)
+                {
+                    var sendEmail = await _emailService.SendEmail(email);
+                    if (sendEmail.StatusCode.Equals(HttpStatusCode.BadRequest) )
+                    {
+                        return ResponseUtil.Error("Can't Send", "Failed", HttpStatusCode.BadRequest);
+                    }
+                
+                    var result = _mapper.Map<UpsertUserDTO>(user);
+
+                    return ResponseUtil.GetObject(result, "ok", HttpStatusCode.Created, 0);
+                }
+                else
+                {
+                    return ResponseUtil.Error("User does not exist", "Failed", HttpStatusCode.NotFound);
+                }
+            }
+            catch (Exception ex)
+            {
+                return ResponseUtil.Error(ex.Message, "Failed", HttpStatusCode.InternalServerError);
+            }
+        }
+        
+        
+        private async Task<string> validateTokenForgotPassword(string theToken, int id)
+        {
+            VerificationToken token =  await _verificationTokenRepository.FindByTokenAsync(theToken);
+            if (token == null || token.UserId != id)
+            {
+                return "Invalid verification token";
+            }
+            User user = token.User;
+            
+            DateTime ex = token.ExpirationTime;
+            DateTime no = DateTime.UtcNow;
+            TimeSpan timeRemaining = ex - no;
+            if (timeRemaining.TotalMinutes <= 0)
+            {
+                user.VerificationTokenId = null;
+                user.VerificationToken = null;
+                await _userRepository.UpdateAsync(user);
+                await _verificationTokenRepository.DeleteAsync(token.Id);
+                return "Token already expired";
+            }
+            else
+            {
+                await _verificationTokenRepository.DeleteAsync(token.Id);
+                return "Valid";
+            }
+        }
+        
         
         
 }

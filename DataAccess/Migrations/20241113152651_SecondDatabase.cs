@@ -7,12 +7,12 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstDatabase : Migration
+    public partial class SecondDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+            /*migrationBuilder.CreateTable(
                 name: "Category",
                 columns: table => new
                 {
@@ -163,12 +163,12 @@ namespace DataAccess.Migrations
                     Name = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     Price = table.Column<float>(type: "real", nullable: true),
                     Quantity = table.Column<int>(type: "integer", nullable: true),
-                    ExpirationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ExpirationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Venue = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CategoryId = table.Column<int>(type: "integer", nullable: true),
-                    UserId = table.Column<int>(type: "integer", nullable: true)
+                    CategoryId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -177,12 +177,14 @@ namespace DataAccess.Migrations
                         name: "FK_Ticket_Category_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Category",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Ticket_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -195,7 +197,7 @@ namespace DataAccess.Migrations
                     TransactionDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     PaymentMethod = table.Column<int>(type: "integer", nullable: false),
                     Promotion = table.Column<int>(type: "integer", nullable: true),
-                    Status = table.Column<bool>(type: "boolean", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
                     Number = table.Column<int>(type: "integer", nullable: true),
                     PlatformFeeId = table.Column<int>(type: "integer", nullable: true),
                     UserId = table.Column<int>(type: "integer", nullable: true),
@@ -293,7 +295,7 @@ namespace DataAccess.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Rating = table.Column<int>(type: "integer", nullable: true),
+                    Rating = table.Column<int>(type: "integer", nullable: false),
                     Context = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     TicketId = table.Column<int>(type: "integer", nullable: false),
@@ -375,7 +377,7 @@ namespace DataAccess.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Title = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
                     Description = table.Column<string>(type: "character varying(3000)", maxLength: 3000, nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     TicketId = table.Column<int>(type: "integer", nullable: true)
@@ -597,7 +599,7 @@ namespace DataAccess.Migrations
                 name: "IX_VerificationToken_UserId",
                 table: "VerificationToken",
                 column: "UserId",
-                unique: true);
+                unique: true);*/
         }
 
         /// <inheritdoc />
