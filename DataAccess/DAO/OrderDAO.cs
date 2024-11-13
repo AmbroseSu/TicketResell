@@ -126,4 +126,17 @@ public class OrderDAO : IBaseDAO<Order>
             throw;
         }
     }
+    
+    public async Task<List<Order>> GetAllOrdersByStartDayAndEndDay(DateTime startDay, DateTime endDay)
+    {
+        try
+        {
+            return await _context.Orders.Include(o => o.OrderStatuses).Where(o => o.OrderDate >= startDay && o.OrderDate <= endDay).ToListAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
 }

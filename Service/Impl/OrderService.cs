@@ -93,4 +93,33 @@ public class OrderService : IOrderService
         await _transactionRepository.SaveAsync(transaction);
         return transaction;
     }
+
+    public async Task<ResponseDTO> GetAllOrdersByStartDayAndEndDay(string startDay, string endDay, int page, int limit)
+    {
+        try
+        {
+            // Chuyển đổi chuỗi ngày tháng thành DateTime
+            DateTime startDateTime = DateTime.ParseExact(startDay, "dd/MM/yyyy", null);
+            DateTime endDateTime = DateTime.ParseExact(endDay, "dd/MM/yyyy", null);
+
+            // Kiểm tra xem endDateTime có lớn hơn startDateTime không
+            if (endDateTime < startDateTime)
+            {
+                return ResponseUtil.Error("End Day must be before Start Date", "Failed", HttpStatusCode.BadRequest);
+            }
+
+            // Truy vấn đơn hàng trong khoảng thời gian cho trước
+            return null;
+        }
+        catch (FormatException)
+        {
+            // Nếu định dạng ngày tháng không đúng, ném ngoại lệ
+            throw new ArgumentException("Invalid date format. Please use dd/MM/yyyy.");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
 }

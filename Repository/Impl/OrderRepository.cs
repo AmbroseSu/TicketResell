@@ -16,4 +16,5 @@ public class OrderRepository : IOrderRepository
 
     public Task<List<Order>> GetAllOrdersByUserId(long userId) => OrderDAO.Instance.GetAllOrdersByUserId(userId);
     public Task<IEnumerable<Order?>> Find(Expression<Func<Order, bool>> predicate) => OrderDAO.Instance.Find(predicate);
+    public Task<List<Order>> GetAllOrdersByStartDayAndEndDay(DateTime startDay, DateTime endDay) => OrderDAO.Instance.GetAllOrdersByStartDayAndEndDay(startDay, endDay);
 }
