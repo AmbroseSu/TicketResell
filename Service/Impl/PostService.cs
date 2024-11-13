@@ -13,6 +13,8 @@ using BusinessObject.enums;
 using Microsoft.VisualBasic;
 using Repository.Impl;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.JsonPatch.Internal;
+using System.Collections.Generic;
 
 
 namespace Service.Impl
@@ -382,6 +384,32 @@ namespace Service.Impl
                 return ResponseUtil.GetCollection(null, "No post found !", HttpStatusCode.OK, 0, page, limit, 0);
             }
 
+            List<Post?> posts = await GetAllPostByListTicket(tickets.ToList(), status);
+
+            return await GetAllPostInfo(posts, page, limit);
+        }
+
+        public async Task<ResponseDTO> GetPostByCategoryId(int id, PostStatus? status, int page, int limit)
+        {
+            Category? category = (await _ticketCategoryRepository.Find(c => c.Id == id)).SingleOrDefault();
+
+            if (category == null)
+            {
+                return ResponseUtil.Error("Request fails", "Category not found !", HttpStatusCode.BadRequest);
+            }
+
+            IEnumerable<Ticket?> tickets = await _ticketRepository.Find(t => t.CategoryId == id);
+
+            if (tickets == null)
+            {
+                return ResponseUtil.GetCollection(null, "No post found !", HttpStatusCode.OK, 0, page, limit, 0);
+            }
+            List<Post?> posts = await GetAllPostByListTicket(tickets.ToList(), status);
+            return await GetAllPostInfo(posts, page, limit);
+        }
+
+        private async Task<List<Post?>> GetAllPostByListTicket(List<Ticket> tickets, PostStatus? status)
+        {
             List<Post?> posts = new List<Post?>();
 
             foreach (Ticket ticket in tickets)
@@ -398,7 +426,7 @@ namespace Service.Impl
                 }
             }
 
-            return await GetAllPostInfo(posts, page, limit);
+            return posts;
         }
     }
 }
