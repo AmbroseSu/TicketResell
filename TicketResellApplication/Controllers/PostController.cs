@@ -32,24 +32,18 @@ namespace TicketResellApplication.Controllers
             return await _postService.CreatePost(post);
         }
 
-        //[HttpPut("edit")]
-        //public async Task<ResponseDTO> UpdatePostAsync([FromQuery] string description, [FromQuery] int ticketId)
-        //{
-        //    return await _postService.EditPost(ticketId, description);
-        //}
+        [HttpPut("remove")]
+        public async Task<ResponseDTO> DeletePost([FromQuery, Required] int postId)
+        {
+            return await _postService.DeletePost(postId);
+        }
 
-        //[HttpPut("remove")]
-        //public async Task<ResponseDTO> DeletePost([FromQuery] int ticketId)
-        //{
-        //    return await _postService.DeletePost(ticketId);
-        //}
-
-        //[HttpGet("current-post")]
-        //public async Task<ResponseDTO> GetCurrentPostsAsync([FromQuery] int page = 1,
-        // [FromQuery] int limit = 1)
-        //{
-        //    return await _postService.getCurrentPosts(page, limit);
-        //}
+        [HttpPut("manager-action")]
+        public async Task<ResponseDTO> UpdateStatus([FromQuery, Required] int postId,
+          [FromQuery, Required] PostStatus status)
+        {
+            return await _postService.UpdateStatus(postId, status);
+        }
 
         [HttpGet("get-lists")]
         public async Task<ResponseDTO> GetAllPosts(
@@ -67,10 +61,20 @@ namespace TicketResellApplication.Controllers
             return await _postService.GetPostByPostId(id);
         }
 
-        //[HttpGet("get-by-ticket")]
-        //public async Task<ResponseDTO> GetPostByTicketId([FromQuery, Required] int id)
-        //{
-        //    return await _postService.GetPostByTicketId(id);
-        //}
+        [HttpGet("get-by-ticket")]
+        public async Task<ResponseDTO> GetPostByTicketId([FromQuery, Required] int id,
+            [FromQuery, Required] int page = 1,
+         [FromQuery, Required] int limit = 10)
+        {
+            return await _postService.GetPostByTicketId(id, page, limit);
+        }
+
+        [HttpGet("get-by-user")]
+        public async Task<ResponseDTO> GetPostByUserId([FromQuery, Required] int id,
+           [FromQuery, Required] int page = 1,
+        [FromQuery, Required] int limit = 10)
+        {
+            return await _postService.GetPostByUserId(id, page, limit);
+        }
     }
 }

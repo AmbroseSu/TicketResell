@@ -15,11 +15,12 @@ namespace Service
     {
         Task<ResponseDTO> CreatePost(NewPostRequest post);
         //Task<ResponseDTO> EditPost(int id, string description);
-        //Task<ResponseDTO> DeletePost(int id);
+        Task<ResponseDTO> DeletePost(int postId);
         //Task<ResponseDTO> getCurrentPosts(int page, int limit);
         Task<ResponseDTO> GetAllPosts(int page, int limit, PostStatus? status, String? searchTerm);
         Task<ResponseDTO> GetPostByPostId(int id);
-        //Task<ResponseDTO> GetPostByTicketId(int id);
-        //Task<ResponseDTO> PostVerify(int id);
+        Task<ResponseDTO> UpdateStatus(int postId, PostStatus status);
+        Task<ResponseDTO> GetPostByTicketId(int id, int page, int limit);
+        Task<ResponseDTO> GetPostByUserId(int id, int page, int limit);
     }
 }
