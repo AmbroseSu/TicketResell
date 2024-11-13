@@ -19,7 +19,7 @@ namespace Service
         Task<ResponseDTO> GetAllTicket(int page, int limit, TicketStatus? status, String? searchTerm);
         Task<ResponseDTO> UpdateStatus(int id, TicketStatus status);
         Task<ResponseDTO> GetTicketByCategoryId(int id, int page, int limit);
-        Task<ResponseDTO> GetTicketByEmail(string email, int page, int limit);
+        Task<ResponseDTO> GetTicketByUserId(int id, int page, int limit);
         Task<ResponseDTO> UpdateTicketImg(List<string> imgList, int ticketId);
     }
 }
