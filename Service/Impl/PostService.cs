@@ -8,7 +8,6 @@ using Repository;
 using Service.Response;
 using BusinessObject.Enums;
 using DataAccess.DTO;
-using System.Transactions;
 using BusinessObject.enums;
 using Microsoft.VisualBasic;
 using Repository.Impl;
@@ -29,8 +28,9 @@ namespace Service.Impl
         private readonly IImageTicketRepository _imageTicketRepository;
         private readonly IFeedbackRepository _feedbackRepository;
         private readonly IFeedbackService _feedbackService;
-
-        public PostService(IPostRepository postRespository, ITicketRepository ticketRepository, IUserRepository userRepository, IMapper mapper, ICategoryRepository ticketCategoryRepository, IImageTicketRepository imageTicketRepository, IFeedbackRepository feedbackRepository, IFeedbackService feedbackService)
+        private readonly ITicketPostingQuotaRepository _ticketPostingQuota;
+        private readonly ITransactionRepository _transactionRepository;
+        public PostService(IPostRepository postRespository, ITicketRepository ticketRepository, IUserRepository userRepository, IMapper mapper, ICategoryRepository ticketCategoryRepository, IImageTicketRepository imageTicketRepository, IFeedbackRepository feedbackRepository, IFeedbackService feedbackService, ITicketPostingQuotaRepository ticketPostingQuota, ITransactionRepository transactionRepository)
         {
             _postRespository = postRespository;
             _ticketRepository = ticketRepository;
@@ -40,6 +40,8 @@ namespace Service.Impl
             _imageTicketRepository = imageTicketRepository;
             _feedbackRepository = feedbackRepository;
             _feedbackService = feedbackService;
+            _ticketPostingQuota = ticketPostingQuota;
+            _transactionRepository = transactionRepository;
         }
 
         public async Task<ResponseDTO> CreatePost(NewPostRequest post)
@@ -93,6 +95,40 @@ namespace Service.Impl
                         return ResponseUtil.Error("Request fails", "There is a post is waiting for verify with this ticket!, please wait for response or delete your renew your request", HttpStatusCode.BadRequest);
                     }
                 }
+            }
+
+            //Kiểm tra status của Transaction
+            IEnumerable<Transaction?> transactions = await _transactionRepository.Find(t => t.UserId == user.Id && t.Status == TransactionStatus.SUCCESS);
+
+            if (transactions == null)
+            {
+                return ResponseUtil.Error("Request fails", "You have 0 slot. Please buy more slots for posting !", HttpStatusCode.BadRequest);
+            }
+
+            bool paid = false;
+
+            foreach (Transaction transaction in transactions)
+            {
+                TicketPostingQuota? ticketPostingQuota = (await _ticketPostingQuota.Find(t => t.Id == transaction.TicketPostingQuotaId)).SingleOrDefault();
+
+                if (ticketPostingQuota == null)
+                {
+                    return ResponseUtil.Error("Request fails", "Ticket Posting Quota not found !", HttpStatusCode.BadRequest);
+                }
+
+                if (ticketPostingQuota.Quantity != 0)
+                {
+                    ticketPostingQuota.Quantity -= 1;
+                    await _ticketPostingQuota.UpdateAsync(ticketPostingQuota);
+                    paid = true;
+                    break;
+                }
+
+            }
+
+            if (!paid)
+            {
+                return ResponseUtil.Error("Request fails", "You have 0 slot. Please buy more slots for posting !", HttpStatusCode.BadRequest);
             }
 
             Post newPost = _mapper.Map<Post>(post);
