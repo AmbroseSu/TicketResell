@@ -38,6 +38,8 @@ builder.Services.AddScoped<IOrderStatusRepository, OrderStatusRepository>();
 builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 builder.Services.AddScoped<IImageFeedbackRepository, ImageFeedbackRepository>();
+builder.Services.AddScoped<ITicketPostingQuotaRepository, TicketPostingQuotaRepository>();
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
 builder.Services.AddHostedService<TicketBackgroundService>();
 
