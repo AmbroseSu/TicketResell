@@ -3,6 +3,7 @@ using DataAccess.DTO.Request;
 using DataAccess.DTO.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using Net.payOS.Types;
 using Service;
@@ -30,10 +31,15 @@ namespace TicketResellApplication.Controllers
         }
         
         [HttpGet("get-platform-fee/all")]
-        public async Task<ResponseDTO> GetTicketRequest([FromQuery, Required] int page = 1,
-            [FromQuery, Required] int limit = 10)
+        public async Task<ResponseDTO> GetTicketRequest([FromQuery] string query,
+            [FromQuery] [Required] int page = 1, [FromQuery] [Required] int limit = 10)
         {
-            return await _platformFeeService.GetAll(page, limit);
+            if (query.IsNullOrEmpty())
+            {
+                return await _platformFeeService.GetAll(page, limit);
+            }
+
+            return await _platformFeeService.GetByName(page, limit, query);
         }
 
     }

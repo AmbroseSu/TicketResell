@@ -9,5 +9,6 @@ public interface IPlatformFeeRepository
     Task UpdateAsync(PlatformFee platformFee);
     Task DeleteAsync(long platformFeeId);
     Task<IEnumerable<PlatformFee?>> Find(Expression<Func<PlatformFee, bool>> predicate);
+    
 
 }
