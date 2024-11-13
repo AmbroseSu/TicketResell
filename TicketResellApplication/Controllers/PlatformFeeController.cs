@@ -34,7 +34,7 @@ namespace TicketResellApplication.Controllers
         public async Task<ResponseDTO> GetTicketRequest([FromQuery] string? query,
             [FromQuery] [Required] int page = 1, [FromQuery] [Required] int limit = 10)
         {
-            if (query.IsNullOrEmpty())
+            if (query == null)
             {
                 return await _platformFeeService.GetAll(page, limit);
             }

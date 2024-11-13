@@ -34,9 +34,9 @@ public class PlatformFeeService : IPlatformFeeService
             platformFees.Count(), page, limit, platfomFeeDtos.Count());
     }
 
-    public async Task<ResponseDTO> GetByName(int page, int limit, string query)
+    public async Task<ResponseDTO> GetByName(int page, int limit, string? query)
     {
-        IEnumerable<PlatformFee> platformFees = await _platformFeeRepository.Find(x => x.Name.Contains(query));
+        IEnumerable<PlatformFee> platformFees = await _platformFeeRepository.Find(x => x.Name.ToLower().Contains(query.ToLower()));
         IEnumerable<PlatformFeeDTO> platformFeeDtos = _mapper.Map<IEnumerable<PlatformFeeDTO>>(platformFees);
         List<PlatformFeeDTO> listPlatformFeeDtos = platformFeeDtos.Skip((page - 1) * limit).Take(limit).ToList();
         return ResponseUtil.GetCollection(listPlatformFeeDtos, "Search by name", HttpStatusCode.OK,
