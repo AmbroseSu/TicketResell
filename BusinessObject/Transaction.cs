@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using BusinessObject.enums;
 using BusinessObject.Enums;
 
 namespace BusinessObject;
@@ -13,7 +14,7 @@ public class Transaction
     public DateTime? TransactionDate { get; set; }
     public PaymentMethod PaymentMethod { get; set; }
     public int? Promotion { get; set; }
-    public bool Status { get; set; }
+    public TransactionStatus Status { get; set; }
     public int? Number {get; set;}
 
     public int? PlatformFeeId { get; set; }
