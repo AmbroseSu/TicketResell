@@ -23,7 +23,7 @@ namespace DataAccess.DTO.Request
         public String ExpirationDate { get; set; }
         [Required(ErrorMessage = "FullName is required")]
         [StringLength(1500, ErrorMessage = "FullName must be less than 1500 characters")]
-        [RegularExpression(@"^[\p{L}0-9\s]+$", ErrorMessage = "Venue must contain only letters or number")]
+        [RegularExpression(@"^[\p{L}0-9\s:,?.!()]+$", ErrorMessage = "Venue must contain only letters or number")]
         public string Venue { get; set; }
         public int CategoryId { get; set; }
         public int UserId { get; set; }

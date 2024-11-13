@@ -78,5 +78,17 @@ namespace TicketResellApplication.Controllers
         {
             return await _postService.GetPostByUserId(id, status, page, limit);
         }
+
+        [HttpGet("get-by-category")]
+        public async Task<ResponseDTO> GetPostByCategoryId(
+             [FromQuery] PostStatus? status,
+            [FromQuery, Required] int id,
+           [FromQuery, Required] int page = 1,
+        [FromQuery, Required] int limit = 10)
+        {
+            return await _postService.GetPostByCategoryId(id, status, page, limit);
+        }
+
+
     }
 }
