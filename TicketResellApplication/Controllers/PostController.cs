@@ -70,11 +70,13 @@ namespace TicketResellApplication.Controllers
         }
 
         [HttpGet("get-by-user")]
-        public async Task<ResponseDTO> GetPostByUserId([FromQuery, Required] int id,
+        public async Task<ResponseDTO> GetPostByUserId(
+            [FromQuery] PostStatus? status,
+            [FromQuery, Required] int id,
            [FromQuery, Required] int page = 1,
         [FromQuery, Required] int limit = 10)
         {
-            return await _postService.GetPostByUserId(id, page, limit);
+            return await _postService.GetPostByUserId(id, status, page, limit);
         }
     }
 }

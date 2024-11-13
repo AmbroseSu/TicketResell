@@ -129,11 +129,11 @@ namespace Service.Impl
             IEnumerable<Post?> result = new List<Post?>();
             if (status == null)
             {
-                result = await _postRespository.Find(p => p.Title.Contains(searchTerm.Trim()));
+                result = await _postRespository.Find(p => p.Title.ToLower().Contains(searchTerm.Trim().ToLower()));
             }
             else
             {
-                result = await _postRespository.Find(p => p.Title.Contains(searchTerm.Trim())
+                result = await _postRespository.Find(p => p.Title.ToLower().Contains(searchTerm.Trim().ToLower())
                 && p.Status == status
                 );
 
@@ -366,7 +366,7 @@ namespace Service.Impl
             return ResponseUtil.GetObject(responseData, "Post retrieved sucessfully", HttpStatusCode.OK, 1);
         }
 
-        public async Task<ResponseDTO> GetPostByUserId(int id, int page, int limit)
+        public async Task<ResponseDTO> GetPostByUserId(int id, PostStatus? status, int page, int limit)
         {
             User? user = await _userRepository.FindUserByIdAsync(id);
 
@@ -384,10 +384,18 @@ namespace Service.Impl
 
             List<Post?> posts = new List<Post?>();
 
-            foreach(Ticket ticket in tickets)
+            foreach (Ticket ticket in tickets)
             {
-                IEnumerable<Post?> post = await _postRespository.Find(p => p.TicketId == ticket.Id);
-                posts.AddRange(post);
+                if (status != null)
+                {
+                    IEnumerable<Post?> post = await _postRespository.Find(p => p.TicketId == ticket.Id && p.Status == status);
+                    posts.AddRange(post);
+                }
+                else
+                {
+                    IEnumerable<Post?> post = await _postRespository.Find(p => p.TicketId == ticket.Id);
+                    posts.AddRange(post);
+                }
             }
 
             return await GetAllPostInfo(posts, page, limit);

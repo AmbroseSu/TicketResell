@@ -66,6 +66,8 @@ builder.Services.Scan(scan => scan
 );
 
 
+builder.Services.AddHostedService<TicketBackgroundService>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
