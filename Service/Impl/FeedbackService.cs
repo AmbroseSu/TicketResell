@@ -234,7 +234,9 @@ namespace Service.Impl
                 //Trim là bỏ phần trước [ 
                 //Split là tách chuỗi, ở đây tách xong lấy phần tử 0
                 string format = "yyyy-MM-dd HH:mm:ss";
-                string prefix = item.Context.Split(']')[0].TrimStart('[');
+                string[] context = item.Context.Split(']');
+                string prefix = context[0].TrimStart('[');
+                feedback.Context = context[1].TrimStart(' ');
                 DateTime time = DateTime.ParseExact(prefix, format,
                     CultureInfo.InvariantCulture);
 
@@ -287,7 +289,9 @@ namespace Service.Impl
             //Trim là bỏ phần trước [ 
             //Split là tách chuỗi, ở đây tách xong lấy phần tử 0
             string format = "yyyy-MM-dd HH:mm:ss";
-            string prefix = feedback.Context.Split(']')[0].TrimStart('[');
+            string[] context = feedback.Context.Split(']');
+            string prefix = context[0].TrimStart('[');
+            data.Context = context[1].TrimStart(' ');
             DateTime time = DateTime.ParseExact(prefix, format,
                 CultureInfo.InvariantCulture);
 

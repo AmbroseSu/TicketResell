@@ -81,13 +81,13 @@ namespace TicketResellApplication.Controllers
             return await _ticketService.GetTicketByCategoryId(categoryId, page, limit);
         }
 
-        [HttpGet("get/user")]
+        [HttpGet("get-user")]
         public async Task<ResponseDTO> getTicket(
-          [FromQuery, Required] string email,
+          [FromQuery, Required] int id,
           [FromQuery, Required] int page = 1,
           [FromQuery, Required] int limit = 10)
         {
-            return await _ticketService.GetTicketByEmail(email, page, limit);
+            return await _ticketService.GetTicketByUserId(id, page, limit);
         }
 
         [HttpPost("images")]
