@@ -2,6 +2,7 @@
 using System.Net;
 using AutoMapper;
 using BusinessObject;
+using BusinessObject.enums;
 using BusinessObject.Enums;
 using DataAccess.DTO;
 using DataAccess.DTO.Response;
@@ -86,7 +87,7 @@ public class OrderService : IOrderService
         transaction.TransactionDate = DateTime.Now.ToUniversalTime();
         transaction.PaymentMethod = PaymentMethod.QRCODE;
         transaction.Promotion = 0;
-        transaction.Status = true;
+        transaction.Status = TransactionStatus.PENDING;
         transaction.Number = number;
         transaction.PlatformFeeId = platformFeeId;
         transaction.UserId = userId;
