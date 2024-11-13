@@ -115,7 +115,7 @@ namespace DataAccess.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("FullName")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
@@ -135,7 +135,7 @@ namespace DataAccess.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("FullName")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
@@ -312,7 +312,7 @@ namespace DataAccess.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("FullName")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
@@ -337,7 +337,7 @@ namespace DataAccess.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("FullName")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
@@ -404,7 +404,7 @@ namespace DataAccess.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("FullName")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 

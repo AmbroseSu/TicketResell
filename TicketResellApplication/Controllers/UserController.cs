@@ -81,5 +81,11 @@ namespace TicketResellApplication.Controllers
             return await _userService.ChangeActiveUserAsync(id);
         }
         
+        [HttpGet("get-number-gender")]
+        public async Task<ResponseDTO> GetNumberGender()
+        {
+            return await _userService.FindByGenderAsync();
+        }
+        
     }
 }

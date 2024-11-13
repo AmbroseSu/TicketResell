@@ -11,6 +11,5 @@ public class Category
     [StringLength(500)]
     public string? Name { get; set; }
     public bool IsDeleted { get; set; } = false;
-    
     public List<Ticket>? Tickets { get; set; }
 }

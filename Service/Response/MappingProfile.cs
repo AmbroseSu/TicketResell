@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Globalization;
+using AutoMapper;
 using BusinessObject;
 using DataAccess.DTO;
 using DataAccess.DTO.Request;
@@ -16,7 +17,10 @@ public class MappingProfile : Profile
         CreateMap<UserDTO, User>();
         CreateMap<Ticket, TicketDTO>();
         CreateMap<TicketDTO, Ticket>();
-        CreateMap<NewTicket, Ticket>();
+        //CreateMap<NewTicket, Ticket>();
+        CreateMap<NewTicket, Ticket>()
+            .ForMember(dest => dest.ExpirationDate, opt => opt.MapFrom(src => 
+                DateTime.ParseExact(src.ExpirationDate, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture)));
         CreateMap<updateTicketRequest, Ticket>();
         CreateMap<NewPostRequest, Post>();
         CreateMap<TicketRequest, RequestTicket>();
@@ -31,6 +35,37 @@ public class MappingProfile : Profile
         CreateMap<FeedbackDTO, Feedback>();
         CreateMap<ImageFeedback, ImageFeedbackDTO>();
         CreateMap<PlatformFee,PlatformFeeDTO>();
+        CreateMap<NewFeedback, Feedback>();
+
+        //TicketResponse
+        CreateMap<FeedbackResponse, FeedbackTicketElement>();
+        CreateMap<List<FeedbackTicketElement>, TicketResponse>();
+        CreateMap<Category, TicketResponse>()
+            .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Id))
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+        CreateMap<Ticket, TicketResponse>()
+            .ForMember(dest => dest.TicketId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.TicketName, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+            .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
+            .ForMember(dest => dest.ExpirationDate, opt => opt.MapFrom(src => src.ExpirationDate))
+            .ForMember(dest => dest.Venue, opt => opt.MapFrom(src => src.Venue))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+            .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => src.IsDeleted))
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+        CreateMap<User, TicketResponse>()
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.Status, opt => opt.Ignore())
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+        CreateMap<Post, TicketResponse>()
+            .ForMember(dest => dest.PostId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.PostTitle, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.PostDescription, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.CurrentPostStatus, opt => opt.MapFrom(src => src.Status))
+            .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.CreatedDate))
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
 
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.RegularExpressions;
 
 namespace BusinessObject;
 
@@ -9,7 +10,7 @@ public class Feedback
     [Key]
     public int Id { get; set; }
     [Range(1, 5, ErrorMessage = "Rating must be between 1 and 5.")]
-    public int? Rating { get; set; }
+    public int Rating { get; set; }
     [StringLength(2000)]
     public string? Context { get; set; }
     public bool IsDeleted { get; set; } = false;
@@ -18,5 +19,5 @@ public class Feedback
     public Ticket? Ticket { get; set; }
     public User? User { get; set; }
     public List<ImageFeedback>? ImageFeedbacks { get; set; }
-    
+
 }

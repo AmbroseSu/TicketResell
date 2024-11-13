@@ -1,4 +1,5 @@
-﻿using DataAccess.DTO;
+﻿using BusinessObject.enums;
+using DataAccess.DTO;
 using DataAccess.DTO.Request;
 using DataAccess.DTO.Response;
 using Service.Response;
@@ -16,7 +17,7 @@ namespace Service
         //Task<ResponseDTO> EditPost(int id, string description);
         //Task<ResponseDTO> DeletePost(int id);
         //Task<ResponseDTO> getCurrentPosts(int page, int limit);
-        //Task<ResponseDTO> getAllPosts(int page, int limit);
+        Task<ResponseDTO> getAllPosts(int page, int limit, PostStatus? status, String? searchTerm);
         //Task<ResponseDTO> GetPost(int id);
         //Task<ResponseDTO> PostVerify(int id);
     }

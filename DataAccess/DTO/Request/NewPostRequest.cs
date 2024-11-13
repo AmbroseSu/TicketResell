@@ -10,9 +10,14 @@ namespace DataAccess.DTO.Request
 {
     public class NewPostRequest
     {
-        [StringLength(1000)]
+        [StringLength(1000, ErrorMessage = "FullName must be less than 1000 characters")]
+        [Required(ErrorMessage = "FullName is required")]
+        [RegularExpression(@"^[\p{L}0-9\s]+$", ErrorMessage = "Title must contain only letters, numbers, or spaces")]
+
         public string Title { get; set; }
-        [StringLength(4000)]
+        [StringLength(3000, ErrorMessage = "FullName must be less than 3000 characters")]
+        [Required(ErrorMessage = "FullName is required")]
+        [RegularExpression(@"^[\p{L}0-9\s]+$", ErrorMessage = "Description must contain only letters, numbers, or spaces")]
         public string Description { get; set; }
         public int ticketId { get; set; }
     }

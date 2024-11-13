@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using BusinessObject;
+using BusinessObject.enums;
 using BusinessObject.Enums;
 using DataAccess.DTO;
 using DataAccess.DTO.Response;
@@ -20,4 +21,6 @@ public interface IUserService
     Task<ResponseDTO> EditProfileAsync(UpsertUserDTO userDTO);
     Task<ResponseDTO> SearchUsersByEmailAndFullNameAsync(string search, int page, int limit);
     Task<ResponseDTO> ChangeActiveUserAsync(int userId);
+    Task<ResponseDTO> FindByGenderAsync();
+    
 }

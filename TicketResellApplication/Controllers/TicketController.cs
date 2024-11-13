@@ -8,6 +8,7 @@ using Service;
 using Service.Impl;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Cors;
+using BusinessObject.Enums;
 
 namespace TicketResellApplication.Controllers
 {
@@ -38,18 +39,22 @@ namespace TicketResellApplication.Controllers
         //}
 
 
-        //[HttpPut("remove")]
-        //public async Task<ResponseDTO> RemoveTicket([FromQuery, Required] int ticketId)
-        //{
-        //    return await _ticketService.DeleteTicketAsync(ticketId);
-        //}
+        [HttpPut("remove")]
+        public async Task<ResponseDTO> RemoveTicket([FromQuery, Required] int ticketId)
+        {
+            return await _ticketService.DeleteTicketAsync(ticketId);
+        }
 
         [HttpGet("get-list")]
         public async Task<ResponseDTO> getTickets(
+         [FromQuery] TicketStatus? status,
+         [FromQuery] string searchTerm = "",
          [FromQuery, Required] int page = 1,
-         [FromQuery, Required] int limit = 10)
+         [FromQuery, Required] int limit = 10
+
+         )
         {
-            return await _ticketService.GetAllTicket(page, limit);
+            return await _ticketService.GetAllTicket(page, limit, status, searchTerm);
         }
 
         [HttpGet("get")]
@@ -59,13 +64,13 @@ namespace TicketResellApplication.Controllers
             return await _ticketService.GetTicketAsync(ticketId);
         }
 
-        //[HttpGet("manager-approve")]
-        //public async Task<ResponseDTO> updateStatus(
-        //    [FromQuery, Required] int ticketId,
-        //  [FromQuery, Required] string status)
-        //{
-        //    return await _ticketService.UpdateStatus(ticketId, status);
-        //}
+        [HttpGet("manager-action")]
+        public async Task<ResponseDTO> updateStatus(
+            [FromQuery, Required] int ticketId,
+          [FromQuery, Required] TicketStatus status)
+        {
+            return await _ticketService.UpdateStatus(ticketId, status);
+        }
 
         [HttpGet("get-by-category")]
         public async Task<ResponseDTO> getTicketByCategoryId(
@@ -86,7 +91,7 @@ namespace TicketResellApplication.Controllers
         }
 
         [HttpPost("images")]
-        public async Task<ResponseDTO> AddImage([FromBody] List<string> imgList, int ticketId)
+        public async Task<ResponseDTO> AddImage([FromBody] List<string> imgList, [FromQuery, Required] int ticketId)
         {
             return await _ticketService.UpdateTicketImg(imgList, ticketId);
         }

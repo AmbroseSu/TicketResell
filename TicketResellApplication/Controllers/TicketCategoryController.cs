@@ -21,20 +21,23 @@ namespace TicketResellApplication.Controllers
             this.categoryService = categoryService;
         }
 
-        [HttpGet("current-categories")]
-        public async Task<ResponseDTO> getCurrentCategories(
-             [FromQuery, Required] int page = 1,
-            [FromQuery, Required] int limit = 10)
-        {
-            return await categoryService.getCurrentCategories(page, limit);
-        }
+        //[HttpGet("current-categories")]
+        //public async Task<ResponseDTO> getCurrentCategories(
+        //     [FromQuery, Required] int page = 1,
+        //    [FromQuery, Required] int limit = 10)
+        //{
+        //    return await categoryService.getCurrentCategories(page, limit);
+        //}
 
         [HttpGet("categories")]
         public async Task<ResponseDTO> getAllCategory(
+            [FromQuery] string searchTerm = "",
             [FromQuery, Required] int page = 1,
-            [FromQuery, Required] int limit = 10)
+            [FromQuery, Required] int limit = 10
+
+            )
         {
-            return await categoryService.getAllCategories(page,  limit);
+            return await categoryService.getAllCategories(page, limit, searchTerm);
         }
 
         [HttpPost("new-category")]
@@ -48,6 +51,13 @@ namespace TicketResellApplication.Controllers
            [FromQuery, Required] int id)
         {
             return await categoryService.GetCategory(id);
+        }
+        
+        [HttpPost("inactive")]
+        public async Task<ResponseDTO> DisableCategory(
+           [FromQuery, Required] int id)
+        {
+            return await categoryService.InactiveCategory(id);
         }
     }
 }

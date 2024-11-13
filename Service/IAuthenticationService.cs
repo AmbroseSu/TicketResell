@@ -12,4 +12,10 @@ public interface IAuthenticationService
     Task<ResponseDTO> SignIn(SignInRequest signInRequest);
     Task<ResponseDTO> SignInGoogle(String email);
     Task<ResponseDTO> SignUpForStaff(SignUpForStaff signUpForStaff);
+    Task<ResponseDTO> SaveInfoGoogle(SignUpGoogle signUpGoogle);
+    Task<ResponseDTO> ChangePasswordAsync(ChangePassword changePassword);
+    Task<ResponseDTO> CheckEmailForgotPasswordAsync(string email);
+    Task<ResponseDTO> VerifyEmailForgotPasswordAsync(string token, int id);
+    Task<ResponseDTO> ChangePasswordForgotPasswordAsync(string email, string newPassword);
+    Task<ResponseDTO> ResetVerifyEmailForgotPasswordAsync(string email, int id);
 }
