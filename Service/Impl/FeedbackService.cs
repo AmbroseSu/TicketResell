@@ -95,7 +95,7 @@ namespace Service.Impl
                         isOrder = true;
                         break;
                     }
-                    
+
                 }
 
             }
@@ -372,6 +372,53 @@ namespace Service.Impl
 
             return ResponseUtil.GetObject("Request accepted", "Image updated successfully", HttpStatusCode.Accepted, 0);
 
+        }
+
+        public ResponseDTO GetUserReputation(int userId)
+        {
+            float repu = 0;
+            int TicketCount = 0;
+            float totalTicketRating = 0;
+            User? user = _userRepository.FindUserByIdAsync(userId).Result;
+
+            if (user == null)
+            {
+                return ResponseUtil.Error("Request fails", "User not found", HttpStatusCode.BadRequest);
+            }
+
+            List<Ticket?> tickets = _ticketRepository.Find(t => t.UserId == userId).Result.ToList();
+
+            if (tickets.Count != 0)
+            {
+                TicketCount = tickets.Count;
+                foreach (Ticket ticket in tickets)
+                {
+                    List<Feedback?> feedbacks = _feedbackRepository.Find(f => f.TicketId == ticket.Id).Result.ToList();
+
+                    if (feedbacks.Count != 0)
+                    {
+                        float totalRating = 0;
+                        foreach (Feedback feedback in feedbacks)
+                        {
+                            totalRating += feedback.Rating;
+                        }
+
+                        float ticketRating = totalRating / feedbacks.Count;
+                        totalTicketRating += ticketRating;
+                    }
+                    else
+                    {
+                        if (TicketCount != 1)
+                        {
+                            TicketCount--;
+                        }
+                    }
+
+                }
+                repu = totalTicketRating / TicketCount;
+            }
+
+            return ResponseUtil.GetObject(repu, "Return user points successfully", HttpStatusCode.OK, 0);
         }
     }
 
