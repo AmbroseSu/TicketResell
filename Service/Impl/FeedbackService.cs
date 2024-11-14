@@ -27,8 +27,9 @@ namespace Service.Impl
         private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
         private readonly IImageFeedbackRepository _imageFeedbackRepository;
+        private readonly IOrderStatusRepository _orderStatusRepository;
 
-        public FeedbackService(ITicketRepository ticketRepository, IFeedbackRepository feedbackRepository, IPostRepository postRepository, IUserRepository userRepository, IOrderRepository orderRepository, IMapper mapper, IImageFeedbackRepository imageFeedbackRepository)
+        public FeedbackService(ITicketRepository ticketRepository, IFeedbackRepository feedbackRepository, IPostRepository postRepository, IUserRepository userRepository, IOrderRepository orderRepository, IMapper mapper, IImageFeedbackRepository imageFeedbackRepository, IOrderStatusRepository orderStatusRepository)
         {
             _ticketRepository = ticketRepository;
             _feedbackRepository = feedbackRepository;
@@ -37,6 +38,7 @@ namespace Service.Impl
             _orderRepository = orderRepository;
             _mapper = mapper;
             _imageFeedbackRepository = imageFeedbackRepository;
+            _orderStatusRepository = orderStatusRepository;
         }
 
         public async Task<ResponseDTO> AddFeedback(NewFeedback feedback)
@@ -68,16 +70,40 @@ namespace Service.Impl
                 return ResponseUtil.Error("Request fails", msg, HttpStatusCode.BadRequest);
             }
 
-            //kiểm tra xem user có đặt item ko
-            //Order? order = (await _orderRepository.Find(c => c.TicketId == ticket.Id)).SingleOrDefault();
+            //kiểm tra xem user có đặt hàng ko
+            IEnumerable<Order?> order = await _orderRepository.Find(c => c.TicketId == ticket.Id);
 
-            //if (order == null)
-            //{
-            //    String msg = "Order not found to be feedback";
-            //    //Kiểm tra order status là đã giao dịch hoàn tất chưa?
+            bool isOrder = false;
+            if (order == null)
+            {
+                return ResponseUtil.Error("Request fails", "Order not found to be feedback", HttpStatusCode.BadRequest);
+            }
 
-            //    return ResponseUtil.Error("Request fails", msg, HttpStatusCode.BadRequest);
-            //}
+            foreach (Order? item in order.ToList())
+            {
+                IEnumerable<OrderStatus?> orderStatus = await _orderStatusRepository.Find(c => c.OrderId == item.Id);
+
+                if (orderStatus == null)
+                {
+                    return ResponseUtil.Error("Request fails", "Order status not found to be feedback", HttpStatusCode.BadRequest);
+                }
+
+                foreach (OrderStatus status in orderStatus.ToList())
+                {
+                    if (status.Name.Equals("Done"))
+                    {
+                        isOrder = true;
+                        break;
+                    }
+                    
+                }
+
+            }
+
+            if (!isOrder)
+            {
+                return ResponseUtil.Error("Request fails", "Order not found to be feedback", HttpStatusCode.BadRequest);
+            }
 
             //post có tồn tại ko
             Post? post = (await _postRepository.Find(c => c.TicketId == ticket.Id)).SingleOrDefault();

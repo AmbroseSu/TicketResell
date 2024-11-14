@@ -1,4 +1,5 @@
 ﻿using BusinessObject;
+using System.Linq.Expressions;
 
 namespace DataAccess.DAO;
 
@@ -97,5 +98,10 @@ public class OrderStatusDAO : IBaseDAO<OrderStatus>
             Console.WriteLine(e);
             throw;
         }
+    }
+
+    public async Task<IEnumerable<OrderStatus?>> Find(Expression<Func<OrderStatus, bool>> predicate)
+    {
+        throw new NotImplementedException();
     }
 }
