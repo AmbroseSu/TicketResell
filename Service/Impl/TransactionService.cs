@@ -72,8 +72,9 @@ public class TransactionService : ITransactionService
                 (await _platformFeeRepository.Find(x => x.Id == transaction.PlatformFeeId)).SingleOrDefault();
             ticketPostingQuota.Quantity = (int)platformFee.Quantity;
             ticketPostingQuota.TransactionId = transaction.Id;
-            await _quotaRepository.SaveAsync(ticketPostingQuota);
             await _transactionRepository.UpdateAsync(transaction);
+            await _quotaRepository.SaveAsync(ticketPostingQuota);
+            
             return ResponseUtil.GetObject("ok", "ok", HttpStatusCode.OK, 0);
         }
         else
