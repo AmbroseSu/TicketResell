@@ -27,7 +27,7 @@ public class JwtService : IJwtService
             {
                 new Claim("Email", userName),
                 //new Claim("Password", password),
-                new Claim("roles", role.ToString())
+                new Claim(ClaimTypes.Role, role.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
@@ -54,7 +54,7 @@ public class JwtService : IJwtService
             {
                 new Claim(ClaimTypes.Name, userName),
                 //new Claim("Password", password),
-                new Claim("roles", role.ToString())
+                new Claim(ClaimTypes.Role, role.ToString())
             };
 
             foreach (var claim in extraClaims)

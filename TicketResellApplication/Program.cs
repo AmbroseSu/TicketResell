@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using System.Text;
 using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Net.payOS;
@@ -6,6 +8,8 @@ using Repository.Impl;
 using Service;
 using Service.Impl;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +48,27 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 // builder.Services.AddScoped<IPayOsService, PayOsService>();
 IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+
+builder.Services.AddAuthentication(option =>
+    {
+        option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        option.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(option =>
+    {
+        option.SaveToken = true;
+        option.RequireHttpsMetadata = false;
+        option.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["JWT:Audience"],
+            ValidIssuer = builder.Configuration["JWT:Issuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
+            RoleClaimType = ClaimTypes.Role
+        };
+    });
 
 PayOS payOS = new PayOS(configuration["PAYOS_CLIENT_ID"] ?? throw new Exception("Cannot find environment"),
     configuration["PAYOS_API_KEY"] ?? throw new Exception("Cannot find environment"),
@@ -125,6 +150,8 @@ using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>(
 app.UseCors("AllowReactApp");
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
