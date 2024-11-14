@@ -88,6 +88,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
             .ForMember(dest => dest.Status, opt => opt.Ignore())
             .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
-
+        CreateMap<PlatformFee, PlatformFeeDTO>();
+        CreateMap<Transaction,TransactionDTO>();
     }
 }
