@@ -1,4 +1,5 @@
-﻿using BusinessObject;
+﻿using System.Security;
+using BusinessObject;
 using BusinessObject.enums;
 using BusinessObject.Enums;
 
@@ -21,6 +22,7 @@ public class TransactionDTO
 
     public int Quantity { get; set; }
     public int? UserId { get; set; }
+    public string? UserName { get; set; }
 
     // public  UserId { get; set; }
 }

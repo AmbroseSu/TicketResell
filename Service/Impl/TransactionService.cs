@@ -16,13 +16,15 @@ public class TransactionService : ITransactionService
     private readonly IPlatformFeeRepository _platformFeeRepository;
     private readonly ITicketPostingQuotaRepository _quotaRepository;
     private readonly IMapper _mapper;
+    private readonly IUserRepository _userRepository;
 
-    public TransactionService(ITransactionRepository transactionRepository, IMapper mapper, IPlatformFeeRepository platformFeeRepository, ITicketPostingQuotaRepository quotaRepository)
+    public TransactionService(ITransactionRepository transactionRepository, IMapper mapper, IPlatformFeeRepository platformFeeRepository, ITicketPostingQuotaRepository quotaRepository, IUserRepository userRepository)
     {
         _transactionRepository = transactionRepository;
         _mapper = mapper;
         _platformFeeRepository = platformFeeRepository;
         _quotaRepository = quotaRepository;
+        _userRepository = userRepository;
     }
 
 
@@ -228,6 +230,24 @@ public class TransactionService : ITransactionService
         }
 
         List<TransactionDTO> listDto = _mapper.Map<List<TransactionDTO>>(transactionsLi);
+        foreach (var trans in listDto)
+        {
+            PlatformFee platformFees =
+                (await _platformFeeRepository.Find(x => x.Id == trans.PlatformFeeId)).SingleOrDefault();
+            PlatformFeeDTO platformFeeDto = _mapper.Map<PlatformFeeDTO>(platformFees);
+            trans.PlatformFeeDto = platformFeeDto;
+            TicketPostingQuota? ticketPostingQuota =
+                (await _quotaRepository.Find(x => x.Id == trans.TicketPostingQuotaId)).SingleOrDefault();
+            if (ticketPostingQuota != null) trans.Quantity = ticketPostingQuota.Quantity;
+            else
+            {
+                trans.Quantity = 0;
+            }
+
+            string? name = (await _userRepository.Find(x => x.Id == trans.UserId)).SingleOrDefault().Fullname;
+            trans.UserName = name;
+
+        }
         return ResponseUtil.GetCollection(listDto, "top 5", HttpStatusCode.OK, 0, 0, 0,0);
     }
 }

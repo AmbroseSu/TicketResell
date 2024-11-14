@@ -1,4 +1,5 @@
-﻿using BusinessObject;
+﻿using System.Linq.Expressions;
+using BusinessObject;
 using BusinessObject.enums;
 using BusinessObject.Enums;
 using DataAccess.DAO;
@@ -23,5 +24,6 @@ public interface IUserRepository
     Task<List<User>> FindAllCustomersByDateAndYearAsync(int month, int year);
     Task<List<User>> SearchUsersByEmailAndFullNameAsync(string search);
     Task<List<User>> FindByGenderAsync(Gender gender);
+    Task<IEnumerable<User?>> Find(Expression<Func<User, bool>> predicate);
 
 }
