@@ -74,7 +74,7 @@ public class FavoriteService : IFavoriteService
         var cart = (await _cartRepository.FindAsync(x => x.UserId == userId)).SingleOrDefault();
         var cartItems =
             (await _cartItemRepository.FindAsync(x =>
-                x.CartId == cart.Id && x.TicketId == ticketId && x.IsDeleted == true));
+                x.CartId == cart.Id && x.TicketId == ticketId && x.IsDeleted == false));
             
         if (cartItems != null)
         {
