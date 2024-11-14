@@ -5,6 +5,7 @@ using Service;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 
 namespace TicketResellApplication.Controllers
@@ -28,7 +29,7 @@ namespace TicketResellApplication.Controllers
         //{
         //    return await categoryService.getCurrentCategories(page, limit);
         //}
-
+        [Authorize(Roles = "CUSTOMER,STAFF")]
         [HttpGet("categories")]
         public async Task<ResponseDTO> getAllCategory(
             [FromQuery] string searchTerm = "",
@@ -39,20 +40,20 @@ namespace TicketResellApplication.Controllers
         {
             return await categoryService.getAllCategories(page, limit, searchTerm);
         }
-
+        [Authorize(Roles = "STAFF")]
         [HttpPost("new-category")]
         public async Task<ResponseDTO> CreateCategory([FromQuery, Required] string categoryName)
         {
             return await categoryService.CreateCategory(categoryName);
         }
-
+        [Authorize(Roles = "CUSTOMER,STAFF")]
         [HttpGet("category")]
         public async Task<ResponseDTO> getCategory(
            [FromQuery, Required] int id)
         {
             return await categoryService.GetCategory(id);
         }
-        
+        [Authorize(Roles = "STAFF")]
         [HttpPost("inactive")]
         public async Task<ResponseDTO> DisableCategory(
            [FromQuery, Required] int id)

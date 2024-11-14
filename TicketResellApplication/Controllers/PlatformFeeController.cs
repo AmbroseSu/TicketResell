@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using DataAccess.DTO.Request;
 using DataAccess.DTO.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -29,7 +30,7 @@ namespace TicketResellApplication.Controllers
             _httpContextAccessor = httpContextAccessor;
             _platformFeeService = platformFeeService;
         }
-        
+        [Authorize(Roles = "CUSTOMER,STAFF")]
         [HttpGet("get-platform-fee/all")]
         public async Task<ResponseDTO> GetTicketRequest([FromQuery] string? query,
             [FromQuery] [Required] int page = 1, [FromQuery] [Required] int limit = 10)
@@ -41,13 +42,13 @@ namespace TicketResellApplication.Controllers
  
             return await _platformFeeService.GetByName(page, limit, query);
         }
-
+        [Authorize(Roles = "STAFF")]
         [HttpPost("add-platform-fee")]
         public async Task<ResponseDTO> CreatePlatformFee([FromBody, Required] PlatFormFeeRequest platFormFeeRequest)
         {
             return await _platformFeeService.CreatePlatformFee(platFormFeeRequest);
         }
-
+        [Authorize(Roles = "STAFF")]
         [HttpPost("change-status/{platformFeeId}")]
         public async Task<ResponseDTO> ChangeStatus(int platformFeeId)
         {

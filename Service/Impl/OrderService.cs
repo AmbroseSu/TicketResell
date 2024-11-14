@@ -182,4 +182,42 @@ public class OrderService : IOrderService
         }
         
     }
+
+    public async Task<ResponseDTO> ConfirmOrder(int id)
+    {
+        Order? order = await _orderRepository.FindByIdAsync(id);
+        if (order == null)
+        {
+            return ResponseUtil.Error("Request fails", "Order not found", HttpStatusCode.BadRequest);
+        }
+
+        List<OrderStatus> orders = await _orderStatusRepository.GetAllOrdersByOrderId(order.Id);
+
+        if (orders.Count == 0)
+        {
+            return ResponseUtil.Error("Server error", "No Order status has created", HttpStatusCode.BadRequest);
+        }
+
+        foreach (OrderStatus orderStatus in orders)
+        {
+            if (orderStatus.Name.Equals("Done"))
+            {
+                return ResponseUtil.Error("Request fails", "Order has been confirmed", HttpStatusCode.BadRequest);
+            }
+
+            if (orderStatus.Name.Equals("Cancelled"))
+            {
+                return ResponseUtil.Error("Request fails", "Order has been cancelled", HttpStatusCode.BadRequest);
+            }
+
+            if (orderStatus.Name.Equals("Pending"))
+            {
+                orderStatus.Name = "Done";
+                await _orderStatusRepository.UpdateAsync(orderStatus);
+            }
+        }
+
+        return ResponseUtil.GetObject(order, "Order confirmed successfully", HttpStatusCode.OK, 0);
+
+    }
 }

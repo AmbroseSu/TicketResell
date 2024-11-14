@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using DataAccess.DTO.Request;
 using DataAccess.DTO.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Net.payOS.Types;
@@ -22,7 +23,7 @@ namespace TicketResellApplication.Controllers
         {
             _favoriteService = favoriteService;
         }
-
+        [Authorize(Roles = "CUSTOMER")]
         [HttpPost("add-ticket-favorite/{userId}")]
         public async Task<ResponseDTO> AddTicketFavorite([FromRoute, Required] int userId,
             [FromQuery, Required] int ticketId)
@@ -31,13 +32,13 @@ namespace TicketResellApplication.Controllers
         }
 
 
-
+        [Authorize(Roles = "CUSTOMER")]
         [HttpGet("get-all-favorite/{userId}")]
         public async Task<ResponseDTO> GetAllFavorite([FromRoute, Required] int userId)
         {
             return await _favoriteService.GetAllFavoriteTicketByUserId(userId);
         }
-
+        [Authorize(Roles = "CUSTOMER")]
         [HttpPost("remove-favorite/{userId}")]
         public async Task<ResponseDTO> RemoveFavorite([FromRoute,Required] int userId ,[FromQuery, Required] int ticketId)
         {
