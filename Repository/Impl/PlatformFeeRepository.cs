@@ -12,11 +12,8 @@ public class PlatformFeeRepository : IPlatformFeeRepository
         await BaseDAO<PlatformFee>.Instance.SaveAsync(platformFee);
     }
 
-    public Task UpdateAsync(PlatformFee platformFee)
-    {
-        throw new NotImplementedException();
-    }
-
+    public async Task UpdateAsync(PlatformFee platformFee) => await BaseDAO<PlatformFee>
+        .Instance.UpdateAsync(platformFee);
     public Task DeleteAsync(long platformFeeId)
     {
         throw new NotImplementedException();
