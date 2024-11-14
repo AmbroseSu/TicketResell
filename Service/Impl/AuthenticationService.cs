@@ -537,22 +537,26 @@ public class AuthenticationService : IAuthenticationService
             }
         }
         
-        public async Task<ResponseDTO> ChangePasswordForgotPasswordAsync(string email, string newPassword)
+        public async Task<ResponseDTO> ChangePasswordForgotPasswordAsync(ChangePasswordForgot changePasswordForgot)
         {
             try
             {
-                if (!IsValidPassword(newPassword))
+                if (!changePasswordForgot.Status)
+                {
+                    return ResponseUtil.Error("Please verify email and check OTP", "Failed", HttpStatusCode.BadRequest);
+                }
+                if (!IsValidPassword(changePasswordForgot.NewPassword))
                 {
                     return ResponseUtil.Error("Invalid password format", "Failed", HttpStatusCode.BadRequest);
                 }
-                var user = await _userRepository.FindUserByEmailAsync(email);
+                var user = await _userRepository.FindUserByEmailAsync(changePasswordForgot.Email.ToLower());
                 
                 if (user == null)
                 {
                     return ResponseUtil.Error("User does not exist", "Failed", HttpStatusCode.BadRequest);
                 }
 
-                string hashedNewPassword = BCrypt.Net.BCrypt.HashPassword(newPassword);
+                string hashedNewPassword = BCrypt.Net.BCrypt.HashPassword(changePasswordForgot.NewPassword);
         
 
                 user.Password = hashedNewPassword;

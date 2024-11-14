@@ -11,6 +11,7 @@ public class Transaction
     [Key]
     public int Id { get; set; }
     public float? Price { get; set; }
+    public long? OrderCode {get; set;}
     public DateTime? TransactionDate { get; set; }
     public PaymentMethod PaymentMethod { get; set; }
     public int? Promotion { get; set; }
