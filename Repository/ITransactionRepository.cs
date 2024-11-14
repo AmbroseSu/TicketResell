@@ -9,6 +9,7 @@ public interface ITransactionRepository
     Task UpdateAsync(Transaction transaction);
     Task DeleteAsync(long transactionId);
     Task<Transaction?> FindByIdAsync(long id);
-    Task<IEnumerable<Transaction?>> Find(Expression<Func<Transaction, bool>> predicate);
-
+    public Task<IEnumerable<Transaction?>> Find(Expression<Func<Transaction, bool>> predicate);
+    public Task<IEnumerable<Transaction>> GetAllAsync();
+    
 }

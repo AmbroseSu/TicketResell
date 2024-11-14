@@ -64,7 +64,7 @@ namespace TicketResellApplication.Controllers
             return await _ticketService.GetTicketAsync(ticketId);
         }
 
-        [HttpGet("manager-action")]
+        [HttpPut("manager-action")]
         public async Task<ResponseDTO> updateStatus(
             [FromQuery, Required] int ticketId,
           [FromQuery, Required] TicketStatus status)

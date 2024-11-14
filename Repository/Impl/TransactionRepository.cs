@@ -1,6 +1,6 @@
-using System.Linq.Expressions;
 using BusinessObject;
 using DataAccess.DAO;
+using System.Linq.Expressions;
 
 namespace Repository.Impl;
 
@@ -25,6 +25,14 @@ public class TransactionRepository : ITransactionRepository
     {
         throw new NotImplementedException();
     }
-    
-    public async Task<IEnumerable<Transaction?>> Find(Expression<Func<Transaction, bool>> predicate) => await BaseDAO<Transaction>.Instance.Find(predicate);
+
+    public async Task<IEnumerable<Transaction?>> Find(Expression<Func<Transaction, bool>> predicate)
+        {
+            return await BaseDAO<Transaction>.Instance.Find(predicate);
+        }
+
+        public async Task<IEnumerable<Transaction>> GetAllAsync()
+        {
+            return await BaseDAO<Transaction>.Instance.GetAllAsync();
+        }
 }
