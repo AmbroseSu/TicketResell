@@ -399,7 +399,7 @@ namespace Service.Impl
             return ResponseUtil.GetCollection(data, "All tickets retrieved sucessfully", HttpStatusCode.OK, result.Count(), page, limit, result.Count());
         }
 
-        public async Task<ResponseDTO> GetTicketByUserId(int id, int page, int limit)
+        public async Task<ResponseDTO> GetTicketByUserId(int id, TicketStatus? status, int page, int limit)
         {
             User? user = await _userRepository.FindUserByIdAsync(id);
 
@@ -408,28 +408,37 @@ namespace Service.Impl
                 return ResponseUtil.Error("Request fails", "User not found !", HttpStatusCode.BadRequest);
             }
 
-            IEnumerable<Ticket?> tickets = await _ticketRepository.Find(p => p.UserId == user.Id);
+            List<Ticket?> tickets = new List<Ticket?>();
+
+            if (status != null)
+            {
+                tickets = (await _ticketRepository.Find(p => p.UserId == user.Id && p.Status == status)).ToList();
+            }
+            else
+            {
+                tickets = (await _ticketRepository.Find(p => p.UserId == user.Id)).ToList();
+            }
 
             if (tickets.Count() == 0)
             {
                 return ResponseUtil.GetObject("Request accepted", "No ticket found !", HttpStatusCode.Accepted, 0);
             }
 
-            List<Ticket?> ticketList = new List<Ticket?>();
+            //List<Ticket?> ticketList = new List<Ticket?>();
 
-            foreach (var item in tickets)
-            {
-                Ticket? result = (await _ticketRepository.Find(t => t.Id == item.Id)).SingleOrDefault();
+            //foreach (var item in tickets)
+            //{
+            //    Ticket? result = (await _ticketRepository.Find(t => t.Id == item.Id)).SingleOrDefault();
 
-                if (result == null)
-                {
-                    return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
-                }
+            //    if (result == null)
+            //    {
+            //        return ResponseUtil.Error("Request fails", "Ticket not found !", HttpStatusCode.BadRequest);
+            //    }
 
-                ticketList.Add(result);
-            }
+            //    ticketList.Add(result);
+            //}
 
-            return await getListTicketInforResponse(ticketList, page, limit);
+            return await getListTicketInforResponse(tickets.ToList(), page, limit);
 
         }
 
