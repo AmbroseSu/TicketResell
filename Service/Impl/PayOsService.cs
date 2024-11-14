@@ -13,12 +13,14 @@ public class PayOsService : IPayOsService
     private readonly PayOS _payOS;
     private readonly IPlatformFeeRepository _platformFeeRepository;
     private readonly ITransactionRepository _transactionRepository;
+    private readonly ITicketPostingQuotaRepository _quotaRepository;
 
-    public PayOsService(PayOS payOs, IPlatformFeeRepository platformFeeRepository, ITransactionRepository transactionRepository)
+    public PayOsService(PayOS payOs, IPlatformFeeRepository platformFeeRepository, ITransactionRepository transactionRepository, ITicketPostingQuotaRepository quotaRepository)
     {
         _payOS = payOs;
         _platformFeeRepository = platformFeeRepository;
         _transactionRepository = transactionRepository;
+        _quotaRepository = quotaRepository;
     }
 
     public void PayCancel()
@@ -83,6 +85,12 @@ public class PayOsService : IPayOsService
                 if (paymentLinkInformation.status.Equals("PAID"))
                 { 
                     if (transaction != null) transaction.Status = TransactionStatus.SUCCESS;
+                    TicketPostingQuota ticketPostingQuota = new TicketPostingQuota();
+                    PlatformFee platformFee =
+                        (await _platformFeeRepository.Find(x => x.Id == transaction.PlatformFeeId)).SingleOrDefault();
+                    ticketPostingQuota.Quantity = (int)platformFee.Quantity;
+                    ticketPostingQuota.TransactionId = transaction.Id;
+                    await _quotaRepository.SaveAsync(ticketPostingQuota);
                 }
                 else
                 {
