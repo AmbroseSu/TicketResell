@@ -38,7 +38,7 @@ namespace TicketResellApplication.Controllers
             return await _favoriteService.GetAllFavoriteTicketByUserId(userId);
         }
 
-        [HttpGet("remove-favorite/{userId}")]
+        [HttpPost("remove-favorite/{userId}")]
         public async Task<ResponseDTO> RemoveFavorite([FromRoute,Required] int userId ,[FromQuery, Required] int ticketId)
         {
             return await _favoriteService.RemoveFavoriteTicket(userId,ticketId);
