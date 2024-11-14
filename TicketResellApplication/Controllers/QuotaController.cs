@@ -18,7 +18,6 @@ namespace TicketResellApplication.Controllers
             _postingQuota = postingQuota;
         }
         [Authorize(Roles = "CUSTOMER")]
-
         [HttpGet("get-total-quota/{userId}")]
         public async Task<ResponseDTO> GetTotalQuota(int userId)
         {
