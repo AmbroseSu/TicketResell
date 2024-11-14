@@ -109,7 +109,7 @@ namespace Service.Impl
 
             foreach (Transaction transaction in transactions)
             {
-                TicketPostingQuota? ticketPostingQuota = (await _ticketPostingQuota.Find(t => t.Id == transaction.TicketPostingQuotaId)).SingleOrDefault();
+                TicketPostingQuota? ticketPostingQuota = (await _ticketPostingQuota.Find(t => t.TransactionId == transaction.Id)).SingleOrDefault();
 
                 if (ticketPostingQuota == null)
                 {
