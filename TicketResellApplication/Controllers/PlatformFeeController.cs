@@ -30,7 +30,7 @@ namespace TicketResellApplication.Controllers
             _httpContextAccessor = httpContextAccessor;
             _platformFeeService = platformFeeService;
         }
-        [Authorize(Roles = "CUSTOMER")]
+        [Authorize(Roles = "CUSTOMER,STAFF")]
         [HttpGet("get-platform-fee/all")]
         public async Task<ResponseDTO> GetTicketRequest([FromQuery] string? query,
             [FromQuery] [Required] int page = 1, [FromQuery] [Required] int limit = 10)
