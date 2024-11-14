@@ -13,4 +13,5 @@ public interface IOrderService
     Task<Transaction> CreateTransaction(int platformFeeId, int userId, int number);
     Task<ResponseDTO> GetAllOrdersByStartDayAndEndDay(string startDay, string endDay, int page, int limit);
     Task<ResponseDTO> FindOrderById(long id);
+    Task<ResponseDTO> ConfirmOrder(int id);
 }

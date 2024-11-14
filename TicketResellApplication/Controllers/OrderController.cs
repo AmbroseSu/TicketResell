@@ -48,6 +48,11 @@ namespace TicketResellApplication.Controllers
             return await _orderService.FindOrderById(orderId);
         }
 
+        [HttpPut("confirm-order-by-user")]
+        public async Task<ResponseDTO> ConfirmOrder([FromQuery, Required] int orderId)
+        {
+            return await _orderService.ConfirmOrder(orderId);
+        }
         
     }
 }
