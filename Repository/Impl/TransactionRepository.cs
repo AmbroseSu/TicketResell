@@ -13,7 +13,7 @@ public class TransactionRepository : ITransactionRepository
 
     public async Task UpdateAsync(Transaction transaction)
     {
-        await BaseDAO<Transaction>.Instance.SaveAsync(transaction);
+        await BaseDAO<Transaction>.Instance.UpdateAsync(transaction);
     }
 
     public Task DeleteAsync(long transactionId)
