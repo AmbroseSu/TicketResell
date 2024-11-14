@@ -17,11 +17,12 @@ public class OrderService : IOrderService
     private readonly IOrderRepository _orderRepository;
     private readonly IOrderStatusRepository _orderStatusRepository;
     private readonly IUserRepository _userRepository;
+    private readonly ITicketRepository _ticketRepository;
     private readonly IMapper _mapper;
     private readonly IPlatformFeeRepository _platformFeeRepository;
     private readonly ITransactionRepository _transactionRepository;
 
-    public OrderService(IOrderRepository orderRepository, IOrderStatusRepository orderStatusRepository, IUserRepository userRepository, IMapper mapper, ITransactionRepository transactionRepository, IPlatformFeeRepository platformFeeRepository)
+    public OrderService(IOrderRepository orderRepository, IOrderStatusRepository orderStatusRepository, IUserRepository userRepository, IMapper mapper, ITransactionRepository transactionRepository, IPlatformFeeRepository platformFeeRepository, ITicketRepository ticketRepository)
     {
         _orderRepository = orderRepository;
         _orderStatusRepository = orderStatusRepository;
@@ -29,6 +30,7 @@ public class OrderService : IOrderService
         _mapper = mapper;
         _transactionRepository = transactionRepository;
         _platformFeeRepository = platformFeeRepository;
+        _ticketRepository = ticketRepository;
     }
 
     public Task SaveAsync(Order order)
@@ -135,5 +137,49 @@ public class OrderService : IOrderService
         {
             return ResponseUtil.Error(e.Message, "Failed!", HttpStatusCode.BadRequest);
         }
+    }
+    
+    public async Task<ResponseDTO> FindOrderById(long id) 
+    {
+        try
+        { 
+            Order? order = await _orderRepository.FindByIdAsync(id);
+            if (order == null)
+            {
+                return ResponseUtil.Error("Request fails", "Order not found !", HttpStatusCode.BadRequest);
+            }
+
+            OrderResponse orderResponse = new OrderResponse();
+            orderResponse.Id = order.Id;
+            orderResponse.Price = order.Price;
+            orderResponse.Quantity = order.Quantity;
+            orderResponse.Address = order.Address;
+            orderResponse.OrderDate = order.OrderDate;
+            orderResponse.IsDeleted = order.IsDeleted;
+            
+            List<OrderStatus> orderStatuses = await _orderStatusRepository.GetAllOrdersByOrderId(order.Id);
+            List<OrderStatusDTO> orderStatusDtos = _mapper.Map<List<OrderStatusDTO>>(orderStatuses);
+            orderResponse.OrderStatuses = orderStatusDtos;
+            Ticket? result = (await _ticketRepository.Find(c => c.Id == order.TicketId)).SingleOrDefault();
+            if (result == null)
+            {
+                return ResponseUtil.Error("Ticket Null", "Failed!", HttpStatusCode.BadRequest);
+            }
+            orderResponse.TicketName = result.Name;
+            
+            User? user = await _userRepository.FindUserByIdAsync(order.UserId);
+            if (user == null)
+            {
+                return ResponseUtil.Error("User Null", "Failed!", HttpStatusCode.BadRequest);
+            }
+
+            orderResponse.BuyerName = user.Fullname;
+            return ResponseUtil.GetObject(orderResponse, "Ticket Request created successfully", HttpStatusCode.OK, 0);
+        }
+        catch (Exception e)
+        {
+            return ResponseUtil.Error(e.Message, "Failed!", HttpStatusCode.BadRequest);
+        }
+        
     }
 }

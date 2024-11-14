@@ -92,7 +92,7 @@ public class OrderDAO : IBaseDAO<Order>
     {
         try
         {
-            return await _context.Orders.FindAsync(id);
+            return await _context.Orders.FindAsync((int)id);
         }
         catch (Exception e)
         {

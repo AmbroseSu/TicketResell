@@ -11,4 +11,5 @@ public interface IOrderStatusRepository
     Task<OrderStatus?> FindByIdAsync(long id);
     //Task<List<OrderStatus>> FindAllOrderStatusAsync(int ticketId);
     Task<IEnumerable<OrderStatus?>> Find(Expression<Func<OrderStatus, bool>> predicate);
+    Task<List<OrderStatus>> GetAllOrdersByOrderId(int orderId);
 }

@@ -577,9 +577,18 @@ public class AuthenticationService : IAuthenticationService
             try
             {
                 User user = await _userRepository.FindUserByEmailAsync(email);
-                VerificationToken? verificationToken = await _verificationTokenRepository.FindByUserIdAsync(id);
-                if (user.Id.Equals(id) && verificationToken == null)
+                //VerificationToken? verificationToken = await _verificationTokenRepository.FindByUserIdAsync(id);
+                if (user.Id.Equals(id) /*&& verificationToken == null*/)
                 {
+                    int userId = user.Id;
+                    user.VerificationTokenId = null;
+                    user.VerificationToken = null;
+                    await _userRepository.UpdateAsync(user);
+                    var verification = await _verificationTokenRepository.FindByUserIdAsync(userId);
+                    if (verification != null)
+                    {
+                        await _verificationTokenRepository.DeleteAsync(verification.Id);
+                    }
                     var sendEmail = await _emailService.SendEmail(email);
                     if (sendEmail.StatusCode.Equals(HttpStatusCode.BadRequest) )
                     {
