@@ -92,5 +92,11 @@ namespace TicketResellApplication.Controllers
             }
 
         }
+
+        [HttpGet("get-by-id-admin")]
+        public async Task<ResponseDTO> GetByIdAdmin([FromQuery, Required] int transId)
+        {
+            return await _transactionService.GettransactionById(transId);
+        }
     }
 }

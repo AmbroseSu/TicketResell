@@ -180,4 +180,23 @@ public class TransactionService : ITransactionService
         return ResponseUtil.GetCollection(transactionDtosList, "ok", HttpStatusCode.OK, transactions.Count(), page,
             limit, transactions.Count());
     }
+
+    public async Task<ResponseDTO> GettransactionById(int id)
+    {
+        Transaction? transaction = (await _transactionRepository.Find(x => x.Id == id)).SingleOrDefault();
+        TransactionDTO trans = _mapper.Map<TransactionDTO>(transaction);
+        PlatformFee platformFees =
+            (await _platformFeeRepository.Find(x => x.Id == transaction.PlatformFeeId)).SingleOrDefault();
+        PlatformFeeDTO platformFeeDto = _mapper.Map<PlatformFeeDTO>(platformFees);
+        trans.PlatformFeeDto = platformFeeDto;
+        TicketPostingQuota? ticketPostingQuota =
+            (await _quotaRepository.Find(x => x.Id == trans.TicketPostingQuotaId)).SingleOrDefault();
+        if (ticketPostingQuota != null) trans.Quantity = ticketPostingQuota.Quantity;
+        else
+        {
+            trans.Quantity = 0;
+        }
+
+        return ResponseUtil.GetObject(trans, "'ok", HttpStatusCode.OK, 0);
+    }
 }
