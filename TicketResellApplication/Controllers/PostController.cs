@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TicketResellApplication.Controllers
 {
@@ -24,27 +25,27 @@ namespace TicketResellApplication.Controllers
             _postService = postService;
             _logger = logger;
         }
-
+        [Authorize(Roles = "CUSTOMER")]
         [HttpPost("new")]
         public async Task<ResponseDTO> CreatePost([FromBody] NewPostRequest post
             )
         {
             return await _postService.CreatePost(post);
         }
-
+        [Authorize(Roles = "CUSTOMER")]
         [HttpPut("remove")]
         public async Task<ResponseDTO> DeletePost([FromQuery, Required] int postId)
         {
             return await _postService.DeletePost(postId);
         }
-
+        [Authorize(Roles = "STAFF")]
         [HttpPut("manager-action")]
         public async Task<ResponseDTO> UpdateStatus([FromQuery, Required] int postId,
           [FromQuery, Required] PostStatus status)
         {
             return await _postService.UpdateStatus(postId, status);
         }
-
+        [Authorize(Roles = "CUSTOMER,STAFF,ADMIN")]
         [HttpGet("get-lists")]
         public async Task<ResponseDTO> GetAllPosts(
             [FromQuery] PostStatus? status,
@@ -54,13 +55,13 @@ namespace TicketResellApplication.Controllers
         {
             return await _postService.GetAllPosts(page, limit, status, searchTerm);
         }
-
+        [Authorize(Roles = "CUSTOMER,STAFF")]
         [HttpGet("get")]
         public async Task<ResponseDTO> GetPostByPostId([FromQuery, Required] int id)
         {
             return await _postService.GetPostByPostId(id);
         }
-
+        [Authorize(Roles = "CUSTOMER")]
         [HttpGet("get-by-ticket")]
         public async Task<ResponseDTO> GetPostByTicketId([FromQuery, Required] int id,
             [FromQuery, Required] int page = 1,
@@ -68,7 +69,7 @@ namespace TicketResellApplication.Controllers
         {
             return await _postService.GetPostByTicketId(id, page, limit);
         }
-
+        [Authorize(Roles = "CUSTOMER")]
         [HttpGet("get-by-user")]
         public async Task<ResponseDTO> GetPostByUserId(
             [FromQuery] PostStatus? status,
@@ -78,7 +79,7 @@ namespace TicketResellApplication.Controllers
         {
             return await _postService.GetPostByUserId(id, status, page, limit);
         }
-
+        [Authorize(Roles = "CUSTOMER,STAFF")]
         [HttpGet("get-by-category")]
         public async Task<ResponseDTO> GetPostByCategoryId(
              [FromQuery] PostStatus? status,
