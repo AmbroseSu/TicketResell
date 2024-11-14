@@ -40,6 +40,12 @@ namespace TicketResellApplication.Controllers
         {
             return await _orderService.GetAllOrdersByStartDayAndEndDay(startDay, endDay, page, limit);
         }
+        
+        [HttpGet("get-order-by-order-id")]
+        public async Task<ResponseDTO> GetOrderByOrderId([FromQuery] long orderId)
+        {
+            return await _orderService.FindOrderById(orderId);
+        }
 
         
     }

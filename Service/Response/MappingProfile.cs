@@ -36,6 +36,8 @@ public class MappingProfile : Profile
         CreateMap<ImageFeedback, ImageFeedbackDTO>();
         CreateMap<PlatformFee,PlatformFeeDTO>();
         CreateMap<NewFeedback, Feedback>();
+        CreateMap<OrderStatus, OrderStatusDTO>();
+        CreateMap<OrderStatusDTO, OrderStatus>();
 
         //TicketResponse
         CreateMap<FeedbackResponse, FeedbackTicketElement>();

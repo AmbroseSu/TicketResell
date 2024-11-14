@@ -19,5 +19,8 @@ public class OrderStatusRepository : IOrderStatusRepository
         return BaseDAO<OrderStatus>.Instance.Find(predicate);
     }
 
+    public Task<List<OrderStatus>> GetAllOrdersByOrderId(int orderId) => OrderStatusDAO.Instance.GetAllOrdersByOrderId(orderId);
+
+
     //public Task<List<OrderStatus>> FindAllTicketRequestsByTicketIdAsync(int ticketId)
 }
