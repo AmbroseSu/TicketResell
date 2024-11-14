@@ -89,6 +89,10 @@ namespace TicketResellApplication.Controllers
             }
             else
             {
+                if(startDate != null)
+                    startDate += " 00:00";
+                if(endDate != null)
+                    endDate += " 00:00";
                 return await _transactionService.GetAllTransactionWithDate(page, limt, startDate, endDate);
             }
 

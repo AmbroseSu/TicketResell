@@ -1,4 +1,5 @@
-﻿using BusinessObject;
+﻿using System.Collections;
+using BusinessObject;
 using DataAccess.DAO;
 using System.Linq.Expressions;
 
@@ -18,4 +19,7 @@ public class OrderRepository : IOrderRepository
     public Task<IEnumerable<Order?>> Find(Expression<Func<Order, bool>> predicate) => OrderDAO.Instance.Find(predicate);
     public Task<List<Order>> GetAllOrdersByStartDayAndEndDay(DateTime startDay, DateTime endDay) => OrderDAO.Instance.GetAllOrdersByStartDayAndEndDay(startDay, endDay);
     public Task<List<Order>> GetAllOrders() => OrderDAO.Instance.GetAllOrders();
+
+    public async Task<IEnumerable<Order?>> FindAsync(Expression<Func<Order, bool>> predicate) =>
+        await BaseDAO<Order>.Instance.Find(predicate);
 }

@@ -91,10 +91,12 @@ public class TransactionService : ITransactionService
     {
         IEnumerable<Transaction?> transactions = await _transactionRepository.Find(x => true);
         IEnumerable<TransactionDTO> transactionDtos = _mapper.Map<IEnumerable<TransactionDTO>>(transactions);
+        
         foreach (var trans in transactionDtos)
         {
             try
             {
+                trans.TransactionDate = trans.TransactionDate.ToLocalTime();
                 PlatformFee platformFees =
                     (await _platformFeeRepository.Find(x => x.Id == trans.PlatformFeeId)).SingleOrDefault();
                 PlatformFeeDTO platformFeeDto = _mapper.Map<PlatformFeeDTO>(platformFees);
@@ -119,7 +121,7 @@ public class TransactionService : ITransactionService
 
     public async Task<ResponseDTO> GetAllTransactionWithDate(int page,int limit,string startDate,string endDate)
     {
-        string format = "dd/MM/yyyy";
+        string format = "dd/MM/yyyy HH:mm";
 
         // Kiểm tra và chuyển đổi ExpirationDate
 
@@ -166,6 +168,7 @@ public class TransactionService : ITransactionService
         IEnumerable<TransactionDTO> transactionDtos = _mapper.Map<IEnumerable<TransactionDTO>>(transactions);
         foreach (var trans in transactionDtos)
         {
+            trans.TransactionDate = trans.TransactionDate.ToLocalTime();
             PlatformFee platformFees =
                 (await _platformFeeRepository.Find(x => x.Id == trans.PlatformFeeId)).SingleOrDefault();
             PlatformFeeDTO platformFeeDto = _mapper.Map<PlatformFeeDTO>(platformFees);
