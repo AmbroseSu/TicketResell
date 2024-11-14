@@ -38,7 +38,7 @@ namespace TicketResellApplication.Controllers
         {
             return await _postService.DeletePost(postId);
         }
-        [Authorize(Roles = "STAFF")]
+        [Authorize(Roles = "STAFF,CUSTOMER")]
         [HttpPut("manager-action")]
         public async Task<ResponseDTO> UpdateStatus([FromQuery, Required] int postId,
           [FromQuery, Required] PostStatus status)
