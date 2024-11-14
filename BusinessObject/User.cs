@@ -28,7 +28,7 @@ public class User
     public string? FcmToken { get; set; }
     public DateTime? PostTime { get; set; }
     public DateTime? CreatedAt { get; set; }
-    public int? Points { get; set; }
+    public float? Point { get; set; }
     public bool Status { get; set; }
     public bool IsDeleted { get; set; }
     public bool IsEnabled { get; set; }
