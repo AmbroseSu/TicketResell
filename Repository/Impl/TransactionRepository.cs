@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using BusinessObject;
 using DataAccess.DAO;
 
@@ -10,9 +11,9 @@ public class TransactionRepository : ITransactionRepository
         await BaseDAO<Transaction>.Instance.SaveAsync(transaction);
     }
 
-    public Task UpdateAsync(PlatformFee transaction)
+    public async Task UpdateAsync(Transaction transaction)
     {
-        throw new NotImplementedException();
+        await BaseDAO<Transaction>.Instance.SaveAsync(transaction);
     }
 
     public Task DeleteAsync(long transactionId)
@@ -24,4 +25,6 @@ public class TransactionRepository : ITransactionRepository
     {
         throw new NotImplementedException();
     }
+    
+    public async Task<IEnumerable<Transaction?>> Find(Expression<Func<Transaction, bool>> predicate) => await BaseDAO<Transaction>.Instance.Find(predicate);
 }

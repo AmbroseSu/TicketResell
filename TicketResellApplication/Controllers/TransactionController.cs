@@ -30,6 +30,7 @@ namespace TicketResellApplication.Controllers
                 packageFeeRequset.quantity);
             ResponseDTO responseDto = new ResponseDTO();
             var test  = await _osService.CheckOut(_httpContextAccessor.HttpContext!.Request, transaction);
+            _osService.CheckPay(test.orderCode);
             return test;
         }
         

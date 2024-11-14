@@ -11,11 +11,13 @@ public class PayOsService : IPayOsService
 {
     private readonly PayOS _payOS;
     private readonly IPlatformFeeRepository _platformFeeRepository;
+    private readonly ITransactionRepository _transactionRepository;
 
-    public PayOsService(PayOS payOs, IPlatformFeeRepository platformFeeRepository)
+    public PayOsService(PayOS payOs, IPlatformFeeRepository platformFeeRepository, ITransactionRepository transactionRepository)
     {
         _payOS = payOs;
         _platformFeeRepository = platformFeeRepository;
+        _transactionRepository = transactionRepository;
     }
 
     public void PayCancel()
@@ -61,5 +63,42 @@ public class PayOsService : IPayOsService
             Console.WriteLine(exception);
             return null;
         }
+    }
+
+    public async Task CheckPay(long orderId)
+    {
+
+        Task check = new Task(
+           async () =>
+            {
+                int count = 0;
+                while (true)
+                {
+                    PaymentLinkInformation paymentLinkInformation = await _payOS.getPaymentLinkInformation(orderId);
+                    // Console.WriteLine(paymentLinkInformation.status);
+                    if (!paymentLinkInformation.status.Equals("PENDING"))
+                    {
+                        if (paymentLinkInformation.status.Equals("PAID"))
+                        {
+                            // _transactionRepository.Find(x => x.)
+                            break;
+                        }
+                        else
+                        {
+                            break;      
+                        }
+                      
+                    }
+                    count++;
+                    // Console.WriteLine("in loop");
+                    Thread.Sleep(1000);
+                    if(count == 300) break;
+                }
+            } 
+        );
+        check.Start();
+        // Console.WriteLine("done task");
+
+        await check;
     }
 }
