@@ -20,5 +20,7 @@ public class TransactionDTO
     public int? TicketPostingQuotaId { get; set; }
 
     public int Quantity { get; set; }
+    public int? UserId { get; set; }
+
     // public  UserId { get; set; }
 }

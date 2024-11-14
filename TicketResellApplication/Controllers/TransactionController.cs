@@ -81,30 +81,15 @@ namespace TicketResellApplication.Controllers
         public async Task<ResponseDTO> GetAllAdmin([FromQuery] string? startDate, [FromQuery] string? endDate,
             [FromQuery] int limt = 10, [FromQuery] int page = 1)
         {
-            DateTime? startDateTime = null;
-            DateTime? endDateTime = null;
             
-            if (startDate != null )
-            {
-                int startDay = int.Parse((startDate.Split("/")[0] + startDate.Split("/")[1]));
-                int startMonth = int.Parse((startDate.Split("/")[2] + startDate.Split("/")[3]));
-                int startYear = int.Parse((startDate.Split("/")[4] + startDate.Split("/")[5]+startDate.Split("/")[6]+startDate.Split("/")[7]));
-                startDateTime = new DateTime(startYear, startMonth, startDay);
-            }
-            if (endDate != null )
-            {
-                int endDay = int.Parse((endDate.Split("/")[0] + endDate.Split("/")[1]));
-                int endMonth = int.Parse((endDate.Split("/")[2] + endDate.Split("/")[3]));
-                int endYear = int.Parse((endDate.Split("/")[4] + endDate.Split("/")[5]+endDate.Split("/")[6]+endDate.Split("/")[7]));
-                endDateTime = new DateTime(endYear, endMonth, endDay);
-            }
-
-            if (startDateTime == null && endDateTime == null)
+            if (startDate == null && endDate == null)
             {
                 return await _transactionService.GetAllTransaction(page, limt);
             }
-
-            return null;
+            else
+            {
+                return await _transactionService.GetAllTransactionWithDate(page, limt, startDate, endDate);
+            }
 
         }
     }

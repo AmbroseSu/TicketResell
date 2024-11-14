@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using AutoMapper;
 using BusinessObject;
@@ -83,5 +84,57 @@ public class TransactionService : ITransactionService
         List<TransactionDTO> transactionDtosList = transactionDtos.Skip((page - 1) * limt).Take(limt).ToList();
         return ResponseUtil.GetCollection(transactionDtosList, "ok", HttpStatusCode.OK, transactions.Count(), page,
             limt, transactions.Count());
+    }
+
+    public async Task<ResponseDTO> GetAllTransactionWithDate(int page,int limit,string startDate,string endDate)
+    {
+        string format = "dd/MM/yyyy";
+
+        // Kiểm tra và chuyển đổi ExpirationDate
+
+        // Thời gian hiện tại theo LocalTime
+
+        // Chuyển expiredDate sang UTC và gán vào reqTicket
+        IEnumerable<Transaction?> transactions = null;
+        if (startDate == null && endDate !=null)
+        {
+            // DateTime? tmp = endDate;
+            if (!DateTime.TryParseExact(endDate, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime expiredDate))
+            {
+                return ResponseUtil.Error("Request fails", "Invalid expiration date format!", HttpStatusCode.BadRequest);
+            }
+            expiredDate = expiredDate.ToUniversalTime();
+
+            transactions = await _transactionRepository.Find(x => x.TransactionDate <= expiredDate);
+        }
+        else if (startDate != null && endDate == null)
+        {
+            if (!DateTime.TryParseExact(endDate, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime expiredDate))
+            {
+                return ResponseUtil.Error("Request fails", "Invalid expiration date format!", HttpStatusCode.BadRequest);
+            }
+            expiredDate = expiredDate.ToUniversalTime();
+            transactions = await _transactionRepository.Find(x => x.TransactionDate >= expiredDate);
+        }
+        else
+        {
+            if (!DateTime.TryParseExact(startDate, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime expiredDate1))
+            {
+                return ResponseUtil.Error("Request fails", "Invalid expiration date format!", HttpStatusCode.BadRequest);
+            }
+            expiredDate1 = expiredDate1.ToUniversalTime();
+            if (!DateTime.TryParseExact(endDate, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime expiredDate2))
+            {
+                return ResponseUtil.Error("Request fails", "Invalid expiration date format!", HttpStatusCode.BadRequest);
+            }
+            expiredDate2 = expiredDate2.ToUniversalTime();
+            transactions =
+                await _transactionRepository.Find(x => x.TransactionDate <= expiredDate2 && x.TransactionDate >= expiredDate1);
+        }
+        
+        IEnumerable<TransactionDTO> transactionDtos = _mapper.Map<IEnumerable<TransactionDTO>>(transactions);
+        List<TransactionDTO> transactionDtosList = transactionDtos.Skip((page - 1) * limit).Take(limit).ToList();
+        return ResponseUtil.GetCollection(transactionDtosList, "ok", HttpStatusCode.OK, transactions.Count(), page,
+            limit, transactions.Count());
     }
 }
