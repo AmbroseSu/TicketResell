@@ -88,6 +88,27 @@ public class TransactionService : ITransactionService
     {
         IEnumerable<Transaction?> transactions = await _transactionRepository.Find(x => true);
         IEnumerable<TransactionDTO> transactionDtos = _mapper.Map<IEnumerable<TransactionDTO>>(transactions);
+        foreach (var trans in transactionDtos)
+        {
+            try
+            {
+                PlatformFee platformFees =
+                    (await _platformFeeRepository.Find(x => x.Id == trans.PlatformFeeId)).SingleOrDefault();
+                PlatformFeeDTO platformFeeDto = _mapper.Map<PlatformFeeDTO>(platformFees);
+                trans.PlatformFeeDto = platformFeeDto;
+                TicketPostingQuota? ticketPostingQuota =
+                    (await _quotaRepository.Find(x => x.Id == trans.TicketPostingQuotaId)).SingleOrDefault();
+                if (ticketPostingQuota != null) trans.Quantity = ticketPostingQuota.Quantity;
+                else
+                {
+                    trans.Quantity = 0;
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
         List<TransactionDTO> transactionDtosList = transactionDtos.Skip((page - 1) * limt).Take(limt).ToList();
         return ResponseUtil.GetCollection(transactionDtosList, "ok", HttpStatusCode.OK, transactions.Count(), page,
             limt, transactions.Count());
@@ -140,6 +161,20 @@ public class TransactionService : ITransactionService
         }
         
         IEnumerable<TransactionDTO> transactionDtos = _mapper.Map<IEnumerable<TransactionDTO>>(transactions);
+        foreach (var trans in transactionDtos)
+        {
+            PlatformFee platformFees =
+                (await _platformFeeRepository.Find(x => x.Id == trans.PlatformFeeId)).SingleOrDefault();
+            PlatformFeeDTO platformFeeDto = _mapper.Map<PlatformFeeDTO>(platformFees);
+            trans.PlatformFeeDto = platformFeeDto;
+            TicketPostingQuota? ticketPostingQuota =
+                (await _quotaRepository.Find(x => x.Id == trans.TicketPostingQuotaId)).SingleOrDefault();
+            if (ticketPostingQuota != null) trans.Quantity = ticketPostingQuota.Quantity;
+            else
+            {
+                trans.Quantity = 0;
+            }
+        }
         List<TransactionDTO> transactionDtosList = transactionDtos.Skip((page - 1) * limit).Take(limit).ToList();
         return ResponseUtil.GetCollection(transactionDtosList, "ok", HttpStatusCode.OK, transactions.Count(), page,
             limit, transactions.Count());
