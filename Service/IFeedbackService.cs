@@ -20,5 +20,6 @@ namespace Service
         Task<ResponseDTO> AddFeedback(NewFeedback feedback);
         Task<ResponseDTO> DeleteFeedback(int id);
         Task<ResponseDTO> UploadImg(List<String> imgs, int feedbackId);
+        ResponseDTO GetUserReputation(int userId);
     }
 }
