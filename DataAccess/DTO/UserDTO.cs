@@ -14,6 +14,7 @@ public class UserDTO
     public Gender Gender { get; set; }
     public string Image { get; set; }
     public Role Role { get; set; }
+    public float? Point { get; set; }
     public string FcmToken { get; set; }
     public bool IsDeleted { get; set; }
     
@@ -28,7 +29,7 @@ public class UserDTO
     {
     }
 
-    public UserDTO(int id, string fullname, string address, string email, string phoneNumber, string status, Gender gender, string image, Role role, string fcmToken, bool isDeleted, List<int> deliveryIds, List<int> ordersIds, List<int> returnsIds, List<int> messagesIds, List<int> userChatsIds, int cartId)
+    public UserDTO(int id, string fullname, string address, string email, string phoneNumber, string status, float point, Gender gender, string image, Role role, string fcmToken, bool isDeleted, List<int> deliveryIds, List<int> ordersIds, List<int> returnsIds, List<int> messagesIds, List<int> userChatsIds, int cartId)
     {
         Id = id;
         Fullname = fullname;
@@ -37,6 +38,7 @@ public class UserDTO
         PhoneNumber = phoneNumber;
         Status = status;
         Gender = gender;
+        Point = point;
         Image = image;
         Role = role;
         FcmToken = fcmToken;
