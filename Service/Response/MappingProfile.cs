@@ -19,7 +19,7 @@ public class MappingProfile : Profile
         CreateMap<TicketDTO, Ticket>();
         //CreateMap<NewTicket, Ticket>();
         CreateMap<NewTicket, Ticket>()
-            .ForMember(dest => dest.ExpirationDate, opt => opt.MapFrom(src => 
+            .ForMember(dest => dest.ExpirationDate, opt => opt.MapFrom(src =>
                 DateTime.ParseExact(src.ExpirationDate, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture)));
         CreateMap<updateTicketRequest, Ticket>();
         CreateMap<NewPostRequest, Post>();
@@ -34,7 +34,7 @@ public class MappingProfile : Profile
         CreateMap<Feedback, FeedbackResponse>();
         CreateMap<FeedbackDTO, Feedback>();
         CreateMap<ImageFeedback, ImageFeedbackDTO>();
-        CreateMap<PlatformFee,PlatformFeeDTO>();
+        CreateMap<PlatformFee, PlatformFeeDTO>();
         CreateMap<NewFeedback, Feedback>();
         CreateMap<OrderStatus, OrderStatusDTO>();
         CreateMap<OrderStatusDTO, OrderStatus>();
@@ -66,6 +66,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.PostTitle, opt => opt.MapFrom(src => src.Title))
             .ForMember(dest => dest.PostDescription, opt => opt.MapFrom(src => src.Description))
             .ForMember(dest => dest.CurrentPostStatus, opt => opt.MapFrom(src => src.Status))
+            .ForMember(dest => dest.Status, opt => opt.Ignore())
             .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.CreatedDate))
             .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
 
@@ -91,6 +92,6 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Status, opt => opt.Ignore())
             .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
         CreateMap<PlatformFee, PlatformFeeDTO>();
-        CreateMap<Transaction,TransactionDTO>();
+        CreateMap<Transaction, TransactionDTO>();
     }
 }

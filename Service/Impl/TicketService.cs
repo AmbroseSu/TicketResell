@@ -208,6 +208,24 @@ namespace Service.Impl
                 }
             }
 
+            List<Post?> posts = (await _postRepository.Find(p => p.TicketId == result.Id)).ToList();
+
+            if (posts.Count != 0)
+            {
+                foreach (Post post in posts)
+                {
+                    if (post.Status == PostStatus.ACTIVE)
+                    {
+                        return ResponseUtil.Error("Request fails", "You have post active on this ticket, please close post before close ticket", HttpStatusCode.BadRequest);
+                    }
+                    else if (post.Status == PostStatus.PENDING)
+                    {
+                        return ResponseUtil.Error("Request fails", "You have post pending on this ticket, please close post before close ticket", HttpStatusCode.BadRequest);
+                    }
+                }
+
+            }
+
             result.Status = status;
             await _ticketRepository.UpdateAsync(result);
 
