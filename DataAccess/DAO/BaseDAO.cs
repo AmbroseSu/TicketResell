@@ -62,5 +62,12 @@ namespace DataAccess.DAO
             var result = await context.Set<T>().Where(predicate).ToListAsync();
             return result;
         }
+        
+        public async Task<IEnumerable<T?>> GetAllAsync<TKey>(Expression<Func<T, TKey>> keySelector)
+        {
+            using var context = new TicketResellDbContext();
+            return await context.Set<T>().OrderBy(keySelector).ToListAsync();
+        }
+
     }
 }

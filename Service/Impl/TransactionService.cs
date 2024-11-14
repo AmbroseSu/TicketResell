@@ -212,4 +212,22 @@ public class TransactionService : ITransactionService
 
         return ResponseUtil.GetObject(totalRevenue, "revenue", HttpStatusCode.OK, 0);
     }
+
+    public async Task<ResponseDTO> GetFiveTopTransaction()
+    {
+        IEnumerable<Transaction?> transactions = await _transactionRepository.FindAll(x => x.Id);
+        List<Transaction> transactionsLi = new List<Transaction>();
+        int count = 0;
+        foreach (var trans in transactions)
+        {
+            count++;
+            if (count > transactions.Count() - 5)
+            {
+                transactionsLi.Add(trans);
+            }
+        }
+
+        List<TransactionDTO> listDto = _mapper.Map<List<TransactionDTO>>(transactionsLi);
+        return ResponseUtil.GetCollection(listDto, "top 5", HttpStatusCode.OK, 0, 0, 0,0);
+    }
 }

@@ -8,5 +8,6 @@ public interface IBaseDAO<T> where T : class
     Task UpdateAsync(T T);
     Task DeleteAsync(long id);
     Task<T?> FindByIdAsync(long id);
+    
 
 }

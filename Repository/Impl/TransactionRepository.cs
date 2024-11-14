@@ -35,4 +35,7 @@ public class TransactionRepository : ITransactionRepository
         {
             return await BaseDAO<Transaction>.Instance.GetAllAsync();
         }
+
+        public async Task<IEnumerable<Transaction?>> FindAll<TKey>(Expression<Func<Transaction, TKey>> predicate) =>
+            await BaseDAO<Transaction>.Instance.GetAllAsync(predicate);
 }

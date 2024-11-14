@@ -104,5 +104,11 @@ namespace TicketResellApplication.Controllers
         {
             return await _transactionService.GetToTalRevenue();
         }
+
+        [HttpGet("get-top-five")]
+        public async Task<ResponseDTO> GetTopFive()
+        {
+            return await _transactionService.GetFiveTopTransaction();
+        }
     }
 }

@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+using BusinessObject;
 using BusinessObject.enums;
 using DataAccess.DTO.Response;
 
@@ -12,4 +14,5 @@ public interface ITransactionService
     Task<ResponseDTO> GetAllTransactionWithDate(int page, int limit, string startDate, string endDate);
     Task<ResponseDTO> GettransactionById(int id);
     Task<ResponseDTO> GetToTalRevenue();
+    Task<ResponseDTO> GetFiveTopTransaction();
 }

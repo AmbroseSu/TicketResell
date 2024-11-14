@@ -11,5 +11,7 @@ public interface ITransactionRepository
     Task<Transaction?> FindByIdAsync(long id);
     public Task<IEnumerable<Transaction?>> Find(Expression<Func<Transaction, bool>> predicate);
     public Task<IEnumerable<Transaction>> GetAllAsync();
-    
+    Task<IEnumerable<Transaction?>> FindAll<TKey>(Expression<Func<Transaction, TKey>> predicate);
+
+
 }
