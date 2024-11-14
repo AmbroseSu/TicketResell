@@ -68,4 +68,18 @@ public class FavoriteService : IFavoriteService
 
         return await _ticketService.getListTicketInforResponse(tickets, 0, tickets.Count);
     }
+
+    public async Task<ResponseDTO> RemoveFavoriteTicket(int cartItemId)
+    {
+        var cartItem = (await _cartItemRepository.FindAsync(x => x.Id == cartItemId)).SingleOrDefault();
+        if (cartItem != null)
+        {
+            cartItem.IsDeleted = true;
+            await _cartItemRepository.UpdateAsync(cartItem);
+            return ResponseUtil.GetObject("Success", "ok", HttpStatusCode.OK, 0);
+        }
+
+        return ResponseUtil.Error("Id Not found", "null", HttpStatusCode.NotFound);
+
+    }
 }
