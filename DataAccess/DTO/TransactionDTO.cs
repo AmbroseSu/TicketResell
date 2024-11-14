@@ -12,6 +12,8 @@ public class TransactionDTO
     public PaymentMethod PaymentMethod { get; set; }
     public int? Promotion { get; set; }
     public TransactionStatus Status { get; set; }
+    public long? OrderCode {get; set;}
+
     
     public PlatformFeeDTO? PlatformFeeDto { get; set; }
     public int? PlatformFeeId { get; set; }

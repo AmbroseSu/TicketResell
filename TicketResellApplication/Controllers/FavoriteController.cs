@@ -15,7 +15,7 @@ namespace TicketResellApplication.Controllers
     [ApiController]
     public class FavoriteController : ControllerBase
     {
-        [HttpPost("add-ticke-favorite")]
+        [HttpPost("add-ticket-favorite")]
         public async Task<ResponseDTO> AddTicketFavorite([FromRoute, Required] int userId,
             [FromQuery, Required] int ticketId)
         {
