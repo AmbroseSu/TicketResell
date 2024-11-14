@@ -11,5 +11,6 @@ public interface IPlatformFeeService
     Task<ResponseDTO> GetAll(int page, int limit);
     Task<ResponseDTO> GetByName(int page, int limit, string? query);
     Task<ResponseDTO> CreatePlatformFee(PlatFormFeeRequest platFormFeeRequest);
+    Task<ResponseDTO> ChangeStatus(int platformFeeId);
 
 }

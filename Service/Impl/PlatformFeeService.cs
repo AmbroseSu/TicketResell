@@ -59,4 +59,20 @@ public class PlatformFeeService : IPlatformFeeService
         await _platformFeeRepository.SaveAsync(platformFee);
         return ResponseUtil.GetObject("ok", "ok", HttpStatusCode.Created,0);
     }
+
+    public async Task<ResponseDTO> ChangeStatus(int platformFeeId)
+    {
+        PlatformFee? platformFee = (await _platformFeeRepository.Find(x => x.Id == platformFeeId)).SingleOrDefault();
+        if (platformFee == null)
+        {
+            return ResponseUtil.Error("Dont have this id", "Null Error", HttpStatusCode.BadRequest);
+        }
+        else
+        {
+            platformFee.IsDeleted = !platformFee.IsDeleted;
+        }
+
+        await _platformFeeRepository.UpdateAsync(platformFee);
+        return ResponseUtil.GetObject("Changed status", "ok", HttpStatusCode.OK, 0);
+    }
 }

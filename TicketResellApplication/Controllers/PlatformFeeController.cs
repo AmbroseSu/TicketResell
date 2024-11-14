@@ -47,7 +47,13 @@ namespace TicketResellApplication.Controllers
         {
             return await _platformFeeService.CreatePlatformFee(platFormFeeRequest);
         }
-        
+
+        [HttpPost("change-status/{platformFeeId}")]
+        public async Task<ResponseDTO> ChangeStatus(int platformFeeId)
+        {
+            return await _platformFeeService.ChangeStatus(platformFeeId);
+        }
+
 
         // [HttpGet("start")]
         // public string Start()
@@ -57,6 +63,6 @@ namespace TicketResellApplication.Controllers
         //     //return data\
         //     return a;
         // }
-       
+
     }
 }
