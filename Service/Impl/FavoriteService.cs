@@ -72,12 +72,19 @@ public class FavoriteService : IFavoriteService
     public async Task<ResponseDTO> RemoveFavoriteTicket(int userId, int ticketId)
     {
         var cart = (await _cartRepository.FindAsync(x => x.UserId == userId)).SingleOrDefault();
-        var cartItem = (await _cartItemRepository.FindAsync(x => x.CartId == cart.Id && x.TicketId == ticketId))
-            .SingleOrDefault();
-        if (cartItem != null)
+        var cartItems =
+            (await _cartItemRepository.FindAsync(x =>
+                x.CartId == cart.Id && x.TicketId == ticketId && x.IsDeleted == true));
+            
+        if (cartItems != null)
         {
-            cartItem.IsDeleted = true;
-            await _cartItemRepository.UpdateAsync(cartItem);
+
+            foreach (var cartItem in cartItems)
+            {
+                cartItem.IsDeleted = true;
+                await _cartItemRepository.UpdateAsync(cartItem);
+            }
+
             return ResponseUtil.GetObject("Success", "ok", HttpStatusCode.OK, 0);
         }
 
