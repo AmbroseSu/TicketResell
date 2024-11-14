@@ -51,7 +51,7 @@ public class FavoriteService : IFavoriteService
         List<CartItem?> items = new List<CartItem?>();
         if (carts != null)
         {
-            IEnumerable<CartItem?> cartItems = await _cartItemRepository.FindAsync(x => x.CartId == carts.Id);
+            IEnumerable<CartItem?> cartItems = await _cartItemRepository.FindAsync(x => x.CartId == carts.Id && x.IsDeleted == false);
             items = cartItems.ToList();
         }
         else

@@ -58,7 +58,7 @@ namespace TicketResellApplication.Controllers
         {
             try
             {
-                return await _osService.CheckPay(orderCode);
+                return await _transactionService.GetStatus(orderCode);
             }
             catch (Exception e)
             {
