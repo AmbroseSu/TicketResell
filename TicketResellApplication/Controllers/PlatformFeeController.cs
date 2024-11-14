@@ -38,7 +38,7 @@ namespace TicketResellApplication.Controllers
             {
                 return await _platformFeeService.GetAll(page, limit);
             }
-
+ 
             return await _platformFeeService.GetByName(page, limit, query);
         }
 
