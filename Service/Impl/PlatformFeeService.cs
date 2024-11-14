@@ -2,6 +2,7 @@ using System.Net;
 using AutoMapper;
 using BusinessObject;
 using DataAccess.DTO;
+using DataAccess.DTO.Request;
 using DataAccess.DTO.Response;
 using Repository;
 using Service.Response;
@@ -41,5 +42,21 @@ public class PlatformFeeService : IPlatformFeeService
         List<PlatformFeeDTO> listPlatformFeeDtos = platformFeeDtos.Skip((page - 1) * limit).Take(limit).ToList();
         return ResponseUtil.GetCollection(listPlatformFeeDtos, "Search by name", HttpStatusCode.OK,
             platformFees.Count(), page, limit, platformFeeDtos.Count());
+    }
+
+    public async Task<ResponseDTO> CreatePlatformFee(PlatFormFeeRequest platFormFeeRequest)
+    {
+        var tmp = (await _platformFeeRepository.Find(x => x.Name.Equals(platFormFeeRequest.Name)));
+        if (tmp.Any())
+        {
+            return ResponseUtil.Error("Duplicate name", "error", HttpStatusCode.BadRequest);
+        }
+        PlatformFee platformFee = new PlatformFee();
+        platformFee.Name = platFormFeeRequest.Name;
+        platformFee.Quantity = platFormFeeRequest.Quantity;
+        platformFee.Price = platFormFeeRequest.Price;
+        platformFee.IsDeleted = false;
+        await _platformFeeRepository.SaveAsync(platformFee);
+        return ResponseUtil.GetObject("ok", "ok", HttpStatusCode.Created,0);
     }
 }

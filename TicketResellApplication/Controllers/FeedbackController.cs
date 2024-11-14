@@ -47,7 +47,7 @@ namespace TicketResellApplication.Controllers
         }
 
         [HttpGet("get-by-userid")]
-        public async Task<ResponseDTO> GetFeedbackByUserId([FromQuery,Required] int id, [FromQuery, Required] int page = 1,
+        public async Task<ResponseDTO> GetFeedbackByUserId([FromQuery, Required] int id, [FromQuery, Required] int page = 1,
             [FromQuery, Required] int limit = 10)
         {
             return await _feedbackService.GetFeedbackByUserId(id, page, limit);
@@ -69,6 +69,12 @@ namespace TicketResellApplication.Controllers
         public async Task<ResponseDTO> UpdateFeedbackImg([FromBody] List<String> imgList, [FromQuery, Required] int feedbackId)
         {
             return await _feedbackService.UploadImg(imgList, feedbackId);
+        }
+
+        [HttpGet("repu")]
+        public ResponseDTO UserReputation([FromQuery, Required] int userId)
+        {
+            return _feedbackService.GetUserReputation(userId);
         }
 
     }

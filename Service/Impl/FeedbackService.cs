@@ -388,17 +388,16 @@ namespace Service.Impl
 
             List<Ticket?> tickets = _ticketRepository.Find(t => t.UserId == userId).Result.ToList();
 
-            if (tickets != null)
+            if (tickets.Count != 0)
             {
                 TicketCount = tickets.Count;
                 foreach (Ticket ticket in tickets)
                 {
                     List<Feedback?> feedbacks = _feedbackRepository.Find(f => f.TicketId == ticket.Id).Result.ToList();
 
-                    if (feedbacks != null)
+                    if (feedbacks.Count != 0)
                     {
-                        TicketCount--;
-                        int totalRating = 0;
+                        float totalRating = 0;
                         foreach (Feedback feedback in feedbacks)
                         {
                             totalRating += feedback.Rating;
@@ -406,6 +405,13 @@ namespace Service.Impl
 
                         float ticketRating = totalRating / feedbacks.Count;
                         totalTicketRating += ticketRating;
+                    }
+                    else
+                    {
+                        if (TicketCount != 1)
+                        {
+                            TicketCount--;
+                        }
                     }
 
                 }
