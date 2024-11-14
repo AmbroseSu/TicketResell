@@ -98,5 +98,11 @@ namespace TicketResellApplication.Controllers
         {
             return await _transactionService.GettransactionById(transId);
         }
+
+        [HttpGet("total-revenue")]
+        public async Task<ResponseDTO> GetTotalRevenue()
+        {
+            return await _transactionService.GetToTalRevenue();
+        }
     }
 }

@@ -199,4 +199,17 @@ public class TransactionService : ITransactionService
 
         return ResponseUtil.GetObject(trans, "'ok", HttpStatusCode.OK, 0);
     }
+
+    public async Task<ResponseDTO> GetToTalRevenue()
+    {
+        IEnumerable<Transaction?> transactions =
+            await _transactionRepository.Find(x => x.Status == TransactionStatus.SUCCESS);
+        float? totalRevenue = 0;
+        foreach (var transaction in transactions)
+        {
+            totalRevenue += transaction.Price;
+        }
+
+        return ResponseUtil.GetObject(totalRevenue, "revenue", HttpStatusCode.OK, 0);
+    }
 }

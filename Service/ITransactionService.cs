@@ -11,4 +11,5 @@ public interface ITransactionService
     Task<ResponseDTO> GetAllTransaction(int page, int limt);
     Task<ResponseDTO> GetAllTransactionWithDate(int page, int limit, string startDate, string endDate);
     Task<ResponseDTO> GettransactionById(int id);
+    Task<ResponseDTO> GetToTalRevenue();
 }
