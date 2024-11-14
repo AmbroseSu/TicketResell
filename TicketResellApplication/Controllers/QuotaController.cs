@@ -1,5 +1,6 @@
 
 using DataAccess.DTO.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service;
 
@@ -16,6 +17,7 @@ namespace TicketResellApplication.Controllers
         {
             _postingQuota = postingQuota;
         }
+        [Authorize(Roles = "CUSTOMER")]
 
         [HttpGet("get-total-quota/{userId}")]
         public async Task<ResponseDTO> GetTotalQuota(int userId)

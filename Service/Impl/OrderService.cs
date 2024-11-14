@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Globalization;
 using System.Net;
 using AutoMapper;
 using BusinessObject;
@@ -99,6 +100,8 @@ public class OrderService : IOrderService
 
     public async Task<ResponseDTO> GetAllOrdersByStartDayAndEndDay(string? startDay, string? endDay, int page, int limit)
     {
+        string format = "dd/MM/yyyy HH:mm";
+
         try
         {
             if (startDay == null || endDay == null)
@@ -111,10 +114,19 @@ public class OrderService : IOrderService
             else
             {
                 //DateTime startDateTime = DateTime.ParseExact(startDay, "dd/MM/yyyy", null).ToUniversalTime();
-                DateTime startDateTime = DateTime.ParseExact(startDay, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.AssumeUniversal);
+                // DateTime startDateTime = DateTime.ParseExact(startDay, "dd/MM/yyyy HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal);
                 //DateTime endDateTime = DateTime.ParseExact(endDay, "dd/MM/yyyy", null).ToUniversalTime();
-                DateTime endDateTime = DateTime.ParseExact(endDay, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.AssumeUniversal);
-
+                // DateTime endDateTime = DateTime.ParseExact(endDay, "dd/MM/yyyy HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal);
+                if (!DateTime.TryParseExact(startDay, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime startDateTime))
+                {
+                    return ResponseUtil.Error("Request fails", "Invalid expiration date format!", HttpStatusCode.BadRequest);
+                }
+                startDateTime = startDateTime.ToUniversalTime();
+                if (!DateTime.TryParseExact(endDay, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime endDateTime))
+                {
+                    return ResponseUtil.Error("Request fails", "Invalid expiration date format!", HttpStatusCode.BadRequest);
+                }
+                endDateTime = endDateTime.ToUniversalTime();
                 // Kiểm tra xem endDateTime có lớn hơn startDateTime không
                 if (endDateTime < startDateTime)
                 {
@@ -123,6 +135,7 @@ public class OrderService : IOrderService
 
                 // Truy vấn đơn hàng trong khoảng thời gian cho trước
                 IEnumerable<Order> orders = await _orderRepository.GetAllOrdersByStartDayAndEndDay(startDateTime, endDateTime);
+                // IEnumerable<Order> orders = await _orderRepository.FindAsync(x => x.OrderDate <= startDateTime && x.OrderDate)
                 IEnumerable<OrderDTO> ordersDTO = _mapper.Map<IEnumerable<OrderDTO>>(orders);
                 IEnumerable<OrderDTO?> data = ordersDTO.Skip((page - 1) * limit).Take(limit);
                 return ResponseUtil.GetCollection(data, "Successfully", HttpStatusCode.OK, orders.Count(), page, limit, orders.Count());

@@ -39,6 +39,8 @@ namespace TicketResellApplication.Controllers
         public async Task<ResponseDTO> GetOrderByStartEndDay([FromQuery] string? startDay, [FromQuery] string? endDay, [FromQuery, Required] int page = 1,
             [FromQuery, Required] int limit = 10)
         {
+            if (startDay != null) startDay += " 00:00";
+            if (endDay != null) endDay += " 00:00";
             return await _orderService.GetAllOrdersByStartDayAndEndDay(startDay, endDay, page, limit);
         }
         [Authorize(Roles = "STAFF")]
