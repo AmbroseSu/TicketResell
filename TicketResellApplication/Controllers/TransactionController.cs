@@ -56,7 +56,15 @@ namespace TicketResellApplication.Controllers
         [HttpGet("get-status")]
         public async Task<ResponseDTO> GetStatus([FromQuery, Required] long orderCode)
         {
-            return await _osService.CheckPay(orderCode);
+            try
+            {
+                return await _osService.CheckPay(orderCode);
+            }
+            catch (Exception e)
+            {
+                return ResponseUtil.Error(e.Message, "error", HttpStatusCode.BadRequest);
+            }
+
         }
         
         // [HttpGet]
