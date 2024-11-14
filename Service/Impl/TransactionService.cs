@@ -44,5 +44,18 @@ public class TransactionService : ITransactionService
         }
         return ResponseUtil.GetCollection(transactionDtos, "Get all transaction", HttpStatusCode.OK, 0, 0, 0, 0);
     }
+
+    public async Task<ResponseDTO> GetStatus(long orderCode)
+    {
+        var trans =(await _transactionRepository.Find(x => x.OrderCode == orderCode)).SingleOrDefault();
+        if (trans != null)
+        {
+            return ResponseUtil.GetObject(trans.Status, "status", HttpStatusCode.OK, 0);
+        }
+        else
+        {
+            return ResponseUtil.Error("Dont have this transaction", "Null error", HttpStatusCode.BadRequest);
+        }
+    }
     
 }

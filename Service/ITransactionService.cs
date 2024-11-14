@@ -5,4 +5,5 @@ namespace Service;
 public interface ITransactionService
 {
     Task<ResponseDTO> GetAllByuserId(int userId);
+    Task<ResponseDTO> GetStatus(long orderCode);
 }

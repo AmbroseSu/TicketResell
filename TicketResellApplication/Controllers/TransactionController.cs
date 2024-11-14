@@ -52,7 +52,12 @@ namespace TicketResellApplication.Controllers
         {
             return await _transactionService.GetAllByuserId(userId);
         }
-        
+
+        [HttpGet("get-status")]
+        public async Task<ResponseDTO> GetStatus([FromQuery, Required] long orderCode)
+        {
+            return await _transactionService.GetStatus(orderCode);
+        }
         
     }
 }
