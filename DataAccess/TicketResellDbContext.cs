@@ -270,6 +270,7 @@ public class TicketResellDbContext : DbContext
             entity.ToTable("Transaction");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Price);
+            entity.Property(e => e.OrderCode);
             entity.Property(e => e.TransactionDate);
             entity.Property(e => e.PaymentMethod);
             entity.Property(e => e.Promotion);

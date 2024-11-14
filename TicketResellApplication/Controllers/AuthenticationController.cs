@@ -144,9 +144,9 @@ namespace TicketResellApplication.Controllers
         }
         
         [HttpPost("change-forgot-password")]
-        public async Task<ResponseDTO> ChangeForgotPasswordAsync([FromQuery] string email, [FromQuery] string password)
+        public async Task<ResponseDTO> ChangeForgotPasswordAsync([FromBody] ChangePasswordForgot changePasswordForgot)
         {
-            return await _authenticationService.ChangePasswordForgotPasswordAsync(email.ToLower(), password);
+            return await _authenticationService.ChangePasswordForgotPasswordAsync(changePasswordForgot);
         }
         
         [HttpPost("resend-otp-email-forgot-password")]
