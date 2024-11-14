@@ -11,9 +11,9 @@ public class TransactionRepository : ITransactionRepository
         await BaseDAO<Transaction>.Instance.SaveAsync(transaction);
     }
 
-    public Task UpdateAsync(PlatformFee transaction)
+    public async Task UpdateAsync(Transaction transaction)
     {
-        throw new NotImplementedException();
+        await BaseDAO<Transaction>.Instance.UpdateAsync(transaction);
     }
 
     public Task DeleteAsync(long transactionId)

@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using Net.payOS.Types;
 using Service;
+using Service.Response;
 using Transaction = BusinessObject.Transaction;
 
 namespace TicketResellApplication.Controllers
@@ -20,7 +21,6 @@ namespace TicketResellApplication.Controllers
         private readonly IOrderService _orderService;
         private readonly IPayOsService _osService;
         private readonly IPlatformFeeService _platformFeeService;
-        
 
         public PlatformFeeController(IOrderService orderService, IPayOsService osService, IHttpContextAccessor httpContextAccessor, IPlatformFeeService platformFeeService)
         {
@@ -42,5 +42,14 @@ namespace TicketResellApplication.Controllers
             return await _platformFeeService.GetByName(page, limit, query);
         }
 
+        // [HttpGet("start")]
+        // public string Start()
+        // {   //get data
+        //     string a = "abc";
+        //     _osService.CheckPay();
+        //     //return data\
+        //     return a;
+        // }
+       
     }
 }

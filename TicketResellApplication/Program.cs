@@ -10,7 +10,7 @@ using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Logging.ClearProviders();
 builder.Services.AddControllers()
     .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -64,7 +64,7 @@ builder.Services.Scan(scan => scan
     .AsMatchingInterface()  // Đăng ký các lớp dựa trên interface phù hợp
     .WithScopedLifetime()
 );
-
+// builder.Services.AddTransient<ITimedBackgroundService, TimedBackgroundService>();
 
 builder.Services.AddHostedService<TicketBackgroundService>();
 

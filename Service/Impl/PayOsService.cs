@@ -1,4 +1,5 @@
 using BusinessObject;
+using BusinessObject.enums;
 using Microsoft.AspNetCore.Http;
 using Net.payOS;
 using Net.payOS.Types;
@@ -11,11 +12,13 @@ public class PayOsService : IPayOsService
 {
     private readonly PayOS _payOS;
     private readonly IPlatformFeeRepository _platformFeeRepository;
+    private readonly ITransactionRepository _transactionRepository;
 
-    public PayOsService(PayOS payOs, IPlatformFeeRepository platformFeeRepository)
+    public PayOsService(PayOS payOs, IPlatformFeeRepository platformFeeRepository, ITransactionRepository transactionRepository)
     {
         _payOS = payOs;
         _platformFeeRepository = platformFeeRepository;
+        _transactionRepository = transactionRepository;
     }
 
     public void PayCancel()
@@ -32,6 +35,7 @@ public class PayOsService : IPayOsService
     {
         try
         {
+            Transaction? transaction1 = (await _transactionRepository.Find(x => x.Id == transaction.Id)).SingleOrDefault();
             var platformFee = (await _platformFeeRepository.Find(x => x.Id == transaction.PlatformFeeId)).SingleOrDefault();
             int orderCode = int.Parse(DateTimeOffset.Now.ToString("ffffff"));
             float? priceFloat = transaction.Price;
@@ -53,7 +57,8 @@ public class PayOsService : IPayOsService
             );
 
             CreatePaymentResult createPayment = await _payOS.createPaymentLink(paymentData);
-
+            transaction1.OrderCode = orderCode;
+            await _transactionRepository.UpdateAsync(transaction1);
             return createPayment;
         }
         catch (Exception exception)
@@ -61,5 +66,45 @@ public class PayOsService : IPayOsService
             Console.WriteLine(exception);
             return null;
         }
+    }
+
+    public async Task CheckPay(long orderId)
+    {
+
+      
+        int count = 0;
+        while (true)
+        {
+            PaymentLinkInformation paymentLinkInformation = await _payOS.getPaymentLinkInformation(orderId);
+            if (!paymentLinkInformation.status.Equals("PENDING"))
+            {
+                Transaction? transaction = (await _transactionRepository.Find(x => x.OrderCode == paymentLinkInformation.orderCode)).SingleOrDefault();
+
+                if (paymentLinkInformation.status.Equals("PAID"))
+                { 
+                    if (transaction != null) transaction.Status = TransactionStatus.SUCCESS;
+                }
+                else
+                {
+                    if (transaction != null) transaction.Status = TransactionStatus.CANCELED;
+                }
+
+                await _transactionRepository.UpdateAsync(transaction!);
+                break; // Kết thúc vòng lặp khi trạng thái không còn là "PENDING"
+            }
+
+            count++;
+            await Task.Delay(1000); // Sử dụng Task.Delay thay cho Thread.Sleep để tránh chặn luồng chính
+
+            if (count == 300)
+            {
+                break; // Thoát nếu đã chạy 300 lần (khoảng 5 phút)
+            }
+        }
+
+        Transaction? finalTransaction = (await _transactionRepository.Find(x => x.OrderCode == orderId)).SingleOrDefault();
+        await _payOS.cancelPaymentLink(orderId);
+        if (finalTransaction != null) finalTransaction.Status = TransactionStatus.CANCELED;
+        await _transactionRepository.UpdateAsync(finalTransaction!);
     }
 }
