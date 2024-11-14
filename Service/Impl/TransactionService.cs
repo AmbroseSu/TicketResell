@@ -63,18 +63,25 @@ public class TransactionService : ITransactionService
     public async Task<ResponseDTO> ChangeStatus(int orderCode, TransactionStatus transactionStatus)
     {
         Transaction? transaction = (await _transactionRepository.Find(x => x.OrderCode == orderCode)).SingleOrDefault();
-        transaction.Status = transactionStatus;
+
         if (transactionStatus == TransactionStatus.SUCCESS)
         {
+            transaction.Status = TransactionStatus.SUCCESS;
             TicketPostingQuota ticketPostingQuota = new TicketPostingQuota();
             PlatformFee platformFee =
                 (await _platformFeeRepository.Find(x => x.Id == transaction.PlatformFeeId)).SingleOrDefault();
             ticketPostingQuota.Quantity = (int)platformFee.Quantity;
             ticketPostingQuota.TransactionId = transaction.Id;
             await _quotaRepository.SaveAsync(ticketPostingQuota);
+            await _transactionRepository.UpdateAsync(transaction);
+            return ResponseUtil.GetObject("ok", "ok", HttpStatusCode.OK, 0);
+        }
+        else
+        {
+            return ResponseUtil.Error("Dont have this transaction", "Null error", HttpStatusCode.BadRequest);
         }
 
-        return ResponseUtil.GetObject("ok", "ok", HttpStatusCode.OK, 0);
+        
     }
 
     public async Task<ResponseDTO> GetAllTransaction(int page,int limt)
