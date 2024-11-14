@@ -38,7 +38,7 @@ namespace TicketResellApplication.Controllers
                     packageFeeRequset.quantity);
                 
                 var test = await _osService.CheckOut(_httpContextAccessor.HttpContext!.Request, transaction);
-                _osService.CheckPay(test.orderCode);
+                // _osService.CheckPay(test.orderCode);
                 return ResponseUtil.GetObject(test,"data",HttpStatusCode.Created,1);
             }
             catch (Exception e)
@@ -56,8 +56,9 @@ namespace TicketResellApplication.Controllers
         [HttpGet("get-status")]
         public async Task<ResponseDTO> GetStatus([FromQuery, Required] long orderCode)
         {
-            return await _transactionService.GetStatus(orderCode);
+            return await _osService.CheckPay(orderCode);
         }
         
+        // [HttpGet]
     }
 }

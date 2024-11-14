@@ -1,4 +1,5 @@
 using BusinessObject;
+using DataAccess.DTO.Response;
 using Microsoft.AspNetCore.Http;
 using Net.payOS.Types;
 using Transaction = BusinessObject.Transaction;
@@ -10,5 +11,6 @@ public interface IPayOsService
     void PayCancel();
     void PaySuccess();
     Task<CreatePaymentResult> CheckOut(HttpRequest httpRequest,Transaction transaction);
-    Task CheckPay(long orderId);
+    Task<ResponseDTO> CheckPay(long orderId);
+
 }

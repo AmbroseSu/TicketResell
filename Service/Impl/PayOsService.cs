@@ -1,9 +1,12 @@
+using System.Net;
 using BusinessObject;
 using BusinessObject.enums;
+using DataAccess.DTO.Response;
 using Microsoft.AspNetCore.Http;
 using Net.payOS;
 using Net.payOS.Types;
 using Repository;
+using Service.Response;
 using Transaction = BusinessObject.Transaction;
 
 namespace Service.Impl;
@@ -70,49 +73,64 @@ public class PayOsService : IPayOsService
         }
     }
 
-    public async Task CheckPay(long orderId)
+    public async Task<ResponseDTO> CheckPay(long orderId)
     {
-
-      
-        int count = 0;
-        while (true)
+        Transaction? transaction = (await _transactionRepository.Find(x => x.OrderCode == orderId)).SingleOrDefault();
+        PaymentLinkInformation paymentLinkInformation = await _payOS.getPaymentLinkInformation(orderId);
+        if (!paymentLinkInformation.status.Equals("PENDING"))
         {
-            PaymentLinkInformation paymentLinkInformation = await _payOS.getPaymentLinkInformation(orderId);
-            if (!paymentLinkInformation.status.Equals("PENDING"))
+            if (paymentLinkInformation.status.Equals("PAID"))
             {
-                Transaction? transaction = (await _transactionRepository.Find(x => x.OrderCode == paymentLinkInformation.orderCode)).SingleOrDefault();
-
-                if (paymentLinkInformation.status.Equals("PAID"))
-                { 
-                    if (transaction != null) transaction.Status = TransactionStatus.SUCCESS;
-                    TicketPostingQuota ticketPostingQuota = new TicketPostingQuota();
-                    PlatformFee platformFee =
-                        (await _platformFeeRepository.Find(x => x.Id == transaction.PlatformFeeId)).SingleOrDefault();
-                    ticketPostingQuota.Quantity = (int)platformFee.Quantity;
-                    ticketPostingQuota.TransactionId = transaction.Id;
-                    await _quotaRepository.SaveAsync(ticketPostingQuota);
-                }
-                else
-                {
-                    if (transaction != null) transaction.Status = TransactionStatus.CANCELED;
-                }
-
-                await _transactionRepository.UpdateAsync(transaction!);
-                break; // Kết thúc vòng lặp khi trạng thái không còn là "PENDING"
+                transaction.Status = TransactionStatus.SUCCESS;
+            }
+            else
+            {
+                transaction.Status = TransactionStatus.CANCELED;
             }
 
-            count++;
-            await Task.Delay(1000); // Sử dụng Task.Delay thay cho Thread.Sleep để tránh chặn luồng chính
-
-            if (count == 300)
-            {
-                break; // Thoát nếu đã chạy 300 lần (khoảng 5 phút)
-            }
+            await _transactionRepository.UpdateAsync(transaction);
         }
-
-        Transaction? finalTransaction = (await _transactionRepository.Find(x => x.OrderCode == orderId)).SingleOrDefault();
-        await _payOS.cancelPaymentLink(orderId);
-        if (finalTransaction != null) finalTransaction.Status = TransactionStatus.CANCELED;
-        await _transactionRepository.UpdateAsync(finalTransaction!);
+      
+        // int count = 0;
+        // while (true)
+        // {
+        //     PaymentLinkInformation paymentLinkInformation = await _payOS.getPaymentLinkInformation(orderId);
+        //     if (!paymentLinkInformation.status.Equals("PENDING"))
+        //     {
+        //         Transaction? transaction = (await _transactionRepository.Find(x => x.OrderCode == paymentLinkInformation.orderCode)).SingleOrDefault();
+        //
+        //         if (paymentLinkInformation.status.Equals("PAID"))
+        //         { 
+        //             if (transaction != null) transaction.Status = TransactionStatus.SUCCESS;
+        //             TicketPostingQuota ticketPostingQuota = new TicketPostingQuota();
+        //             PlatformFee platformFee =
+        //                 (await _platformFeeRepository.Find(x => x.Id == transaction.PlatformFeeId)).SingleOrDefault();
+        //             ticketPostingQuota.Quantity = (int)platformFee.Quantity;
+        //             ticketPostingQuota.TransactionId = transaction.Id;
+        //             await _quotaRepository.SaveAsync(ticketPostingQuota);
+        //         }
+        //         else
+        //         {
+        //             if (transaction != null) transaction.Status = TransactionStatus.CANCELED;
+        //         }
+        //
+        //         await _transactionRepository.UpdateAsync(transaction!);
+        //         break; // Kết thúc vòng lặp khi trạng thái không còn là "PENDING"
+        //     }
+        //
+        //     count++;
+        //     await Task.Delay(1000); // Sử dụng Task.Delay thay cho Thread.Sleep để tránh chặn luồng chính
+        //
+        //     if (count == 300)
+        //     {
+        //         break; // Thoát nếu đã chạy 300 lần (khoảng 5 phút)
+        //     }
+        // }
+        //
+        // Transaction? finalTransaction = (await _transactionRepository.Find(x => x.OrderCode == orderId)).SingleOrDefault();
+        // await _payOS.cancelPaymentLink(orderId);
+        // if (finalTransaction != null) finalTransaction.Status = TransactionStatus.CANCELED;
+        // await _transactionRepository.UpdateAsync(finalTransaction!);
+        return ResponseUtil.GetObject(transaction.Status, "Status", HttpStatusCode.OK, 0);
     }
 }
