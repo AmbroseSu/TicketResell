@@ -1,6 +1,6 @@
 using DataAccess.DTO.Response;
 
-namespace Repository;
+namespace Service;
 
 public interface IFavoriteService
 {
