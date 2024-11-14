@@ -15,7 +15,6 @@ public class Order
     public string? Address { get; set; }
     public DateTime OrderDate { get; set; }
     public bool IsDeleted { get; set; }
-    
     public int TicketId { get; set; }
     public int UserId { get; set; }
     public List<OrderStatus>? OrderStatuses { get; set; }
