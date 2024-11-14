@@ -416,9 +416,36 @@ namespace Service.Impl
 
                 }
                 repu = totalTicketRating / TicketCount;
+                return ResponseUtil.GetObject(repu, "Return user points successfully", HttpStatusCode.OK, 0);
             }
 
-            return ResponseUtil.GetObject(repu, "Return user points successfully", HttpStatusCode.OK, 0);
+            return ResponseUtil.GetObject(null, "User has nothing to update", HttpStatusCode.OK, 0);
+        }
+
+        public async Task<ResponseDTO> UpdateUserReputation()
+        {
+            List<User> users = await _userRepository.FindAllUsersAsync();
+
+            int count = 0;
+            if (users.Count != 0)
+            {
+                foreach(User user in users)
+                {
+                    object? repu =  GetUserReputation(user.Id).Content;
+
+                    if (repu != null)
+                    {
+                        float points = (float)repu;
+                        user.Point = points;
+                        await _userRepository.UpdateAsync(user);
+                        count++;
+                    }
+
+                }
+
+            }
+
+            return ResponseUtil.GetObject("Request accepted", "Number of user updated reputation successfully: " + count , HttpStatusCode.Accepted, 0);
         }
     }
 

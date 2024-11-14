@@ -72,9 +72,9 @@ namespace TicketResellApplication.Controllers
         }
 
         [HttpGet("repu")]
-        public ResponseDTO UserReputation([FromQuery, Required] int userId)
+        public async Task<ResponseDTO> UserReputation()
         {
-            return _feedbackService.GetUserReputation(userId);
+            return await _feedbackService.UpdateUserReputation();
         }
 
     }
