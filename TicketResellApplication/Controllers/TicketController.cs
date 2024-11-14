@@ -84,11 +84,12 @@ namespace TicketResellApplication.Controllers
         [Authorize(Roles = "CUSTOMER,STAFF")]
         [HttpGet("get-user")]
         public async Task<ResponseDTO> getTicket(
+          [FromQuery] TicketStatus? status,
           [FromQuery, Required] int id,
           [FromQuery, Required] int page = 1,
           [FromQuery, Required] int limit = 10)
         {
-            return await _ticketService.GetTicketByUserId(id, page, limit);
+            return await _ticketService.GetTicketByUserId(id, status, page, limit);
         }
 
         [HttpPost("images")]
