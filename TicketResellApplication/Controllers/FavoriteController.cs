@@ -23,12 +23,19 @@ namespace TicketResellApplication.Controllers
             _favoriteService = favoriteService;
         }
 
-        [HttpPost("add-ticket-favorite")]
+        [HttpPost("add-ticket-favorite/{userId}")]
         public async Task<ResponseDTO> AddTicketFavorite([FromRoute, Required] int userId,
             [FromQuery, Required] int ticketId)
         {
             return await _favoriteService.AddTicketFavorite(userId, ticketId);
         }
-        
+
+
+
+        [HttpGet("get-all-favorite/{userId}")]
+        public async Task<ResponseDTO> GetAllFavorite([FromRoute, Required] int userId)
+        {
+            return await _favoriteService.GetAllFavoriteTicketByUserId(userId);
+        }
     }
 }

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BusinessObject;
 
 namespace Service
 {
@@ -21,5 +22,7 @@ namespace Service
         Task<ResponseDTO> GetTicketByCategoryId(int id, int page, int limit);
         Task<ResponseDTO> GetTicketByUserId(int id, int page, int limit);
         Task<ResponseDTO> UpdateTicketImg(List<string> imgList, int ticketId);
+        Task<ResponseDTO> getTicketInfoResponse(Ticket result);
+        Task<ResponseDTO> getListTicketInforResponse(List<Ticket?> result, int page, int limit);
     }
 }

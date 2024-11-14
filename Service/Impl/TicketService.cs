@@ -263,7 +263,7 @@ namespace Service.Impl
 
         }
 
-        private async Task<ResponseDTO> getTicketInfoResponse(Ticket result)
+        public async Task<ResponseDTO> getTicketInfoResponse(Ticket result)
         {
             Category? cat = (await _ticketCategoryRepository.Find(c => c.Id == result.CategoryId)).SingleOrDefault();
 
@@ -313,7 +313,7 @@ namespace Service.Impl
             return ResponseUtil.GetObject(ticket, "Ticket retrieved successfully", HttpStatusCode.OK, 1);
         }
 
-        private async Task<ResponseDTO> getListTicketInforResponse(List<Ticket?> result, int page, int limit)
+        public async Task<ResponseDTO> getListTicketInforResponse(List<Ticket?> result, int page, int limit)
         {
             List<TicketResponse?> responseData = new List<TicketResponse?>();
 
