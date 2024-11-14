@@ -1,6 +1,7 @@
 using System.Net;
 using AutoMapper;
 using BusinessObject;
+using BusinessObject.enums;
 using DataAccess.DTO;
 using DataAccess.DTO.Response;
 using Repository;
@@ -57,5 +58,30 @@ public class TransactionService : ITransactionService
             return ResponseUtil.Error("Dont have this transaction", "Null error", HttpStatusCode.BadRequest);
         }
     }
-    
+
+    public async Task<ResponseDTO> ChangeStatus(int orderCode, TransactionStatus transactionStatus)
+    {
+        Transaction? transaction = (await _transactionRepository.Find(x => x.OrderCode == orderCode)).SingleOrDefault();
+        transaction.Status = transactionStatus;
+        if (transactionStatus == TransactionStatus.SUCCESS)
+        {
+            TicketPostingQuota ticketPostingQuota = new TicketPostingQuota();
+            PlatformFee platformFee =
+                (await _platformFeeRepository.Find(x => x.Id == transaction.PlatformFeeId)).SingleOrDefault();
+            ticketPostingQuota.Quantity = (int)platformFee.Quantity;
+            ticketPostingQuota.TransactionId = transaction.Id;
+            await _quotaRepository.SaveAsync(ticketPostingQuota);
+        }
+
+        return ResponseUtil.GetObject("ok", "ok", HttpStatusCode.OK, 0);
+    }
+
+    public async Task<ResponseDTO> GetAllTransaction(int page,int limt)
+    {
+        IEnumerable<Transaction?> transactions = await _transactionRepository.Find(x => true);
+        IEnumerable<TransactionDTO> transactionDtos = _mapper.Map<IEnumerable<TransactionDTO>>(transactions);
+        List<TransactionDTO> transactionDtosList = transactionDtos.Skip((page - 1) * limt).Take(limt).ToList();
+        return ResponseUtil.GetCollection(transactionDtosList, "ok", HttpStatusCode.OK, transactions.Count(), page,
+            limt, transactions.Count());
+    }
 }
