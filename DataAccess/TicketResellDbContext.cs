@@ -297,7 +297,7 @@ public class TicketResellDbContext : DbContext
             entity.Property(e => e.FcmToken);
             entity.Property(e => e.PostTime);
             entity.Property(e => e.CreatedAt);
-            entity.Property(e => e.Points);
+            entity.Property(e => e.Point);
             entity.Property(e => e.Status);
             entity.Property(e => e.IsEnabled);
             entity.Property(e => e.IsDeleted);
