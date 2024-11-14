@@ -42,11 +42,12 @@ namespace TicketResellApplication.Controllers
             return await _platformFeeService.GetByName(page, limit, query);
         }
 
-        // [HttpPost("add-platform-fee")]
-        // public async Task<ResponseDTO> CreatePlatformFee([FromBody, Required] PlatFormFeeRequest platFormFeeRequest)
-        // {
-        //     
-        // }
+        [HttpPost("add-platform-fee")]
+        public async Task<ResponseDTO> CreatePlatformFee([FromBody, Required] PlatFormFeeRequest platFormFeeRequest)
+        {
+            return await _platformFeeService.CreatePlatformFee(platFormFeeRequest);
+        }
+        
 
         // [HttpGet("start")]
         // public string Start()
